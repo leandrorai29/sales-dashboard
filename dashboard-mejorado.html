@@ -191,6 +191,16 @@
 </style>
 </head>
 <body>
+<style>
+  .nav-bar{background:rgba(8,8,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;position:sticky;top:0;z-index:200;height:48px;}
+  .nav-link{padding:0 18px;height:48px;display:flex;align-items:center;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-decoration:none;font-family:'Inter',sans-serif;}
+  .nav-link:hover{color:var(--text);}
+  .nav-link.active{color:var(--accent2);border-bottom-color:var(--accent);}
+</style>
+<nav class="nav-bar">
+  <a class="nav-link" href="sales-script.html">📋 Sales Script</a>
+  <a class="nav-link active" href="dashboard-mejorado.html">📊 Dashboard</a>
+</nav>
 <div class="shell">
   <aside class="sidebar">
     <div class="logo">
@@ -208,6 +218,9 @@
       <div class="nav-item" onclick="switchTab('metas')"><span class="nav-icon">🏆</span> Metas</div>
     </nav>
     <div class="sidebar-bottom">
+      <div class="nav-item-settings" onclick="exportData()"><span>💾</span> Exportar datos</div>
+      <div class="nav-item-settings" onclick="document.getElementById('import-file').click()"><span>📂</span> Importar datos</div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
       <div class="nav-item-settings" onclick="openModal('modal-settings')"><span>⚙️</span> Configuración</div>
       <div class="save-indicator">
         <div class="save-dot"></div>
@@ -897,6 +910,48 @@ function renderMetasProgress() {
   updateBar(realCalls,metas.calls,'meta-calls-bar','meta-calls-vals','meta-calls-pct','meta-calls-status',' calls');
   updateBar(realCierres,metas.cierres,'meta-cierres-bar','meta-cierres-vals','meta-cierres-pct','meta-cierres-status',' cierres');
   updateBar(realTasa,metas.tasa,'meta-tasa-bar','meta-tasa-vals','meta-tasa-pct','meta-tasa-status','%');
+}
+
+// ===== EXPORT / IMPORT =====
+function exportData() {
+  const data = {
+    calls: state.calls,
+    leads: state.leads,
+    metas: loadMetas(),
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sales-dashboard-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.calls || !data.leads) { alert('Archivo inválido'); return; }
+      if (!confirm(`¿Importar ${data.calls.length} calls y ${data.leads.length} leads? Esto reemplazará los datos actuales.`)) return;
+      state.calls = data.calls;
+      state.leads = data.leads;
+      if (data.metas) localStorage.setItem('scd_metas', JSON.stringify(data.metas));
+      saveState();
+      updateOverview();
+      updateDailyEntries();
+      updateLeadsList();
+      renderMetasProgress();
+      alert('✅ Datos importados correctamente');
+    } catch(e) {
+      alert('Error al leer el archivo: ' + e.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 // ===== RESET =====
