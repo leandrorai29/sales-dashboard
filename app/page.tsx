@@ -1,10 +1,5 @@
-import fs from "fs";
-import path from "path";
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  const html = fs.readFileSync(
-    path.join(process.cwd(), "dashboard-mejorado.html"),
-    "utf-8"
-  );
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  redirect('/sales-script')
 }
