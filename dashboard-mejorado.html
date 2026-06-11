@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Closer Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#080810;--surface:#0f0f1a;--surface2:#161624;--surface3:#1e1e30;--border:#252538;--border2:#2e2e48;
+    --accent:#7c6af5;--accent2:#a78bfa;--accent3:rgba(124,106,245,0.12);
+    --green:#10d9a0;--green2:rgba(16,217,160,0.12);
+    --red:#f43f6e;--red2:rgba(244,63,110,0.12);
+    --yellow:#f59e0b;--yellow2:rgba(245,158,11,0.12);
+    --text:#eeeef8;--text2:#7878a0;--text3:#404060;
+    --radius:14px;--radius-sm:8px;--radius-xs:6px;
+    --shadow:0 4px 24px rgba(0,0,0,.4);
+    --glow-purple:0 0 20px rgba(124,106,245,.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
+  .shell{display:flex;min-height:100vh;}
+
+  /* SIDEBAR */
+  .sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:0;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+  .logo{padding:24px 22px 22px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+  .logo-title{font-size:15px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .logo-sub{font-size:10px;color:var(--text3);margin-top:3px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+  .nav-section{padding:8px 12px 4px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 10px;cursor:pointer;color:var(--text2);transition:all .2s;font-size:13px;font-weight:500;border-radius:var(--radius-sm);border:1px solid transparent;}
+  .nav-item:hover{color:var(--text);background:var(--surface2);border-color:var(--border);}
+  .nav-item.active{color:#fff;background:linear-gradient(135deg,rgba(124,106,245,.25),rgba(124,106,245,.1));border-color:rgba(124,106,245,.3);box-shadow:var(--glow-purple);}
+  .nav-item .nav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .sidebar-bottom{margin-top:auto;padding:10px 0 12px;border-top:1px solid var(--border);}
+  .nav-item-settings{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 10px;cursor:pointer;color:var(--text3);transition:all .2s;font-size:12px;font-weight:500;border-radius:var(--radius-sm);}
+  .nav-item-settings:hover{color:var(--text2);background:var(--surface2);}
+  .save-indicator{padding:6px 22px;font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+  .save-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+  /* MAIN */
+  .main{flex:1;overflow-y:auto;background:var(--bg);}
+  .topbar{background:rgba(15,15,26,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+  .page-title{font-size:17px;font-weight:700;letter-spacing:-0.3px;}
+  .filter-group{display:flex;gap:4px;background:var(--surface2);padding:3px;border-radius:var(--radius-sm);border:1px solid var(--border);}
+  .filter-btn{padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;font-family:'Inter',sans-serif;}
+  .filter-btn:hover{color:var(--text);}
+  .filter-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,106,245,.4);}
+  .content{padding:28px 32px;}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+
+  /* STAT CARDS */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
+  .stat-card:hover{border-color:var(--border2);box-shadow:var(--shadow);}
+  .stat-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;filter:blur(30px);opacity:.4;}
+  .stat-card.purple::after{background:var(--accent);}
+  .stat-card.green::after{background:var(--green);}
+  .stat-card.red::after{background:var(--red);}
+  .stat-card.yellow::after{background:var(--yellow);}
+  .stat-card-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px;}
+  .stat-card.purple .stat-card-icon{background:var(--accent3);}
+  .stat-card.green .stat-card-icon{background:var(--green2);}
+  .stat-card.red .stat-card-icon{background:var(--red2);}
+  .stat-card.yellow .stat-card-icon{background:var(--yellow2);}
+  .stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600;}
+  .stat-value{font-size:36px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+  .stat-value.purple{color:var(--accent2);}
+  .stat-value.green{color:var(--green);}
+  .stat-value.red{color:var(--red);}
+  .stat-value.yellow{color:var(--yellow);}
+  .stat-sub{font-size:11px;color:var(--text3);margin-top:6px;}
+
+  /* SECTIONS */
+  .section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .section-title{font-size:14px;font-weight:700;letter-spacing:-0.2px;}
+  .section-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:var(--accent3);color:var(--accent2);font-family:'JetBrains Mono',monospace;border:1px solid rgba(124,106,245,.2);font-weight:600;}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;padding:11px 14px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);background:var(--surface2);font-weight:700;}
+  td{padding:13px 14px;font-size:13px;border-bottom:1px solid rgba(37,37,56,.6);}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(255,255,255,.015);}
+
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge-cerrada{background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);}
+  .badge-no-cerrada{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
+  .badge-seguimiento{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+  .badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(124,106,245,.2);}
+
+  /* INPUTS */
+  .input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:all .2s;}
+  .input:focus{border-color:var(--accent);background:var(--surface3);box-shadow:0 0 0 3px rgba(124,106,245,.1);}
+  .input::placeholder{color:var(--text3);}
+  textarea.input{resize:vertical;min-height:120px;line-height:1.6;}
+  select.input{cursor:pointer;}
+  .input-group{margin-bottom:16px;}
+  .input-label{font-size:11px;color:var(--text2);margin-bottom:7px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  /* BUTTONS */
+  .btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;letter-spacing:-0.1px;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#6b59e0);color:#fff;box-shadow:0 2px 12px rgba(124,106,245,.3);}
+  .btn-primary:hover{box-shadow:0 4px 20px rgba(124,106,245,.5);transform:translateY(-1px);}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--accent);color:var(--accent2);background:var(--surface3);}
+  .btn-danger{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
+  .btn-danger:hover{background:rgba(244,63,110,.2);}
+  .btn-edit{background:var(--accent3);color:var(--accent2);border:1px solid rgba(124,106,245,.2);}
+  .btn-edit:hover{background:rgba(124,106,245,.2);}
+  .btn-sm{padding:6px 12px;font-size:11px;}
+
+  /* AI */
+  .ai-output{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:18px;font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap;min-height:60px;}
+  .ai-loading{color:var(--text3);font-style:italic;display:flex;align-items:center;gap:10px;}
+  .spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* LEADS */
+  .leads-grid{display:grid;gap:14px;}
+  .lead-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
+  .lead-card:hover{border-color:rgba(124,106,245,.4);box-shadow:var(--glow-purple);}
+  .lead-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .lead-name{font-weight:700;font-size:14px;}
+  .lead-meta{font-size:11px;color:var(--text3);margin-top:3px;}
+  .lead-followups{margin-top:14px;}
+  .followup-item{display:flex;gap:10px;padding:9px 12px;background:var(--surface);border-radius:var(--radius-xs);margin-bottom:6px;font-size:12px;color:var(--text2);border:1px solid var(--border);}
+
+  /* REPORT */
+  .report-section{background:linear-gradient(135deg,rgba(124,106,245,.1),rgba(124,106,245,.03));border:1px solid rgba(124,106,245,.25);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .report-title{font-size:14px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
+  .report-date{font-size:11px;color:var(--text3);margin-bottom:16px;}
+
+  /* OBJECTIONS */
+  .objection-list{display:grid;gap:8px;}
+  .objection-item{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);transition:border-color .2s;}
+  .objection-item:hover{border-color:var(--border2);}
+  .objection-count{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--red2);color:var(--red);font-weight:700;}
+
+  /* RATE BAR */
+  .rate-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-top:10px;border:1px solid var(--border);}
+  .rate-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+  /* METAS */
+  .meta-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:border-color .2s;}
+  .meta-card:hover{border-color:var(--border2);}
+  .meta-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .meta-title{font-size:13px;font-weight:700;}
+  .meta-values{font-size:12px;color:var(--text2);}
+  .meta-bar-wrap{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border);}
+  .meta-bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+  .meta-bar-fill.purple{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+  .meta-bar-fill.green{background:linear-gradient(90deg,var(--green),#34d399);}
+  .meta-bar-fill.yellow{background:linear-gradient(90deg,var(--yellow),#fbbf24);}
+  .meta-pct{font-size:11px;color:var(--text3);}
+  .meta-pct span{color:var(--text2);font-weight:600;}
+
+  /* API BANNER */
+  .api-banner{background:rgba(124,106,245,.07);border:1px solid rgba(124,106,245,.2);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+  .api-banner-text{font-size:13px;color:var(--text2);line-height:1.6;}
+  .api-banner-text a{color:var(--accent2);text-decoration:none;}
+  .api-banner-text a:hover{text-decoration:underline;}
+  .api-key-indicator{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+  .api-key-indicator.ok{background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);}
+  .api-key-indicator.missing{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
+
+  /* MODALS */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:600px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.6);}
+  .modal-sm{width:440px;}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .modal-title{font-size:16px;font-weight:700;}
+  .modal-close{cursor:pointer;color:var(--text3);font-size:22px;line-height:1;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all .15s;}
+  .modal-close:hover{color:var(--text);background:var(--surface2);}
+  .divider{border:none;border-top:1px solid var(--border);margin:22px 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
+  .empty-state-icon{font-size:36px;margin-bottom:12px;opacity:.7;}
+  .empty-state-text{font-size:13px;line-height:1.6;}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text3);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-title">Sales Closer</div>
+      <div class="logo-sub">// Dashboard</div>
+    </div>
+    <nav>
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="switchTab('overview')"><span class="nav-icon">📊</span> Overview</div>
+      <div class="nav-item" onclick="switchTab('daily')"><span class="nav-icon">📋</span> Reporte Diario</div>
+      <div class="nav-item" onclick="switchTab('leads')"><span class="nav-icon">👥</span> Leads & Follows</div>
+      <div class="nav-item" onclick="switchTab('transcripts')"><span class="nav-icon">🎙️</span> Transcripts</div>
+      <div class="nav-section">Análisis</div>
+      <div class="nav-item" onclick="switchTab('report')"><span class="nav-icon">📈</span> Reporte Semanal</div>
+      <div class="nav-item" onclick="switchTab('metas')"><span class="nav-icon">🏆</span> Metas</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item-settings" onclick="openModal('modal-settings')"><span>⚙️</span> Configuración</div>
+      <div class="save-indicator">
+        <div class="save-dot"></div>
+        <span id="save-status">Guardado automático ON</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="pageTitle">Overview</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="setFilter('dia',this)">Hoy</button>
+          <button class="filter-btn" onclick="setFilter('semana',this)">Semana</button>
+          <button class="filter-btn" onclick="setFilter('mes',this)">Mes</button>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="confirmClearData()">🗑️ Reset</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div id="tab-overview" class="tab-content active">
+        <div class="stats-row">
+          <div class="stat-card purple"><div class="stat-card-icon">📞</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este período</div></div>
+          <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
+          <div class="stat-card red"><div class="stat-card-icon">❌</div><div class="stat-label">No Cerradas</div><div class="stat-value red" id="stat-no-cerradas">0</div><div class="stat-sub">Requieren follow-up</div></div>
+          <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
+        </div>
+        <div class="two-col">
+          <div class="section">
+            <div class="section-header"><div class="section-title">Tasa de Cierre</div></div>
+            <div id="cierre-rate-text" style="font-size:28px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)">0%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:12px">de calls cerradas</div>
+            <div class="rate-bar"><div class="rate-fill" id="rate-bar-fill" style="width:0%"></div></div>
+          </div>
+          <div class="section">
+            <div class="section-header"><div class="section-title">Objeciones Frecuentes</div><span class="section-badge">no resueltas</span></div>
+            <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">Historial de Calls</div>
+            <button class="btn btn-primary btn-sm" onclick="openAddCall()">+ Nueva Call</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Fecha</th><th>Lead</th><th>Estado</th><th>Objeción</th><th>Notas</th><th></th></tr></thead>
+              <tbody id="calls-table-body"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls registradas aún</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTE DIARIO -->
+      <div id="tab-daily" class="tab-content">
+        <div class="section">
+          <div class="section-header"><div class="section-title">📋 Reporte Diario de Calls</div><div style="font-size:12px;color:var(--text2)" id="daily-date-display"></div></div>
+          <div class="form-row">
+            <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="daily-lead-name" type="text" placeholder="Ej: María García"></div>
+            <div class="input-group"><label class="input-label">Estado del Lead</label><select class="input" id="daily-estado"><option value="">Seleccionar estado...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="daily-objecion" type="text" placeholder="Ej: 'No tengo presupuesto ahora'"></div>
+            <div class="input-group"><label class="input-label">Próximo paso</label><input class="input" id="daily-proximo" type="text" placeholder="Ej: Follow-up en 3 días"></div>
+          </div>
+          <div class="input-group"><label class="input-label">Notas de la call</label><textarea class="input" id="daily-notas" placeholder="Resumen de lo que hablaron..."></textarea></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-primary" onclick="addDailyEntry()">Guardar Entrada</button>
+            <button class="btn btn-secondary" onclick="generateDailyFeedback()">✨ Feedback AI del Día</button>
+          </div>
+        </div>
+        <div class="section" id="daily-feedback-section" style="display:none">
+          <div class="section-header"><div class="section-title">🤖 Feedback del Día</div></div>
+          <div class="ai-output" id="daily-feedback-output"></div>
+        </div>
+        <div class="section">
+          <div class="section-header"><div class="section-title">Entries de Hoy</div><span class="section-badge" id="daily-count-badge">0 calls</span></div>
+          <div id="daily-entries-list"><div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Aún no cargaste calls hoy</div></div></div>
+        </div>
+      </div>
+
+      <!-- LEADS -->
+      <div id="tab-leads" class="tab-content">
+        <div class="section" style="margin-bottom:20px">
+          <div class="section-header"><div class="section-title">Generar Carpeta de Lead desde Transcript</div></div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Pegá el transcript de tu call y la IA arma automáticamente el perfil del lead con follow-ups detallados.</p>
+          <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="lead-folder-name" type="text" placeholder="Nombre del cliente"></div>
+          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="lead-transcript-input" style="min-height:150px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
+          <button class="btn btn-primary" id="btn-create-lead" onclick="createLeadFolder()">🗂️ Crear Carpeta del Lead</button>
+        </div>
+        <div class="section">
+          <div class="section-header"><div class="section-title">Carpetas de Leads</div><span class="section-badge" id="leads-count-badge">0 leads</span></div>
+          <div class="leads-grid" id="leads-folder-list"><div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">Aún no creaste carpetas de leads</div></div></div>
+        </div>
+      </div>
+
+      <!-- TRANSCRIPTS -->
+      <div id="tab-transcripts" class="tab-content">
+        <div id="api-key-banner-transcripts"></div>
+        <div class="section">
+          <div class="section-header"><div class="section-title">🎙️ Análisis de Transcript</div></div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Pegá el transcript y recibí feedback detallado: qué salió bien, qué mejorar, manejo de objeciones y próximos pasos.</p>
+          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="transcript-input" style="min-height:200px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
+          <div class="form-row">
+            <div class="input-group"><label class="input-label">Resultado de la call</label><select class="input" id="transcript-resultado"><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option></select></div>
+            <div class="input-group"><label class="input-label">Contexto adicional (opcional)</label><input class="input" id="transcript-contexto" type="text" placeholder="Ej: Lead frío, primer contacto"></div>
+          </div>
+          <button class="btn btn-primary" onclick="analyzeTranscript()">🤖 Analizar con AI</button>
+        </div>
+        <div class="section" id="transcript-result-section" style="display:none">
+          <div class="section-header"><div class="section-title">Feedback de la Call</div></div>
+          <div class="ai-output" id="transcript-output"></div>
+        </div>
+      </div>
+
+      <!-- REPORTE SEMANAL -->
+      <div id="tab-report" class="tab-content">
+        <div class="report-section">
+          <div class="report-title">📈 Reporte Semanal Automático</div>
+          <div class="report-date" id="weekly-date-range">Semana actual</div>
+          <button class="btn btn-primary" onclick="generateWeeklyReport()">🔄 Generar Reporte Semanal</button>
+        </div>
+        <div class="grid2" style="margin-bottom:20px">
+          <div class="stat-card purple"><div class="stat-label">Calls esta semana</div><div class="stat-value purple" id="weekly-total">0</div></div>
+          <div class="stat-card green"><div class="stat-label">Cierre semanal</div><div class="stat-value green" id="weekly-rate">0%</div></div>
+          <div class="stat-card red"><div class="stat-label">No cerradas</div><div class="stat-value red" id="weekly-no">0</div></div>
+          <div class="stat-card yellow"><div class="stat-label">Seguimientos</div><div class="stat-value yellow" id="weekly-seg">0</div></div>
+        </div>
+        <div class="section" id="weekly-report-section" style="display:none">
+          <div class="section-header"><div class="section-title">Reporte Generado por AI</div></div>
+          <div class="ai-output" id="weekly-report-output"></div>
+        </div>
+      </div>
+
+      <!-- METAS -->
+      <div id="tab-metas" class="tab-content">
+        <div class="section">
+          <div class="section-header"><div class="section-title">🏆 Metas Mensuales</div><span class="section-badge" id="metas-month-label"></span></div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:20px">Establecé tus objetivos mensuales y seguí tu progreso en tiempo real.</p>
+          <div class="form-row" style="margin-bottom:14px">
+            <div class="input-group"><label class="input-label">🎯 Calls objetivo (mes)</label><input class="input" id="meta-calls" type="number" min="1" placeholder="Ej: 60"></div>
+            <div class="input-group"><label class="input-label">✅ Cierres objetivo (mes)</label><input class="input" id="meta-cierres" type="number" min="1" placeholder="Ej: 15"></div>
+          </div>
+          <div class="input-group" style="max-width:50%"><label class="input-label">📊 Tasa de cierre objetivo (%)</label><input class="input" id="meta-tasa" type="number" min="1" max="100" placeholder="Ej: 25"></div>
+          <button class="btn btn-primary" onclick="saveMetas()">💾 Guardar Metas</button>
+        </div>
+
+        <div id="metas-progress-section">
+          <div class="meta-card">
+            <div class="meta-header">
+              <div>
+                <div class="meta-title">📞 Calls realizadas</div>
+                <div class="meta-values" id="meta-calls-vals">— / — calls</div>
+              </div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--accent2)" id="meta-calls-pct">—</div>
+            </div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill purple" id="meta-calls-bar" style="width:0%"></div></div>
+            <div class="meta-pct" id="meta-calls-status">Establecé una meta para ver el progreso</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-header">
+              <div>
+                <div class="meta-title">🏅 Cierres logrados</div>
+                <div class="meta-values" id="meta-cierres-vals">— / — cierres</div>
+              </div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)" id="meta-cierres-pct">—</div>
+            </div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill green" id="meta-cierres-bar" style="width:0%"></div></div>
+            <div class="meta-pct" id="meta-cierres-status">Establecé una meta para ver el progreso</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-header">
+              <div>
+                <div class="meta-title">📈 Tasa de cierre actual</div>
+                <div class="meta-values" id="meta-tasa-vals">—% / —% objetivo</div>
+              </div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--yellow)" id="meta-tasa-pct">—</div>
+            </div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill yellow" id="meta-tasa-bar" style="width:0%"></div></div>
+            <div class="meta-pct" id="meta-tasa-status">Establecé una meta para ver el progreso</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADD/EDIT CALL -->
+<div class="modal-overlay" id="modal-add-call">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-call-title">Nueva Call</div>
+      <span class="modal-close" onclick="closeModal('modal-add-call')">×</span>
+    </div>
+    <div class="form-row">
+      <div class="input-group"><label class="input-label">Nombre del Lead *</label><input class="input" id="call-lead-name" type="text" placeholder="Nombre completo"></div>
+      <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="call-fecha" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option></select></div>
+      <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerró..."></div>
+    </div>
+    <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
+    <input type="hidden" id="call-edit-id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-call')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-save-call" onclick="saveCall()">Guardar Call</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT LEAD -->
+<div class="modal-overlay" id="modal-edit-lead">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">Editar Lead</div>
+      <span class="modal-close" onclick="closeModal('modal-edit-lead')">×</span>
+    </div>
+    <div class="input-group"><label class="input-label">Nombre</label><input class="input" id="edit-lead-nombre" type="text"></div>
+    <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="edit-lead-fecha" type="date"></div>
+    <div class="input-group"><label class="input-label">Probabilidad de Cierre</label>
+      <select class="input" id="edit-lead-prob"><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option></select>
+    </div>
+    <input type="hidden" id="edit-lead-id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-lead')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditLead()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LEAD DETAIL -->
+<div class="modal-overlay" id="modal-lead-detail">
+  <div class="modal" style="width:680px">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-lead-title">Carpeta del Lead</div>
+      <span class="modal-close" onclick="closeModal('modal-lead-detail')">×</span>
+    </div>
+    <div id="modal-lead-content"></div>
+  </div>
+</div>
+
+<!-- MODAL SETTINGS -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Configuración</div>
+      <span class="modal-close" onclick="closeModal('modal-settings')">×</span>
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)">🔑 API Key de OpenAI</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+        Necesitás una API key para usar las funciones de análisis con IA.<br>
+        <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">→ Crear una API key en OpenAI</a>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Tu API Key</label>
+        <input class="input" id="settings-api-key" type="password" placeholder="sk-...">
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:4px" id="settings-key-status"></div>
+    </div>
+    <hr class="divider">
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-settings')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveApiKey()">💾 Guardar Key</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STORAGE =====
+const STORAGE_KEY = 'scd_v2';
+function loadState() {
+  try { const s = localStorage.getItem(STORAGE_KEY); if(s) return JSON.parse(s); } catch(e) {}
+  return { calls:[], leads:[], filter:'dia' };
+}
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const el = document.getElementById('save-status');
+    if(el){ el.textContent='Guardado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); setTimeout(()=>el.textContent='Guardado automático ON',2000); }
+  } catch(e) {}
+}
+let state = loadState();
+
+// ===== API KEY =====
+function getApiKey() { return localStorage.getItem('openai_api_key') || ''; }
+function saveApiKey() {
+  const k = document.getElementById('settings-api-key').value.trim();
+  if (!k) { alert('Ingresá tu API key'); return; }
+  localStorage.setItem('openai_api_key', k);
+  closeModal('modal-settings');
+  renderApiKeyStatus();
+  alert('✅ API key guardada correctamente');
+}
+function renderApiKeyStatus() {
+  const k = getApiKey();
+  const statusEl = document.getElementById('settings-key-status');
+  if(statusEl) {
+    if(k) statusEl.innerHTML = `<span class="api-key-indicator ok">✓ Key guardada (${k.slice(0,8)}...)</span>`;
+    else statusEl.innerHTML = `<span class="api-key-indicator missing">✗ No configurada</span>`;
+  }
+  // banner in transcripts
+  const banner = document.getElementById('api-key-banner-transcripts');
+  if(banner) {
+    if(!k) {
+      banner.innerHTML = `<div class="api-banner"><div class="api-banner-text">⚠️ <strong>API key de OpenAI no configurada.</strong> Para usar el análisis de transcripts necesitás ingresar tu key.<br><a href="https://platform.openai.com/api-keys" target="_blank">→ Crear una API key aquí</a></div><button class="btn btn-primary btn-sm" onclick="openSettingsModal()">Configurar Key</button></div>`;
+    } else {
+      banner.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><span class="api-key-indicator ok">✓ OpenAI conectado</span></div>`;
+    }
+  }
+}
+function openSettingsModal() {
+  const k = getApiKey();
+  if(k) document.getElementById('settings-api-key').value = k;
+  renderApiKeyStatus();
+  openModal('modal-settings');
+}
+
+// ===== NAV =====
+const titles = {overview:'Overview',daily:'Reporte Diario',leads:'Leads & Follow-ups',transcripts:'Análisis de Transcripts',report:'Reporte Semanal',metas:'Metas Mensuales'};
+const tabOrder = ['overview','daily','leads','transcripts','report','metas'];
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('.nav-item')[tabOrder.indexOf(tab)].classList.add('active');
+  document.getElementById('pageTitle').textContent = titles[tab];
+  if(tab==='report') updateWeeklyStats();
+  if(tab==='metas') renderMetasProgress();
+  if(tab==='transcripts') renderApiKeyStatus();
+}
+function setFilter(f,btn) {
+  state.filter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateOverview();
+}
+
+// ===== HELPERS =====
+function today() { return new Date().toISOString().slice(0,10); }
+function getWeekRange() {
+  const now=new Date(), monday=new Date(now);
+  monday.setDate(now.getDate()-((now.getDay()+6)%7));
+  const sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
+  return {start:monday.toISOString().slice(0,10),end:sunday.toISOString().slice(0,10)};
+}
+function getMonthRange() {
+  const now=new Date();
+  return {start:new Date(now.getFullYear(),now.getMonth(),1).toISOString().slice(0,10),end:new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().slice(0,10)};
+}
+function filterCalls() {
+  const t=today(),w=getWeekRange(),m=getMonthRange();
+  if(state.filter==='dia') return state.calls.filter(c=>c.fecha===t);
+  if(state.filter==='semana') return state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+  if(state.filter==='mes') return state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
+  return state.calls;
+}
+function estadoLabel(e) { return {cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada'}[e]||e; }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ===== OVERVIEW =====
+function updateOverview() {
+  const calls=filterCalls(), total=calls.length;
+  const cerradas=calls.filter(c=>c.estado==='cerrada').length;
+  const noCerradas=calls.filter(c=>c.estado==='no-cerrada').length;
+  const seguimiento=calls.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+  const rate=total>0?Math.round((cerradas/total)*100):0;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-cerradas').textContent=cerradas;
+  document.getElementById('stat-no-cerradas').textContent=noCerradas;
+  document.getElementById('stat-seguimiento').textContent=seguimiento;
+  document.getElementById('stat-rate').textContent=rate+'% tasa de cierre';
+  document.getElementById('cierre-rate-text').textContent=rate+'%';
+  document.getElementById('rate-bar-fill').style.width=rate+'%';
+  // Objeciones
+  const objMap={};
+  calls.filter(c=>c.objecion).forEach(c=>{ const k=c.objecion.toLowerCase().trim(); objMap[k]=(objMap[k]||0)+1; });
+  const sorted=Object.entries(objMap).sort((a,b)=>b[1]-a[1]);
+  const objEl=document.getElementById('objection-list');
+  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones registradas</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
+  // Tabla
+  const tbody=document.getElementById('calls-table-body');
+  if(calls.length===0){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este período</td></tr>'; return; }
+  tbody.innerHTML=[...calls].reverse().map(c=>`
+    <tr>
+      <td style="font-family:'JetBrains Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
+      <td style="font-weight:500">${c.nombre}</td>
+      <td><span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span></td>
+      <td style="color:var(--text2);font-size:12px">${c.objecion||'—'}</td>
+      <td style="color:var(--text2);font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notas||'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-edit btn-sm" style="margin-right:4px" onclick="openEditCall(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">✕</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ===== ADD / EDIT CALL =====
+function openAddCall() {
+  document.getElementById('modal-call-title').textContent='Nueva Call';
+  document.getElementById('btn-save-call').textContent='Guardar Call';
+  document.getElementById('call-fecha').value=today();
+  document.getElementById('call-lead-name').value='';
+  document.getElementById('call-estado').value='';
+  document.getElementById('call-objecion').value='';
+  document.getElementById('call-notas').value='';
+  document.getElementById('call-edit-id').value='';
+  openModal('modal-add-call');
+}
+function openEditCall(id) {
+  const c=state.calls.find(x=>x.id===id); if(!c) return;
+  document.getElementById('modal-call-title').textContent='Editar Call';
+  document.getElementById('btn-save-call').textContent='Actualizar Call';
+  document.getElementById('call-fecha').value=c.fecha;
+  document.getElementById('call-lead-name').value=c.nombre;
+  document.getElementById('call-estado').value=c.estado;
+  document.getElementById('call-objecion').value=c.objecion||'';
+  document.getElementById('call-notas').value=c.notas||'';
+  document.getElementById('call-edit-id').value=id;
+  openModal('modal-add-call');
+}
+function saveCall() {
+  const nombre=document.getElementById('call-lead-name').value.trim();
+  const estado=document.getElementById('call-estado').value;
+  const fecha=document.getElementById('call-fecha').value;
+  const objecion=document.getElementById('call-objecion').value.trim();
+  const notas=document.getElementById('call-notas').value.trim();
+  const editId=document.getElementById('call-edit-id').value;
+  if(!nombre||!estado){ alert('Completá nombre y estado'); return; }
+  if(editId) {
+    const idx=state.calls.findIndex(c=>c.id==editId);
+    if(idx>-1) state.calls[idx]={...state.calls[idx],nombre,estado,fecha:fecha||today(),objecion,notas};
+  } else {
+    state.calls.push({id:Date.now(),nombre,estado,fecha:fecha||today(),objecion,notas});
+  }
+  saveState(); closeModal('modal-add-call');
+  updateOverview(); updateDailyEntries();
+}
+function deleteCall(id) {
+  if(!confirm('¿Eliminar esta call? Esta acción no se puede deshacer.')) return;
+  state.calls=state.calls.filter(c=>c.id!==id);
+  saveState(); updateOverview(); updateDailyEntries();
+}
+
+// ===== DAILY =====
+function initDaily() {
+  document.getElementById('daily-date-display').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+function addDailyEntry() {
+  const nombre=document.getElementById('daily-lead-name').value.trim();
+  const estado=document.getElementById('daily-estado').value;
+  if(!nombre||!estado){ alert('Completá al menos nombre y estado'); return; }
+  state.calls.push({id:Date.now(),nombre,estado,fecha:today(),objecion:document.getElementById('daily-objecion').value.trim(),proximo:document.getElementById('daily-proximo').value.trim(),notas:document.getElementById('daily-notas').value.trim()});
+  saveState();
+  ['daily-lead-name','daily-objecion','daily-proximo','daily-notas'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('daily-estado').value='';
+  updateDailyEntries(); updateOverview();
+}
+function updateDailyEntries() {
+  const todayCalls=state.calls.filter(c=>c.fecha===today());
+  document.getElementById('daily-count-badge').textContent=todayCalls.length+' calls';
+  const list=document.getElementById('daily-entries-list');
+  if(todayCalls.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Aún no cargaste calls hoy</div></div>'; return; }
+  list.innerHTML=todayCalls.map(c=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:13px">${c.nombre}</div>
+        ${c.objecion?`<div style="font-size:12px;color:var(--red);margin-top:2px">Objeción: ${c.objecion}</div>`:''}
+        ${c.proximo?`<div style="font-size:12px;color:var(--text2);margin-top:2px">→ ${c.proximo}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span>
+        <button class="btn btn-edit btn-sm" onclick="openEditCall(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ===== AI CALL (OpenAI) =====
+async function callOpenAI(prompt) {
+  const k=getApiKey();
+  if(!k) throw new Error('NO_KEY');
+  const res=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},
+    body:JSON.stringify({model:'gpt-4o-mini',max_tokens:1200,messages:[{role:'user',content:prompt}]})
+  });
+  if(!res.ok){ const err=await res.json(); throw new Error(err.error?.message||'Error de API'); }
+  const data=await res.json();
+  return data.choices?.[0]?.message?.content||'Sin respuesta';
+}
+
+function noKeyMessage(outputEl) {
+  outputEl.innerHTML=`<div style="padding:8px 0;color:var(--text2)">⚠️ <strong>API key no configurada.</strong> Para usar esta función necesitás ingresar tu key de OpenAI.<br><br><a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">→ Crear una API key aquí</a> &nbsp;·&nbsp; <span style="color:var(--accent2);cursor:pointer" onclick="openSettingsModal()">→ Configurar ahora</span></div>`;
+}
+
+async function generateDailyFeedback() {
+  const todayCalls=state.calls.filter(c=>c.fecha===today());
+  if(todayCalls.length===0){ alert('No hay calls registradas hoy'); return; }
+  const section=document.getElementById('daily-feedback-section');
+  const output=document.getElementById('daily-feedback-output');
+  section.style.display='block';
+  output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Analizando tu día...</div>';
+  const resumen=todayCalls.map((c,i)=>`${i+1}. Lead: ${c.nombre} | Estado: ${estadoLabel(c.estado)} | Objeción: ${c.objecion||'ninguna'} | Notas: ${c.notas||'sin notas'}`).join('\n');
+  const prompt=`Eres un coach de ventas experto en High Ticket Closing. Analiza el reporte de calls del día:\n\n${resumen}\n\nFeedback estructurado:\n1. **Resumen del día**\n2. **Qué hiciste bien** (2-3 puntos)\n3. **Áreas de mejora** (2-3 puntos)\n4. **Objeciones no resueltas** (cómo manejarlas)\n5. **Recomendación para mañana**\n\nDirecto, específico, en español.`;
+  try { output.textContent=await callOpenAI(prompt); }
+  catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
+}
+
+async function analyzeTranscript() {
+  const transcript=document.getElementById('transcript-input').value.trim();
+  const resultado=document.getElementById('transcript-resultado').value;
+  const contexto=document.getElementById('transcript-contexto').value.trim();
+  if(!transcript){ alert('Pegá el transcript primero'); return; }
+  const section=document.getElementById('transcript-result-section');
+  const output=document.getElementById('transcript-output');
+  section.style.display='block';
+  output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Analizando transcript...</div>';
+  const prompt=`Eres un coach de ventas experto en High Ticket Closing ($2.8k-$12k USD). Analiza el transcript.\n\nRESULTADO: ${resultado}\n${contexto?'CONTEXTO: '+contexto:''}\n\nTRANSCRIPT:\n${transcript}\n\n**1. DIAGNÓSTICO RÁPIDO**\n**2. LO QUE HICISTE BIEN ✅** (3-4 puntos)\n**3. ÁREAS DE MEJORA 🎯** (3-4 puntos)\n**4. MANEJO DE OBJECIONES 💡**\n**5. MOMENTOS CLAVE 🔑**\n**6. PRÓXIMOS PASOS 🚀**\n\nEspecífico, con ejemplos del transcript, en español.`;
+  try { output.textContent=await callOpenAI(prompt); }
+  catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
+}
+
+async function generateWeeklyReport() {
+  const w=getWeekRange();
+  const calls=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+  if(calls.length===0){ alert('No hay calls esta semana'); return; }
+  const section=document.getElementById('weekly-report-section');
+  const output=document.getElementById('weekly-report-output');
+  section.style.display='block';
+  output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Generando reporte semanal...</div>';
+  const total=calls.length, cerradas=calls.filter(c=>c.estado==='cerrada').length;
+  const rate=total>0?Math.round((cerradas/total)*100):0;
+  const objMap={};
+  calls.filter(c=>c.objecion).forEach(c=>{ const k=c.objecion.toLowerCase().trim(); objMap[k]=(objMap[k]||0)+1; });
+  const objText=Object.entries(objMap).sort((a,b)=>b[1]-a[1]).map(([o,n])`=>"- \"${o}\" (${n}x)"`).join('\n');
+  const resumenCalls=calls.map((c,i)=>`${i+1}. ${c.nombre} - ${estadoLabel(c.estado)} - Objeción: ${c.objecion||'ninguna'}`).join('\n');
+  const prompt=`Coach de ventas, genera REPORTE SEMANAL de un High Ticket Closer.\n\nSEMANA: ${w.start} al ${w.end}\nTOTAL: ${total} | CERRADAS: ${cerradas} (${rate}%) | NO CERRADAS: ${calls.filter(c=>c.estado==='no-cerrada').length}\n\nOBJECIONES:\n${objText||'Ninguna'}\n\nCALLS:\n${resumenCalls}\n\n**📊 RESUMEN DE LA SEMANA**\n**🏆 LOGROS**\n**⚠️ PATRÓN DE OBJECIONES** (con scripts)\n**🎯 FOCO DE MEJORA**\n**📈 OBJETIVO PRÓXIMA SEMANA**\n\nEn español, específico y motivador.`;
+  try { output.textContent=await callOpenAI(prompt); }
+  catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
+}
+
+// ===== LEADS =====
+async function createLeadFolder() {
+  const nombre=document.getElementById('lead-folder-name').value.trim();
+  const transcript=document.getElementById('lead-transcript-input').value.trim();
+  if(!nombre||!transcript){ alert('Completá nombre y transcript'); return; }
+  const btn=document.getElementById('btn-create-lead');
+  btn.textContent='⏳ Procesando...'; btn.disabled=true;
+  const prompt=`Eres un asistente de ventas high ticket. Analiza el transcript y crea carpeta para "${nombre}".\n\nTRANSCRIPT:\n${transcript}\n\nResponde SOLO JSON válido:\n{"resumen":"2-3 oraciones","perfil":{"necesidades":"...","presupuesto":"...","urgencia":"Alta/Media/Baja","objeciones":["obj1"]},"estado":"cerrada|no-cerrada|seguimiento","followups":[{"dia":"N","accion":"...","mensaje_sugerido":"..."}],"notas_importantes":["nota1"],"probabilidad_cierre":"Alta/Media/Baja"}`;
+  try {
+    let text=await callOpenAI(prompt);
+    text=text.replace(/```json|```/g,'').trim();
+    let parsed; try{ parsed=JSON.parse(text); }catch(e){ parsed={resumen:text,followups:[],perfil:{},notas_importantes:[]}; }
+    state.leads.push({id:Date.now(),nombre,transcript,fecha:today(),data:parsed});
+    saveState();
+    document.getElementById('lead-folder-name').value='';
+    document.getElementById('lead-transcript-input').value='';
+    updateLeadsList();
+  } catch(e){
+    if(e.message==='NO_KEY'){ alert('Configurá tu API key de OpenAI primero.\nAndá a ⚙️ Configuración en el sidebar.'); openSettingsModal(); }
+    else alert('Error al procesar: '+e.message);
+  }
+  btn.textContent='🗂️ Crear Carpeta del Lead'; btn.disabled=false;
+}
+function updateLeadsList() {
+  document.getElementById('leads-count-badge').textContent=state.leads.length+' leads';
+  const list=document.getElementById('leads-folder-list');
+  if(state.leads.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">Aún no creaste carpetas de leads</div></div>'; return; }
+  list.innerHTML=state.leads.map(lead=>{
+    const d=lead.data, fc=d.followups?.length||0;
+    const probColor={Alta:'var(--green)',Media:'var(--yellow)',Baja:'var(--red)'}[d.probabilidad_cierre]||'var(--text2)';
+    return `<div class="lead-card">
+      <div class="lead-card-header">
+        <div><div class="lead-name">📁 ${lead.nombre}</div><div class="lead-meta">${lead.fecha} · ${fc} follow-ups</div></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:${probColor};font-weight:600">● ${d.probabilidad_cierre||'?'}</span>
+          <button class="btn btn-secondary btn-sm" onclick="openLeadDetail(${lead.id})">Ver</button>
+          <button class="btn btn-edit btn-sm" onclick="openEditLead(${lead.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLead(${lead.id})">✕</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5">${d.resumen||''}</div>
+      ${fc>0?`<div class="lead-followups">${d.followups.slice(0,2).map(f=>`<div class="followup-item"><span style="color:var(--accent2)">📅</span><span><strong>+${f.dia} días:</strong> ${f.accion}</span></div>`).join('')}${fc>2?`<div style="font-size:11px;color:var(--text3);padding-left:10px">+${fc-2} más...</div>`:''}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function openEditLead(id) {
+  const l=state.leads.find(x=>x.id===id); if(!l) return;
+  document.getElementById('edit-lead-id').value=id;
+  document.getElementById('edit-lead-nombre').value=l.nombre;
+  document.getElementById('edit-lead-fecha').value=l.fecha;
+  document.getElementById('edit-lead-prob').value=l.data?.probabilidad_cierre||'Media';
+  openModal('modal-edit-lead');
+}
+function saveEditLead() {
+  const id=parseInt(document.getElementById('edit-lead-id').value);
+  const idx=state.leads.findIndex(l=>l.id===id); if(idx<0) return;
+  state.leads[idx].nombre=document.getElementById('edit-lead-nombre').value.trim();
+  state.leads[idx].fecha=document.getElementById('edit-lead-fecha').value;
+  state.leads[idx].data.probabilidad_cierre=document.getElementById('edit-lead-prob').value;
+  saveState(); closeModal('modal-edit-lead'); updateLeadsList();
+}
+function deleteLead(id) {
+  if(!confirm('¿Eliminar esta carpeta de lead? Esta acción no se puede deshacer.')) return;
+  state.leads=state.leads.filter(l=>l.id!==id); saveState(); updateLeadsList();
+}
+function openLeadDetail(id) {
+  const lead=state.leads.find(l=>l.id===id); if(!lead) return;
+  const d=lead.data;
+  document.getElementById('modal-lead-title').textContent='📁 '+lead.nombre;
+  document.getElementById('modal-lead-content').innerHTML=`
+    <div style="margin-bottom:16px"><div style="font-size:12px;color:var(--text2);margin-bottom:8px">Resumen</div><div style="font-size:13px;line-height:1.6">${d.resumen||''}</div></div>
+    <div class="form-row" style="margin-bottom:16px">
+      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Necesidades</div><div style="font-size:13px">${d.perfil?.necesidades||'—'}</div></div>
+      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Urgencia</div><div style="font-size:13px">${d.perfil?.urgencia||'—'}</div></div>
+    </div>
+    ${d.perfil?.objeciones?.length>0?`<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeciones</div>${d.perfil.objeciones.map(o=>`<div style="padding:8px 12px;background:rgba(244,63,110,.08);border:1px solid rgba(244,63,110,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--red)">⚠️ ${o}</div>`).join('')}</div>`:''}
+    <hr class="divider">
+    <div style="margin-bottom:12px;font-size:13px;font-weight:600">📅 Plan de Follow-ups</div>
+    ${d.followups?.map(f=>`<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:13px">Día +${f.dia}</div><span style="font-size:11px;color:var(--accent2);padding:2px 8px;background:rgba(124,106,245,.1);border-radius:4px">Programado</span></div><div style="font-size:13px;margin-bottom:8px">${f.accion}</div>${f.mensaje_sugerido?`<div style="font-size:12px;color:var(--text2);padding:10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);font-style:italic">"${f.mensaje_sugerido}"</div>`:''}</div>`).join('')||'<div style="color:var(--text3);font-size:13px">Sin follow-ups</div>'}
+    ${d.notas_importantes?.length>0?`<hr class="divider"><div style="font-size:13px;font-weight:600;margin-bottom:10px">📌 Notas importantes</div>${d.notas_importantes.map(n=>`<div style="padding:8px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--yellow)">• ${n}</div>`).join('')}`:''}`;
+  openModal('modal-lead-detail');
+}
+
+// ===== WEEKLY =====
+function updateWeeklyStats() {
+  const w=getWeekRange();
+  const calls=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+  const total=calls.length, cerradas=calls.filter(c=>c.estado==='cerrada').length;
+  const rate=total>0?Math.round((cerradas/total)*100):0;
+  document.getElementById('weekly-total').textContent=total;
+  document.getElementById('weekly-rate').textContent=rate+'%';
+  document.getElementById('weekly-no').textContent=calls.filter(c=>c.estado==='no-cerrada').length;
+  document.getElementById('weekly-seg').textContent=calls.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+  document.getElementById('weekly-date-range').textContent=`Semana del ${w.start} al ${w.end}`;
+}
+
+// ===== METAS =====
+function loadMetas() { try{ const m=localStorage.getItem('scd_metas'); return m?JSON.parse(m):{calls:'',cierres:'',tasa:''}; }catch(e){ return {calls:'',cierres:'',tasa:''}; } }
+function saveMetas() {
+  const calls=document.getElementById('meta-calls').value;
+  const cierres=document.getElementById('meta-cierres').value;
+  const tasa=document.getElementById('meta-tasa').value;
+  if(!calls&&!cierres&&!tasa){ alert('Ingresá al menos una meta'); return; }
+  localStorage.setItem('scd_metas',JSON.stringify({calls,cierres,tasa}));
+  renderMetasProgress();
+  alert('✅ Metas guardadas');
+}
+function renderMetasProgress() {
+  const metas=loadMetas();
+  // Populate inputs
+  if(metas.calls) document.getElementById('meta-calls').value=metas.calls;
+  if(metas.cierres) document.getElementById('meta-cierres').value=metas.cierres;
+  if(metas.tasa) document.getElementById('meta-tasa').value=metas.tasa;
+  // Month label
+  const now=new Date();
+  document.getElementById('metas-month-label').textContent=now.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+  // Real data this month
+  const m=getMonthRange();
+  const calls=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
+  const realCalls=calls.length;
+  const realCierres=calls.filter(c=>c.estado==='cerrada').length;
+  const realTasa=realCalls>0?Math.round((realCierres/realCalls)*100):0;
+
+  function updateBar(realVal,metaVal,barId,valId,pctId,statusId,unit='',isPercent=false) {
+    const hasMeta=metaVal&&parseInt(metaVal)>0;
+    const meta=hasMeta?parseInt(metaVal):0;
+    const pct=hasMeta?Math.min(Math.round((realVal/meta)*100),100):0;
+    document.getElementById(barId).style.width=(hasMeta?pct:0)+'%';
+    document.getElementById(valId).textContent=`${realVal}${unit} / ${hasMeta?metaVal+unit:'—'} objetivo`;
+    document.getElementById(pctId).textContent=hasMeta?pct+'%':'—';
+    const statusEl=document.getElementById(statusId);
+    if(!hasMeta){ statusEl.innerHTML='Establecé una meta para ver el progreso'; return; }
+    const remaining=meta-realVal;
+    if(pct>=100) statusEl.innerHTML=`<span style="color:var(--green)">🎉 ¡Meta alcanzada!</span>`;
+    else statusEl.innerHTML=`<span>${remaining} ${unit||'unidades'} para la meta · ${pct}% completado</span>`;
+  }
+
+  updateBar(realCalls,metas.calls,'meta-calls-bar','meta-calls-vals','meta-calls-pct','meta-calls-status',' calls');
+  updateBar(realCierres,metas.cierres,'meta-cierres-bar','meta-cierres-vals','meta-cierres-pct','meta-cierres-status',' cierres');
+  updateBar(realTasa,metas.tasa,'meta-tasa-bar','meta-tasa-vals','meta-tasa-pct','meta-tasa-status','%');
+}
+
+// ===== RESET =====
+function confirmClearData() {
+  if(!confirm('¿Borrar TODOS los datos (calls y leads)? Esta acción no se puede deshacer.')) return;
+  state.calls=[]; state.leads=[];
+  saveState(); updateOverview(); updateDailyEntries(); updateLeadsList();
+}
+
+// ===== INIT =====
+initDaily();
+updateOverview();
+updateDailyEntries();
+updateLeadsList();
+renderApiKeyStatus();
+renderMetasProgress();
+const w=getWeekRange();
+document.getElementById('weekly-date-range').textContent=`Semana del ${w.start} al ${w.end}`;
+</script>
+</body>
+</html>
