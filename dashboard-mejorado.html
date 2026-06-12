@@ -939,75 +939,146 @@ function renderHotList(){
     return;
   }
   const estadoEmoji={hot:'🔥',tibio:'⚡',frio:'❄️'};
-  const estadoLabel={hot:'Hot',tibio:'Tibio',frio:'Frio'};
+  const estadoLabel={hot:'Hot',tibio:'Tibio',frio:'Frío'};
+  const puntColor=(p)=>p>=8?'var(--green)':p>=5?'var(--yellow)':'var(--red)';
+  const mensajesPendientes=(l)=>(l.mensajes||[]).filter(m=>!m.enviado).length;
   grid.innerHTML=leads.map(l=>`
-    <div class="hl-card ${l.estado}">
+    <div class="hl-card ${l.estado}" style="cursor:pointer;" onclick="openHotLeadDetail(${l.id})">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-        <div class="hl-card-name">${l.nombre}</div>
+        <div>
+          <div class="hl-card-name">${l.nombre}</div>
+          ${l.empresa?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.empresa}</div>`:''}
+        </div>
         <span class="hl-status-badge ${l.estado}">${estadoEmoji[l.estado]} ${estadoLabel[l.estado]}</span>
       </div>
-      ${l.proximoFollowup?`<div class="hl-card-meta">📅 Próximo follow-up: <strong>${l.proximoFollowup}</strong></div>`:''}
-      ${l.ultimoContacto?`<div class="hl-card-meta">🕐 Último contacto: ${l.ultimoContacto}</div>`:''}
-      ${l.notas?`<div class="hl-card-notes">${l.notas}</div>`:''}
-      <div class="hl-card-actions">
-        <button class="btn btn-secondary btn-sm" onclick="openHotLeadDetail(${l.id})">Ver</button>
-        <button class="btn btn-edit btn-sm" onclick="openEditHotLead(${l.id})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteHotLead(${l.id})">✕</button>
+      <!-- Puntuación -->
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600;">Calidad del lead</div>
+        <div style="display:flex;gap:4px;">
+          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
+            <button onclick="event.stopPropagation();setPuntuacion(${l.id},${n})" style="width:24px;height:24px;border-radius:4px;border:1px solid ${l.puntuacion===n?puntColor(n):'var(--border2)'};background:${l.puntuacion===n?puntColor(n)+'22':'transparent'};color:${l.puntuacion===n?puntColor(n):'var(--text3)'};font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;">${n}</button>
+          `).join('')}
+        </div>
+      </div>
+      ${l.objecion?`<div style="font-size:12px;padding:6px 10px;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.15);border-radius:6px;color:var(--red);margin-bottom:8px;">⚠️ ${l.objecion}</div>`:''}
+      ${l.proximoFollowup?`<div class="hl-card-meta">📅 Próximo FU: <strong>${l.proximoFollowup}</strong></div>`:''}
+      ${mensajesPendientes(l)>0?`<div class="hl-card-meta" style="color:var(--yellow);">💬 ${mensajesPendientes(l)} mensaje${mensajesPendientes(l)>1?'s':''} pendiente${mensajesPendientes(l)>1?'s':''}</div>`:''}
+      <div class="hl-card-actions" style="margin-top:12px;">
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openEditHotLead(${l.id})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteHotLead(${l.id})">✕</button>
       </div>
     </div>
   `).join('');
 }
+
+function setPuntuacion(id, val) {
+  const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  lead.puntuacion=val;
+  saveHotList();renderHotList();
+}
 function openHotLeadDetail(id){
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
   const estadoEmoji={hot:'🔥',tibio:'⚡',frio:'❄️'};
-  document.getElementById('modal-hot-detail-title').textContent=`${estadoEmoji[lead.estado]||''} ${lead.nombre}`;
+  const puntColor=(p)=>p>=8?'var(--green)':p>=5?'var(--yellow)':'var(--red)';
+  document.getElementById('modal-hot-detail-title').textContent=`${estadoEmoji[lead.estado]||''} ${lead.nombre}${lead.empresa?' · '+lead.empresa:''}`;
   const mensajes=lead.mensajes||[];
   document.getElementById('modal-hot-detail-content').innerHTML=`
-    <div class="form-row" style="margin-bottom:16px;">
-      <div style="background:var(--surface2);border-radius:8px;padding:14px">
-        <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Ultimo Contacto</div>
-        <div>${lead.ultimoContacto||'—'}</div>
+    <!-- Info básica -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Último contacto</div>
+        <div style="font-size:13px;font-weight:600;">${lead.ultimoContacto||'—'}</div>
       </div>
-      <div style="background:var(--surface2);border-radius:8px;padding:14px">
-        <div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Proximo Follow-up</div>
-        <div style="font-weight:700;color:var(--yellow)">${lead.proximoFollowup||'—'}</div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Próximo follow-up</div>
+        <div style="font-size:13px;font-weight:700;color:var(--yellow);">${lead.proximoFollowup||'—'}</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Calidad del lead</div>
+        <div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:${lead.puntuacion?puntColor(lead.puntuacion):'var(--text3)'};">${lead.puntuacion||'—'}/10</div>
       </div>
     </div>
-    ${lead.notas?`<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">Notas</div><div style="font-size:13px;line-height:1.6;color:var(--text2)">${lead.notas}</div></div>`:''}
-    ${lead.transcript?`<hr class="divider"><div style="font-size:13px;font-weight:600;margin-bottom:10px;">📋 Transcript</div><div style="background:var(--surface2);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.6;max-height:200px;overflow-y:auto;">${lead.transcript}</div>`:''}
+
+    <!-- Puntuación editable -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">Puntuá el lead (1-10)</div>
+      <div style="display:flex;gap:5px;">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
+          <button onclick="setPuntuacionAndRefresh(${id},${n})" style="width:32px;height:32px;border-radius:6px;border:1px solid ${lead.puntuacion===n?puntColor(n):'var(--border2)'};background:${lead.puntuacion===n?puntColor(n)+'22':'var(--surface2)'};color:${lead.puntuacion===n?puntColor(n):'var(--text2)'};font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;">${n}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Objeción principal -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">⚠️ Objeción principal</div>
+      <input id="hl-detail-objecion-${id}" class="input" type="text" value="${(lead.objecion||'').replace(/"/g,'&quot;')}" placeholder="¿Cuál es la objeción del lead?" style="font-size:13px;" onchange="saveLeadField(${id},'objecion',this.value)">
+    </div>
+
+    <!-- Análisis de la call -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">📊 Análisis de la call</div>
+      <textarea id="hl-detail-analisis-${id}" class="input" style="min-height:100px;font-size:13px;" placeholder="¿Qué pasó en la call? ¿Qué quedó pendiente? ¿Cómo estaba el lead emocionalmente?" onchange="saveLeadField(${id},'analisisCall',this.value)">${lead.analisisCall||''}</textarea>
+    </div>
+
+    <!-- Notas -->
+    ${lead.notas?`<div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">📝 Notas</div><div style="font-size:12px;line-height:1.6;color:var(--text2);background:var(--surface2);border-radius:8px;padding:12px;">${lead.notas}</div></div>`:''}
+
     <hr class="divider">
+
+    <!-- Mensajes de seguimiento -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div style="font-size:13px;font-weight:600;">💬 Follow-up Messages</div>
-      <button class="btn btn-primary btn-sm" onclick="addFollowupMessage(${id})">➕ Agregar mensaje</button>
+      <div style="font-size:13px;font-weight:700;">💬 Mensajes de seguimiento</div>
+      <button class="btn btn-primary btn-sm" onclick="addFollowupMessage(${id})">➕ Agregar</button>
     </div>
     <div id="hl-mensajes-list-${id}">
-      ${mensajes.length===0?'<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px;">Sin mensajes aun</div>':mensajes.map((m,i)=>`
-        <div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border);${m.enviado?'opacity:.6':''}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="display:flex;gap:8px;align-items:center;">
-              <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--accent3);color:var(--accent2);font-weight:600;">${m.canal}</span>
-              ${m.fecha?`<span style="font-size:11px;color:var(--text3);">📅 ${m.fecha}</span>`:''}
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" ${m.enviado?'checked':''} onchange="toggleMensajeEnviado(${id},${i})"> Enviado</label>
+      ${mensajes.length===0
+        ?'<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px;background:var(--surface2);border-radius:8px;">Sin mensajes aún — agregá el primero</div>'
+        :mensajes.map((m,i)=>`
+          <div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:8px;border:1px solid ${m.enviado?'rgba(16,185,129,.2)':'var(--border)'};transition:all .2s;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                  <input type="checkbox" ${m.enviado?'checked':''} onchange="toggleMensajeEnviado(${id},${i})" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer;">
+                  <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:${m.canal==='WhatsApp'?'rgba(16,185,129,.1)':m.canal==='Email'?'rgba(59,130,246,.1)':'rgba(251,146,60,.1)'};color:${m.canal==='WhatsApp'?'var(--green)':m.canal==='Email'?'var(--accent2)':'var(--orange)'};">${m.canal}</span>
+                  ${m.fecha?`<span style="font-size:11px;color:var(--text3);">📅 ${m.fecha}</span>`:''}
+                </label>
+              </div>
               <button class="btn btn-danger btn-sm" onclick="deleteMensaje(${id},${i})">✕</button>
             </div>
+            <div style="font-size:13px;line-height:1.5;color:${m.enviado?'var(--text3)':'var(--text)'};${m.enviado?'text-decoration:line-through;':''}">${m.texto}</div>
+            ${m.enviado?'<div style="font-size:11px;color:var(--green);margin-top:6px;">✓ Enviado</div>':''}
           </div>
-          <div style="font-size:13px;line-height:1.5;">${m.texto}</div>
-        </div>
-      `).join('')}
+        `).join('')}
     </div>
   `;
   openModal('modal-hot-detail');
 }
+
+function setPuntuacionAndRefresh(id, val) {
+  const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  lead.puntuacion=val;
+  saveHotList();
+  // Actualizar solo el número en el modal sin cerrarlo
+  openHotLeadDetail(id);
+}
+
+function saveLeadField(id, field, value) {
+  const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  lead[field]=value;
+  saveHotList();
+  renderHotList();
+}
 function addFollowupMessage(leadId){
-  const texto=prompt('Escribi el mensaje de follow-up:');
-  if(!texto)return;
-  const canal=prompt('Canal (WhatsApp / Email / Llamada):','WhatsApp')||'WhatsApp';
+  const texto=prompt('✍️ Escribí el mensaje de follow-up:');
+  if(!texto||!texto.trim())return;
+  const canalOpts=['WhatsApp','Email','Llamada'];
+  const canalStr=prompt('Canal:\n1. WhatsApp\n2. Email\n3. Llamada\n\nEscribí el número:','1');
+  const canal=canalOpts[parseInt(canalStr)-1]||'WhatsApp';
   const fecha=prompt('Fecha sugerida (YYYY-MM-DD):',today())||today();
   const lead=hotLeads.find(l=>l.id===leadId);if(!lead)return;
   if(!lead.mensajes)lead.mensajes=[];
-  lead.mensajes.push({texto,canal,fecha,enviado:false});
+  lead.mensajes.push({texto:texto.trim(),canal,fecha,enviado:false});
   saveHotList();openHotLeadDetail(leadId);
 }
 function toggleMensajeEnviado(leadId,idx){

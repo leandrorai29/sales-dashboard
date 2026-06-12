@@ -623,6 +623,35 @@ function saveCall() {
 
   try { localStorage.setItem('scd_v2', JSON.stringify(dashState)); } catch(e){}
 
+  // Si quedó en seguimiento → crear automáticamente en Hot List
+  if(estado === 'seguimiento' || estado === 'agendada') {
+    let hotLeads = [];
+    try { const h = localStorage.getItem('hotlist_leads'); if(h) hotLeads = JSON.parse(h); } catch(e){}
+    // Determinar estado hot/tibio/frio según el resultado
+    let estadoHot = 'tibio';
+    if(form.callResult === 'attended' && form.pitched === 'si') estadoHot = 'hot';
+    else if(form.callResult === 'noshow') estadoHot = 'frio';
+    // Calcular próximo follow-up (+3 días)
+    const proxFU = new Date(); proxFU.setDate(proxFU.getDate()+3);
+    const proxFUStr = proxFU.toISOString().slice(0,10);
+    hotLeads.push({
+      id: Date.now()+1,
+      nombre: form.prospectName,
+      empresa: empresaLabel,
+      estado: estadoHot,
+      ultimoContacto: new Date().toISOString().slice(0,10),
+      proximoFollowup: proxFUStr,
+      transcript: form.fathomTranscript || '',
+      notas: notas,
+      objecion: form.bottleneck || '',
+      analisisCall: '',
+      puntuacion: null,
+      mensajes: [],
+      fromSalesScript: true
+    });
+    try { localStorage.setItem('hotlist_leads', JSON.stringify(hotLeads)); } catch(e){}
+  }
+
   // Reset
   form = { empresa:null, callType:null, prospectName:'', prospectEmail:'', prospectPhone:'', decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, fathomLink:'', fathomTranscript:'', manualNotes:'' };
   saveFormToStorage();
