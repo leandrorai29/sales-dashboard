@@ -5,26 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales Closer Dashboard — Leandro</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 :root {
-  --bg:#080810;--surface:#0f0f1a;--surface2:#161624;--surface3:#1e1e30;--border:#252538;--border2:#2e2e48;
-  --accent:#7c6af5;--accent2:#a78bfa;--accent3:rgba(124,106,245,0.12);
-  --green:#10d9a0;--green2:rgba(16,217,160,0.12);--green3:#10d9a0;
-  --red:#f43f6e;--red2:rgba(244,63,110,0.12);
+  --bg:#080d14;--surface:#0d1520;--surface2:#111d2c;--surface3:#162032;--border:#1e2d3d;--border2:#243444;
+  --accent:#3b82f6;--accent2:#60a5fa;--accent3:rgba(59,130,246,0.12);
+  --cyan:#06b6d4;--cyan2:rgba(6,182,212,0.12);
+  --green:#10b981;--green2:rgba(16,185,129,0.12);--green3:#10b981;
+  --red:#f43f5e;--red2:rgba(244,63,94,0.12);
   --yellow:#f59e0b;--yellow2:rgba(245,158,11,0.12);
   --orange:#fb923c;--orange2:rgba(251,146,60,0.12);
   --blue:#38bdf8;--blue2:rgba(56,189,248,0.12);
-  --text:#eeeef8;--text2:#7878a0;--text3:#404060;
+  --text:#e2eaf4;--text2:#6b8094;--text3:#3a4a5a;
   --radius:14px;--radius-sm:8px;--radius-xs:6px;
-  --shadow:0 4px 24px rgba(0,0,0,.4);
-  --glow-purple:0 0 20px rgba(124,106,245,.15);
-  --glow-green:0 0 20px rgba(16,217,160,.15);
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --glow-blue:0 0 24px rgba(59,130,246,.18);
+  --glow-green:0 0 20px rgba(16,185,129,.15);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
 
 /* TOP NAV */
-.top-nav{background:rgba(8,8,16,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;position:sticky;top:0;z-index:200;height:44px;}
+.top-nav{background:rgba(6,10,16,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;position:sticky;top:0;z-index:200;height:44px;}
 .top-nav-link{padding:0 16px;height:44px;display:flex;align-items:center;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-decoration:none;font-family:'Inter',sans-serif;}
 .top-nav-link:hover{color:var(--text);}
 .top-nav-link.active{color:var(--accent2);border-bottom-color:var(--accent);}
@@ -32,13 +33,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .shell{display:flex;min-height:calc(100vh - 44px);}
 
 /* SIDEBAR */
-.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:44px;height:calc(100vh - 44px);}
+.sidebar{width:240px;background:linear-gradient(180deg,var(--surface) 0%,#070f1a 100%);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:44px;height:calc(100vh - 44px);}
 .logo{padding:20px 22px 18px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.logo-title{font-size:15px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-title{font-size:15px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--accent2) 0%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .logo-user{font-size:12px;color:var(--green);margin-top:4px;font-weight:600;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 10px;cursor:pointer;color:var(--text2);transition:all .2s;font-size:13px;font-weight:500;border-radius:var(--radius-sm);border:1px solid transparent;position:relative;}
 .nav-item:hover{color:var(--text);background:var(--surface2);border-color:var(--border);}
-.nav-item.active{color:#fff;background:linear-gradient(135deg,rgba(124,106,245,.25),rgba(124,106,245,.1));border-color:rgba(124,106,245,.3);box-shadow:var(--glow-purple);}
+.nav-item.active{color:#fff;background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.06));border-color:rgba(59,130,246,.3);box-shadow:var(--glow-blue);}
 .nav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;}
 .nav-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);margin-left:auto;}
 .sidebar-bottom{margin-top:auto;padding:10px 0 12px;border-top:1px solid var(--border);}
@@ -50,12 +51,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* MAIN */
 .main{flex:1;overflow-y:auto;background:var(--bg);}
-.topbar{background:rgba(15,15,26,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.topbar{background:rgba(8,13,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
 .page-title{font-size:17px;font-weight:700;letter-spacing:-.3px;}
 .filter-group{display:flex;gap:4px;background:var(--surface2);padding:3px;border-radius:var(--radius-sm);border:1px solid var(--border);}
 .filter-btn{padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;font-family:'Inter',sans-serif;}
 .filter-btn:hover{color:var(--text);}
-.filter-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,106,245,.4);}
+.filter-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.35);}
 .content{padding:28px 32px;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
@@ -75,7 +76,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .stat-card.red .stat-card-icon{background:var(--red2);}
 .stat-card.yellow .stat-card-icon{background:var(--yellow2);}
 .stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600;}
-.stat-value{font-size:36px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+.stat-value{font-size:36px;font-weight:800;font-family:'DM Mono',monospace;line-height:1;}
 .stat-value.purple{color:var(--accent2);}
 .stat-value.green{color:var(--green);}
 .stat-value.red{color:var(--red);}
@@ -86,7 +87,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .section-title{font-size:14px;font-weight:700;letter-spacing:-.2px;}
-.section-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:var(--accent3);color:var(--accent2);font-family:'JetBrains Mono',monospace;border:1px solid rgba(124,106,245,.2);font-weight:600;}
+.section-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:var(--accent3);color:var(--accent2);font-family:'DM Mono',monospace;border:1px solid rgba(59,130,246,.2);font-weight:600;}
 
 /* TABLE */
 .table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
@@ -101,11 +102,11 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .badge-cerrada{background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);}
 .badge-no-cerrada{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
 .badge-seguimiento{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
-.badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(124,106,245,.2);}
+.badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
 
 /* INPUTS */
 .input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:all .2s;}
-.input:focus{border-color:var(--accent);background:var(--surface3);box-shadow:0 0 0 3px rgba(124,106,245,.1);}
+.input:focus{border-color:var(--accent);background:var(--surface3);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
 .input::placeholder{color:var(--text3);}
 textarea.input{resize:vertical;min-height:120px;line-height:1.6;}
 select.input{cursor:pointer;}
@@ -115,14 +116,14 @@ select.input{cursor:pointer;}
 
 /* BUTTONS */
 .btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;letter-spacing:-.1px;}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#6b59e0);color:#fff;box-shadow:0 2px 12px rgba(124,106,245,.3);}
-.btn-primary:hover{box-shadow:0 4px 20px rgba(124,106,245,.5);transform:translateY(-1px);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(59,130,246,.4);transform:translateY(-1px);}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent2);background:var(--surface3);}
 .btn-danger{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
 .btn-danger:hover{background:rgba(244,63,110,.2);}
-.btn-edit{background:var(--accent3);color:var(--accent2);border:1px solid rgba(124,106,245,.2);}
-.btn-edit:hover{background:rgba(124,106,245,.2);}
+.btn-edit{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
+.btn-edit:hover{background:rgba(59,130,246,.2);}
 .btn-sm{padding:6px 12px;font-size:11px;}
 
 /* AI */
@@ -134,7 +135,7 @@ select.input{cursor:pointer;}
 /* LEADS */
 .leads-grid{display:grid;gap:14px;}
 .lead-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
-.lead-card:hover{border-color:rgba(124,106,245,.4);box-shadow:var(--glow-purple);}
+.lead-card:hover{border-color:rgba(59,130,246,.35);box-shadow:var(--glow-blue);}
 .lead-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
 .lead-name{font-weight:700;font-size:14px;}
 .lead-meta{font-size:11px;color:var(--text3);margin-top:3px;}
@@ -145,7 +146,7 @@ select.input{cursor:pointer;}
 .objection-list{display:grid;gap:8px;}
 .objection-item{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);transition:border-color .2s;}
 .objection-item:hover{border-color:var(--border2);}
-.objection-count{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--red2);color:var(--red);font-weight:700;}
+.objection-count{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--red2);color:var(--red);font-weight:700;}
 
 /* RATE BAR */
 .rate-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-top:10px;border:1px solid var(--border);}
@@ -167,7 +168,7 @@ select.input{cursor:pointer;}
 .meta-pct span{color:var(--text2);font-weight:600;}
 
 /* API BANNER */
-.api-banner{background:rgba(124,106,245,.07);border:1px solid rgba(124,106,245,.2);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.api-banner{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
 .api-banner-text{font-size:13px;color:var(--text2);line-height:1.6;}
 .api-banner-text a{color:var(--accent2);text-decoration:none;}
 .api-key-indicator{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
@@ -199,7 +200,7 @@ select.input{cursor:pointer;}
 .hotlist-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
 .hl-filter{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;transition:all .2s;}
 .hl-filter:hover{border-color:var(--accent);color:var(--accent2);}
-.hl-filter.active{background:var(--accent3);border-color:rgba(124,106,245,.4);color:var(--accent2);}
+.hl-filter.active{background:var(--accent3);border-color:rgba(59,130,246,.35);color:var(--accent2);}
 .hotlist-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .hl-card{background:var(--surface2);border-radius:var(--radius);padding:18px;transition:all .2s;border:1px solid var(--border);border-left:3px solid var(--border);}
 .hl-card.hot{border-left-color:var(--red);}
@@ -219,7 +220,7 @@ select.input{cursor:pointer;}
 .perf-weekly{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
 .perf-week-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
 .perf-week-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;}
-.perf-week-val{font-size:24px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.perf-week-val{font-size:24px;font-weight:800;font-family:'DM Mono',monospace;}
 .perf-week-sub{font-size:11px;color:var(--text3);margin-top:4px;}
 
 /* BADGES GAMIFICATION */
@@ -292,13 +293,36 @@ select.input{cursor:pointer;}
         </div>
         <div class="two-col">
           <div class="section">
-            <div class="section-header"><div class="section-title">Tasa de Cierre</div></div>
-            <div id="cierre-rate-text" style="font-size:28px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)">0%</div>
+            <div class="section-header">
+              <div class="section-title">Tasa de Cierre</div>
+            </div>
+            <div id="cierre-rate-text" style="font-size:28px;font-weight:700;font-family:'DM Mono';color:var(--green)">0%</div>
             <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:12px">de calls cerradas</div>
             <div class="rate-bar"><div class="rate-fill" id="rate-bar-fill" style="width:0%"></div></div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">💰 Comisiones estimadas</div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;flex:1;border:1px solid var(--border)">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SA Dental</div>
+                  <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--green)" id="comision-sa">$0</div>
+                </div>
+                <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;flex:1;border:1px solid var(--border)">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Scaling In Blue</div>
+                  <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--accent2)" id="comision-scaling">$0</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:8px;">Ticket promedio SA: $4k · Scaling: $6k · Comisión: 10%</div>
+            </div>
           </div>
           <div class="section">
-            <div class="section-header"><div class="section-title">Objeciones Frecuentes</div><span class="section-badge">no resueltas</span></div>
+            <div class="section-header">
+              <div class="section-title">Objeciones Frecuentes</div>
+              <div style="display:flex;gap:4px;background:var(--surface2);padding:3px;border-radius:6px;border:1px solid var(--border)">
+                <button class="filter-btn active" id="obj-filter-semana" onclick="setObjFilter('semana',this)" style="padding:3px 10px;font-size:11px;">Semana</button>
+                <button class="filter-btn" id="obj-filter-mes" onclick="setObjFilter('mes',this)" style="padding:3px 10px;font-size:11px;">Mes</button>
+                <button class="filter-btn" id="obj-filter-todo" onclick="setObjFilter('todo',this)" style="padding:3px 10px;font-size:11px;">Todo</button>
+              </div>
+            </div>
             <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
           </div>
         </div>
@@ -385,31 +409,38 @@ select.input{cursor:pointer;}
           <div class="stat-card red"><div class="stat-card-icon">🎯</div><div class="stat-label">Meta Mensual</div><div class="stat-value red" id="perf-meta-pct">—</div><div class="stat-sub">% completado</div></div>
         </div>
 
-        <!-- Metas -->
-        <div class="section" style="margin-bottom:20px;">
-          <div class="section-header"><div class="section-title">🎯 Metas Mensuales</div><span class="section-badge" id="perf-month-label"></span></div>
-          <div class="form-row" style="margin-bottom:16px;">
-            <div class="input-group"><label class="input-label">Calls objetivo</label><input class="input" id="meta-calls" type="number" min="1" placeholder="Ej: 60"></div>
-            <div class="input-group"><label class="input-label">Cierres objetivo</label><input class="input" id="meta-cierres" type="number" min="1" placeholder="Ej: 15"></div>
+        <!-- Metas + Calculadora -->
+        <div class="two-col" style="margin-bottom:20px;">
+          <div class="section">
+            <div class="section-header"><div class="section-title">🎯 Fijar Metas Mensuales</div><span class="section-badge" id="perf-month-label"></span></div>
+            <div class="input-group"><label class="input-label">Calls objetivo</label><input class="input" id="meta-calls" type="number" min="1" placeholder="Ej: 60" oninput="renderMetasProgress()"></div>
+            <div class="input-group"><label class="input-label">Cierres objetivo</label><input class="input" id="meta-cierres" type="number" min="1" placeholder="Ej: 15" oninput="renderMetasProgress()"></div>
+            <div class="input-group"><label class="input-label">Tasa de cierre objetivo (%)</label><input class="input" id="meta-tasa" type="number" min="1" max="100" placeholder="Ej: 25" oninput="renderMetasProgress()"></div>
+            <button class="btn btn-primary btn-sm" onclick="saveMetas()">💾 Guardar Metas</button>
           </div>
-          <div class="input-group" style="max-width:50%"><label class="input-label">Tasa de cierre objetivo (%)</label><input class="input" id="meta-tasa" type="number" min="1" max="100" placeholder="Ej: 25"></div>
-          <button class="btn btn-primary btn-sm" onclick="saveMetas()">💾 Guardar Metas</button>
+          <div class="section">
+            <div class="section-header"><div class="section-title">🧮 Calculadora — ¿Cuánto falta?</div></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Basado en tu ritmo actual, esto es lo que necesitás para llegar a la meta.</div>
+            <div id="calculadora-output">
+              <div style="font-size:12px;color:var(--text3);text-align:center;padding:20px;">Establecé metas para ver el cálculo.</div>
+            </div>
+          </div>
         </div>
 
         <!-- Progreso metas -->
-        <div id="metas-progress-section" style="margin-bottom:24px;">
+        <div style="margin-bottom:24px;">
           <div class="meta-card">
-            <div class="meta-header"><div><div class="meta-title">📞 Calls realizadas</div><div class="meta-values" id="meta-calls-vals">— / — calls</div></div><div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--accent2)" id="meta-calls-pct">—</div></div>
+            <div class="meta-header"><div><div class="meta-title">📞 Calls realizadas</div><div class="meta-values" id="meta-calls-vals">— / — calls</div></div><div style="font-size:22px;font-weight:700;font-family:'DM Mono';color:var(--accent2)" id="meta-calls-pct">—</div></div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill purple" id="meta-calls-bar" style="width:0%"></div></div>
             <div class="meta-pct" id="meta-calls-status">Establecé una meta para ver el progreso</div>
           </div>
           <div class="meta-card">
-            <div class="meta-header"><div><div class="meta-title">🏅 Cierres logrados</div><div class="meta-values" id="meta-cierres-vals">— / — cierres</div></div><div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)" id="meta-cierres-pct">—</div></div>
+            <div class="meta-header"><div><div class="meta-title">🏅 Cierres logrados</div><div class="meta-values" id="meta-cierres-vals">— / — cierres</div></div><div style="font-size:22px;font-weight:700;font-family:'DM Mono';color:var(--green)" id="meta-cierres-pct">—</div></div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill green" id="meta-cierres-bar" style="width:0%"></div></div>
             <div class="meta-pct" id="meta-cierres-status">Establecé una meta para ver el progreso</div>
           </div>
           <div class="meta-card">
-            <div class="meta-header"><div><div class="meta-title">📈 Tasa de cierre</div><div class="meta-values" id="meta-tasa-vals">—% / —% objetivo</div></div><div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--yellow)" id="meta-tasa-pct">—</div></div>
+            <div class="meta-header"><div><div class="meta-title">📈 Tasa de cierre</div><div class="meta-values" id="meta-tasa-vals">—% / —% objetivo</div></div><div style="font-size:22px;font-weight:700;font-family:'DM Mono';color:var(--yellow)" id="meta-tasa-pct">—</div></div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill yellow" id="meta-tasa-bar" style="width:0%"></div></div>
             <div class="meta-pct" id="meta-tasa-status">Establecé una meta para ver el progreso</div>
           </div>
@@ -552,6 +583,14 @@ function loadHotList(){try{const h=localStorage.getItem(HL_KEY);return h?JSON.pa
 function saveHotList(){try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}}
 let hotLeads=loadHotList();
 let hlFilter='todos';
+let objFilter='semana';
+
+function setObjFilter(f,btn){
+  objFilter=f;
+  document.querySelectorAll('#obj-filter-semana,#obj-filter-mes,#obj-filter-todo').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateOverview();
+}
 
 // ===== API KEY =====
 function getApiKey(){return localStorage.getItem('openai_api_key')||'';}
@@ -642,16 +681,33 @@ function updateOverview(){
   document.getElementById('stat-rate').textContent=rate+'% tasa de cierre';
   document.getElementById('cierre-rate-text').textContent=rate+'%';
   document.getElementById('rate-bar-fill').style.width=rate+'%';
+
+  // Comisiones (basado en todas las calls cerradas del mes)
+  const m=getMonthRange();
+  const callsMesCerradas=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end&&c.estado==='cerrada');
+  const cierresSA=callsMesCerradas.filter(c=>c.notas&&c.notas.includes('SA Dental')).length;
+  const cierresScaling=callsMesCerradas.filter(c=>c.notas&&c.notas.includes('Scaling')).length;
+  const otrosCierres=callsMesCerradas.length-cierresSA-cierresScaling;
+  // Si no tiene empresa registrada, dividir por igual
+  const totalSA=cierresSA+(otrosCierres>0?0:0);
+  document.getElementById('comision-sa').textContent='$'+((cierresSA*4000*0.1).toLocaleString());
+  document.getElementById('comision-scaling').textContent='$'+((cierresScaling*6000*0.1).toLocaleString());
+
+  // Objeciones con filtro
+  let callsObj=state.calls;
+  if(objFilter==='semana'){const w=getWeekRange();callsObj=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);}
+  else if(objFilter==='mes'){callsObj=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);}
   const objMap={};
-  calls.filter(c=>c.objecion).forEach(c=>{const k=c.objecion.toLowerCase().trim();objMap[k]=(objMap[k]||0)+1;});
+  callsObj.filter(c=>c.objecion).forEach(c=>{const k=c.objecion.toLowerCase().trim();objMap[k]=(objMap[k]||0)+1;});
   const sorted=Object.entries(objMap).sort((a,b)=>b[1]-a[1]);
   const objEl=document.getElementById('objection-list');
-  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones registradas</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
+  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones en este período</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
+
   const tbody=document.getElementById('calls-table-body');
   if(calls.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este período</td></tr>';return;}
   tbody.innerHTML=[...calls].reverse().map(c=>`
     <tr>
-      <td style="font-family:'JetBrains Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
+      <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
       <td style="font-weight:500">${c.nombre}</td>
       <td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green2);color:var(--green);font-weight:600;">Leandro</span></td>
       <td><span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span></td>
@@ -810,7 +866,7 @@ function openLeadDetail(id){
     ${d.perfil?.objeciones?.length>0?`<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeciones</div>${d.perfil.objeciones.map(o=>`<div style="padding:8px 12px;background:rgba(244,63,110,.08);border:1px solid rgba(244,63,110,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--red)">⚠️ ${o}</div>`).join('')}</div>`:''}
     <hr class="divider">
     <div style="margin-bottom:12px;font-size:13px;font-weight:600">📅 Plan de Follow-ups</div>
-    ${d.followups?.map(f=>`<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:13px">Dia +${f.dia}</div><span style="font-size:11px;color:var(--accent2);padding:2px 8px;background:rgba(124,106,245,.1);border-radius:4px">Programado</span></div><div style="font-size:13px;margin-bottom:8px">${f.accion}</div>${f.mensaje_sugerido?`<div style="font-size:12px;color:var(--text2);padding:10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);font-style:italic">"${f.mensaje_sugerido}"</div>`:''}</div>`).join('')||'<div style="color:var(--text3);font-size:13px">Sin follow-ups</div>'}
+    ${d.followups?.map(f=>`<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:13px">Dia +${f.dia}</div><span style="font-size:11px;color:var(--accent2);padding:2px 8px;background:rgba(59,130,246,.1);border-radius:4px">Programado</span></div><div style="font-size:13px;margin-bottom:8px">${f.accion}</div>${f.mensaje_sugerido?`<div style="font-size:12px;color:var(--text2);padding:10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);font-style:italic">"${f.mensaje_sugerido}"</div>`:''}</div>`).join('')||'<div style="color:var(--text3);font-size:13px">Sin follow-ups</div>'}
     ${d.notas_importantes?.length>0?`<hr class="divider"><div style="font-size:13px;font-weight:600;margin-bottom:10px">📌 Notas importantes</div>${d.notas_importantes.map(n=>`<div style="padding:8px 12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--yellow)">● ${n}</div>`).join('')}`:''}`;
   openModal('modal-lead-detail');
 }
@@ -1017,7 +1073,8 @@ function renderMetasProgress(){
   if(metas.cierres)document.getElementById('meta-cierres').value=metas.cierres;
   if(metas.tasa)document.getElementById('meta-tasa').value=metas.tasa;
   const now=new Date();
-  document.getElementById('perf-month-label').textContent=now.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+  const el=document.getElementById('perf-month-label');
+  if(el)el.textContent=now.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
   const m=getMonthRange();
   const calls=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
   const realCalls=calls.length;
@@ -1036,11 +1093,60 @@ function renderMetasProgress(){
     if(!hasMeta){statusEl.innerHTML='Establece una meta para ver el progreso';return;}
     const remaining=meta-realVal;
     if(pct>=100)statusEl.innerHTML=`<span style="color:var(--green)">🎉 Meta alcanzada!</span>`;
-    else statusEl.innerHTML=`<span>${remaining} ${unit||'unidades'} para la meta · ${pct}% completado</span>`;
+    else statusEl.innerHTML=`<span>${remaining>0?remaining:0} ${unit||'unidades'} para la meta · ${pct}% completado</span>`;
   }
   updateBar(realCalls,metas.calls,'meta-calls-bar','meta-calls-vals','meta-calls-pct','meta-calls-status',' calls');
   updateBar(realCierres,metas.cierres,'meta-cierres-bar','meta-cierres-vals','meta-cierres-pct','meta-cierres-status',' cierres');
   updateBar(realTasa,metas.tasa,'meta-tasa-bar','meta-tasa-vals','meta-tasa-pct','meta-tasa-status','%');
+
+  // ===== CALCULADORA =====
+  const calcEl=document.getElementById('calculadora-output');
+  if(!calcEl)return;
+  const metaCalls=parseInt(metas.calls)||0;
+  const metaCierres=parseInt(metas.cierres)||0;
+  // Días del mes
+  const diasMes=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const diaActual=now.getDate();
+  const diasRestantes=diasMes-diaActual+1;
+  const semanasRestantes=Math.ceil(diasRestantes/7);
+  // Promedio semanal actual (últimas 4 semanas)
+  let promedioCallsSemanal=0;
+  let promedioCierresSemanal=0;
+  for(let i=0;i<4;i++){
+    const w=getWeekRange(-i);
+    const wCalls=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+    promedioCallsSemanal+=wCalls.length;
+    promedioCierresSemanal+=wCalls.filter(c=>c.estado==='cerrada').length;
+  }
+  promedioCallsSemanal=Math.round(promedioCallsSemanal/4);
+  promedioCierresSemanal=Math.round(promedioCierresSemanal/4);
+
+  const callsFaltantes=Math.max(0,metaCalls-realCalls);
+  const cierresFaltantes=Math.max(0,metaCierres-realCierres);
+  const callsPorDia=diasRestantes>0?Math.ceil(callsFaltantes/diasRestantes):callsFaltantes;
+  const callsPorSemana=semanasRestantes>0?Math.ceil(callsFaltantes/semanasRestantes):callsFaltantes;
+  const cierresPorSemana=semanasRestantes>0?Math.ceil(cierresFaltantes/semanasRestantes):cierresFaltantes;
+
+  if(!metaCalls&&!metaCierres){
+    calcEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px;">Establecé metas para ver el cálculo.</div>';
+    return;
+  }
+  calcEl.innerHTML=`
+    <div style="display:grid;gap:10px;">
+      ${metaCalls?`<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">📞 Calls restantes</div>
+        <div style="font-size:22px;font-weight:800;font-family:'DM Mono';color:var(--accent2)">${callsFaltantes}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">${callsPorSemana}/semana · ${callsPorDia}/día para los próximos ${diasRestantes} días</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">Tu promedio actual: ${promedioCallsSemanal} calls/semana</div>
+      </div>`:''}
+      ${metaCierres?`<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">✅ Cierres restantes</div>
+        <div style="font-size:22px;font-weight:800;font-family:'DM Mono';color:var(--green)">${cierresFaltantes}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">${cierresPorSemana} cierre${cierresPorSemana!==1?'s':''}/semana para llegar a la meta</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">Tu promedio actual: ${promedioCierresSemanal} cierres/semana</div>
+      </div>`:''}
+      ${diasRestantes<=7?`<div style="background:rgba(244,63,110,.08);border:1px solid rgba(244,63,110,.2);border-radius:8px;padding:12px;font-size:12px;color:var(--red);">⚠️ Quedan solo ${diasRestantes} días del mes.</div>`:''}
+    </div>`;
 }
 
 // ===== EXPORT / IMPORT =====
