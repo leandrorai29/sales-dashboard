@@ -4,57 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales Script Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0a0a0a;--surface:#111111;--surface2:#1a1a1a;--surface3:#222222;
-  --border:#2a2a2a;--border2:#333333;
-  --gold:#c9a84c;--gold2:rgba(201,168,76,0.15);--gold3:rgba(201,168,76,0.08);
-  --text:#f0f0f0;--text2:#888;--text3:#555;
-  --green:#22c55e;--red:#ef4444;--orange:#f97316;
-  --radius:12px;--radius-sm:8px;
+  --bg:#080d14;--surface:#0d1520;--surface2:#111d2c;--surface3:#162032;
+  --border:#1e2d3d;--border2:#243444;
+  --gold:#3b82f6;--gold2:rgba(59,130,246,0.15);--gold3:rgba(59,130,246,0.08);
+  --accent:#3b82f6;--accent2:#60a5fa;
+  --text:#e2eaf4;--text2:#6b8094;--text3:#3a4a5a;
+  --green:#10b981;--red:#f43f5e;--orange:#fb923c;
+  --radius:14px;--radius-sm:8px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
-.nav-bar{background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:200;height:48px;}
-.nav-link{padding:0 18px;height:48px;display:flex;align-items:center;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-decoration:none;}
+.nav-bar{background:rgba(6,10,16,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:200;height:44px;}
+.nav-link{padding:0 18px;height:44px;display:flex;align-items:center;font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-decoration:none;}
 .nav-link:hover{color:var(--text);}
-.nav-link.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-link.active{color:var(--accent2);border-bottom-color:var(--accent);}
 
 /* TOPBAR */
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:48px;z-index:100;}
+.topbar{background:linear-gradient(180deg,var(--surface) 0%,rgba(13,21,32,.95) 100%);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:44px;z-index:100;backdrop-filter:blur(12px);}
 .topbar-left{position:relative;}
-.ql-btn{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;letter-spacing:.3px;}
-.ql-btn:hover{border-color:var(--gold);color:var(--gold);}
-.ql-dropdown{position:absolute;top:calc(100% + 8px);left:0;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:8px;min-width:280px;display:none;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.6);}
+.ql-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:7px 14px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;letter-spacing:.3px;}
+.ql-btn:hover{border-color:var(--accent);color:var(--accent2);}
+.ql-dropdown{position:absolute;top:calc(100% + 8px);left:0;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:8px;min-width:280px;display:none;z-index:300;box-shadow:0 12px 40px rgba(0,0,0,.7);}
 .ql-dropdown.open{display:block;}
 .ql-item{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-radius:6px;transition:background .15s;}
 .ql-item:hover{background:var(--surface3);}
 .ql-item-link{font-size:12px;color:var(--text);text-decoration:none;flex:1;}
 .ql-item-link.unset{color:var(--text3);font-style:italic;}
 .ql-item-link.unset:hover{color:var(--text3);cursor:default;}
-.ql-item-link:not(.unset):hover{color:var(--gold);}
+.ql-item-link:not(.unset):hover{color:var(--accent2);}
 .ql-edit-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 6px;font-size:13px;border-radius:4px;transition:color .15s;}
-.ql-edit-btn:hover{color:var(--gold);}
-.ql-edit-input{font-size:12px;background:var(--surface3);border:1px solid var(--gold);border-radius:4px;padding:4px 8px;color:var(--text);font-family:'Inter',sans-serif;outline:none;width:200px;}
-.topbar-title{font-size:15px;font-weight:800;letter-spacing:4px;color:var(--gold);text-transform:uppercase;position:absolute;left:50%;transform:translateX(-50%);}
+.ql-edit-btn:hover{color:var(--accent2);}
+.ql-edit-input{font-size:12px;background:var(--surface3);border:1px solid var(--accent);border-radius:4px;padding:4px 8px;color:var(--text);font-family:'Inter',sans-serif;outline:none;width:200px;}
+.topbar-title{font-size:13px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,var(--accent2),var(--cyan,#06b6d4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;position:absolute;left:50%;transform:translateX(-50%);}
 .topbar-right{display:flex;align-items:center;gap:8px;}
-.timer-display{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace,sans-serif;color:var(--text);min-width:52px;text-align:center;}
+.timer-display{font-size:15px;font-weight:700;font-family:'DM Mono',monospace,sans-serif;color:var(--text);min-width:52px;text-align:center;}
 .tb-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;letter-spacing:.3px;}
-.tb-btn:hover{border-color:var(--gold);color:var(--gold);}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent2);}
 .tb-btn.running{border-color:var(--green);color:var(--green);}
 
 /* MAIN */
-.main{max-width:860px;margin:0 auto;padding:32px 24px 80px;}
+.main{max-width:820px;margin:0 auto;padding:28px 24px 80px;}
 
 /* BADGE */
-.badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border:1px solid var(--gold);color:var(--gold);border-radius:4px;margin-bottom:10px;}
+.badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border:1px solid rgba(59,130,246,.4);color:var(--accent2);border-radius:4px;margin-bottom:10px;background:rgba(59,130,246,.06);}
 
 /* SECTION */
-.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
-.section-title{font-size:16px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:border-color .2s;}
+.section:hover{border-color:var(--border2);}
+.section-title{font-size:15px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
 .section-desc{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:18px;line-height:1.6;}
 .section-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 
@@ -64,7 +66,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .selector-group.cols2x2{grid-template-columns:1fr 1fr;gap:10px;}
 .sel-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:16px 18px;cursor:pointer;transition:all .2s;text-align:left;}
 .sel-btn:hover{border-color:var(--text3);background:var(--surface3);}
-.sel-btn.active{border-color:#fff;background:var(--surface3);box-shadow:0 0 0 1px rgba(255,255,255,.1);}
+.sel-btn.active{border-color:var(--accent2);background:var(--surface3);box-shadow:0 0 0 1px rgba(59,130,246,.2),var(--glow-blue,0 0 16px rgba(59,130,246,.15));}
 .sel-btn-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.3px;}
 .sel-btn-sub{font-size:11px;color:var(--text2);margin-top:3px;}
 .sel-btn-emoji{font-size:18px;margin-bottom:6px;display:block;}
@@ -74,37 +76,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .field-group{display:flex;flex-direction:column;gap:6px;}
 .field-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);}
 .field-input{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:all .2s;width:100%;}
-.field-input:focus{border-color:var(--gold);background:var(--surface3);}
+.field-input:focus{border-color:var(--accent);background:var(--surface3);}
 .field-input::placeholder{color:var(--text3);}
 .copy-btn{background:var(--surface3);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;width:100%;}
-.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent2);}
 .copy-btn.copied{border-color:var(--green);color:var(--green);}
 
 /* CONTEXT */
 .context-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .field-prefix-wrap{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;overflow:hidden;transition:border-color .2s;}
-.field-prefix-wrap:focus-within{border-color:var(--gold);}
+.field-prefix-wrap:focus-within{border-color:var(--accent);}
 .field-prefix{padding:10px 10px 10px 12px;font-size:13px;color:var(--text2);font-weight:600;white-space:nowrap;}
 .field-prefix-input{background:transparent;border:none;padding:10px 0;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;flex:1;}
 .field-suffix{padding:10px 12px 10px 0;font-size:13px;color:var(--text2);font-weight:600;white-space:nowrap;}
 
 /* SAVE BLOCK */
-.save-block{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;}
-.stage-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
-.stage-value{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:20px;}
-.stage-value.ready{color:var(--text);}
-.save-btn{width:100%;padding:14px;border-radius:var(--radius-sm);border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;}
+.save-btn{padding:12px 28px;border-radius:var(--radius-sm);border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:all .2s;}
 .save-btn.disabled{background:var(--surface3);color:var(--text3);cursor:not-allowed;}
-.save-btn.enabled{background:var(--gold);color:#000;}
-.save-btn.enabled:hover{background:#d4b05a;box-shadow:0 4px 16px rgba(201,168,76,.3);}
+.save-btn.enabled{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.3);}
+.save-btn.enabled:hover{box-shadow:0 4px 20px rgba(59,130,246,.45);transform:translateY(-1px);}
 .save-status{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
 .save-badge{font-size:11px;font-weight:600;}
-.save-badge.unsaved{color:var(--gold);}
+.save-badge.unsaved{color:var(--accent2);}
 .save-badge.saved{color:var(--green);}
 .save-warning{font-size:12px;color:var(--orange);margin-top:10px;}
 
 /* NOTES PANEL */
-.notes-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:none;opacity:0;transition:opacity .2s;}
+.notes-overlay{position:fixed;inset:0;background:rgba(0,0,6,.7);backdrop-filter:blur(4px);z-index:400;display:none;opacity:0;transition:opacity .2s;}
 .notes-overlay.open{display:block;opacity:1;}
 .notes-panel{position:fixed;top:0;right:0;width:380px;height:100vh;background:var(--surface);border-left:1px solid var(--border2);z-index:401;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
 .notes-panel.open{transform:translateX(0);}
@@ -116,8 +114,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .notes-textarea::placeholder{color:var(--text3);}
 
 /* SEARCH BTN */
-.search-btn{background:var(--gold2);border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all .2s;}
-.search-btn:hover{background:rgba(201,168,76,.25);}
+.search-btn{background:var(--gold2);border:1px solid rgba(59,130,246,.3);color:var(--accent2);padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all .2s;}
+.search-btn:hover{background:rgba(59,130,246,.2);}
 
 /* HIDDEN */
 .hidden{display:none!important;}
@@ -130,7 +128,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* TEXTAREA */
 .field-textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:all .2s;width:100%;resize:vertical;line-height:1.6;}
-.field-textarea:focus{border-color:var(--gold);background:var(--surface3);}
+.field-textarea:focus{border-color:var(--accent);background:var(--surface3);}
 .field-textarea::placeholder{color:var(--text3);}
 
 /* FIELD NOTE */
@@ -155,10 +153,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-left">
-    <button class="ql-btn" onclick="toggleDropdown()">🔗 QUICK LINKS ▼</button>
-    <div class="ql-dropdown" id="ql-dropdown"></div>
-  </div>
+  <div style="width:120px;"></div>
   <div class="topbar-title">SALES SCRIPT</div>
   <div class="topbar-right">
     <span class="timer-display" id="timer">00:00</span>
@@ -171,9 +166,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <!-- MAIN -->
 <div class="main">
 
-  <!-- SECCIÓN 1 — TIPO DE LLAMADA -->
+  <!-- SECCIÓN 0 — EMPRESA -->
   <div class="section">
     <span class="badge">Empezá acá</span>
+    <div class="section-title">¿Para qué empresa es esta llamada?</div>
+    <div class="section-desc">Seleccioná la agencia antes de arrancar.</div>
+    <div class="selector-group cols2">
+      <div class="sel-btn" id="btn-sa-dental" onclick="select('empresa','sa-dental',this)">
+        <span class="sel-btn-emoji">🦷</span>
+        <div class="sel-btn-title">SA DENTAL</div>
+        <div class="sel-btn-sub">Clínicas dentales — USA</div>
+      </div>
+      <div class="sel-btn" id="btn-scaling" onclick="select('empresa','scaling',this)">
+        <span class="sel-btn-emoji">🏗️</span>
+        <div class="sel-btn-title">SCALING IN BLUE</div>
+        <div class="sel-btn-sub">Arquitectos — proyectos nuevos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1 — TIPO DE LLAMADA -->
+  <div class="section">
+    <span class="badge">Tipo de llamada</span>
     <div class="section-title">Tipo de llamada</div>
     <div class="section-desc">Initial Call para primeras conversaciones. Follow-Up / Decisión cuando ya vieron el plan y esta llamada es para decidir Sí / No.</div>
     <div class="selector-group cols2">
@@ -259,6 +273,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="section">
     <span class="badge">Post-llamada</span>
     <div class="section-title">¿Qué pasó con la llamada?</div>
+
+    <!-- 1. ¿Qué pasó con la cita? -->
     <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1. ¿Qué pasó con la cita?</div>
     <div class="selector-group cols2x2">
       <div class="sel-btn" onclick="select('callResult','attended',this)">
@@ -283,7 +299,61 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
     </div>
 
-    <!-- 1b — solo si cancelada -->
+    <!-- 1b — solo si NO ASISTIÓ -->
+    <div id="noshow-type-section" class="hidden" style="margin-top:20px;">
+      <hr class="section-divider">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. ¿Qué tipo de no-show?</div>
+      <div class="selector-group cols2">
+        <div class="sel-btn" onclick="select('noshowType','nunca',this)">
+          <span class="sel-btn-emoji">🚫</span>
+          <div class="sel-btn-title">Nunca respondió</div>
+          <div class="sel-btn-sub">Nunca contestó a ningún mensaje</div>
+        </div>
+        <div class="sel-btn" onclick="select('noshowType','conversacion',this)">
+          <span class="sel-btn-emoji">💬</span>
+          <div class="sel-btn-title">Tuvo conversación previa</div>
+          <div class="sel-btn-sub">Hablamos antes pero no apareció</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 — solo si ASISTIÓ -->
+    <div id="attended-section" class="hidden" style="margin-top:20px;">
+      <hr class="section-divider">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">2. ¿Le pitcheaste el programa?</div>
+      <div class="selector-group cols2">
+        <div class="sel-btn" onclick="select('pitched','si',this)">
+          <span class="sel-btn-emoji">🎯</span>
+          <div class="sel-btn-title">Sí, se le pitcheó</div>
+          <div class="sel-btn-sub">Le mostraste el programa y la oferta</div>
+        </div>
+        <div class="sel-btn" onclick="select('pitched','no',this)">
+          <span class="sel-btn-emoji">🔴</span>
+          <div class="sel-btn-title">No se le pitcheó</div>
+          <div class="sel-btn-sub">La llamada terminó sin presentar la oferta</div>
+        </div>
+      </div>
+
+      <!-- 3 — solo si se pitcheó -->
+      <div id="pitched-section" class="hidden" style="margin-top:20px;">
+        <hr class="section-divider">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">3. ¿Cerró?</div>
+        <div class="selector-group cols2">
+          <div class="sel-btn" onclick="select('closed','si',this)">
+            <span class="sel-btn-emoji">🏆</span>
+            <div class="sel-btn-title">Sí, cerró</div>
+            <div class="sel-btn-sub">El lead dijo que sí y se procesó el pago</div>
+          </div>
+          <div class="sel-btn" onclick="select('closed','no',this)">
+            <span class="sel-btn-emoji">🔄</span>
+            <div class="sel-btn-title">No cerró — seguimiento</div>
+            <div class="sel-btn-sub">Quedó en pensarlo o tiene objeciones</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1b — solo si CANCELADA -->
     <div id="who-cancel-section" class="hidden" style="margin-top:20px;">
       <hr class="section-divider">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. ¿Quién canceló la demo?</div>
@@ -325,15 +395,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
   </div>
 
-  <!-- SECCIÓN 7 — GUARDAR -->
-  <div class="save-block">
-    <div class="stage-label">Stage que se va a aplicar (auto-derivado del wizard)</div>
-    <div class="stage-value" id="stage-value">— pendiente, completá el wizard —</div>
-    <button class="save-btn disabled" id="save-btn" onclick="saveCall()">GUARDAR LLAMADA Y MOVER PIPELINE</button>
-    <div class="save-status">
-      <span class="save-badge unsaved" id="save-badge">● Cambios sin guardar</span>
-    </div>
-    <div class="save-warning" id="save-warning">⚠ Completá el wizard de arriba (todas las preguntas) antes de guardar.</div>
+  <!-- GUARDAR -->
+  <div style="display:flex;justify-content:flex-end;gap:12px;align-items:center;padding:8px 0 40px;">
+    <span id="save-warning" style="font-size:12px;color:#fb923c;">⚠ Completá el wizard antes de guardar.</span>
+    <button class="save-btn disabled" id="save-btn" onclick="saveCall()" style="width:auto;padding:12px 28px;">💾 Guardar llamada en Dashboard</button>
+    <span id="save-badge" class="save-badge unsaved" style="display:none;">✓ Guardado en Dashboard</span>
   </div>
 
 </div>
@@ -366,11 +432,13 @@ const defaultLinks = [
 ];
 
 let form = {
+  empresa: null,
   callType: null,
   prospectName: '', prospectEmail: '', prospectPhone: '',
   decisionMaker: null,
   monthlyRevenue: '', bottleneck: '',
   callResult: null, whoCancel: null,
+  noshowType: null, pitched: null, closed: null,
   fathomLink: '', fathomTranscript: '', manualNotes: ''
 };
 
@@ -387,20 +455,28 @@ function init() {
   // Load notes
   const notes = localStorage.getItem(NOTES_KEY) || '';
   document.getElementById('notes-textarea').value = notes;
-  // Load links
-  try { const l = localStorage.getItem(LINKS_KEY); links = l ? JSON.parse(l) : defaultLinks.map(x=>({...x})); }
-  catch(e){ links = defaultLinks.map(x=>({...x})); }
   // Restore form UI
   restoreFormUI();
-  renderLinks();
   updateWizard();
 }
 
 function restoreFormUI() {
+  if(form.empresa) activateBtn('empresa', form.empresa);
   if(form.callType) activateBtn('callType', form.callType);
   if(form.decisionMaker) activateBtn('decisionMaker', form.decisionMaker);
-  if(form.callResult) { activateBtn('callResult', form.callResult); if(form.callResult==='cancelled') document.getElementById('who-cancel-section').classList.remove('hidden'); }
+  if(form.callResult) {
+    activateBtn('callResult', form.callResult);
+    if(form.callResult === 'cancelled') document.getElementById('who-cancel-section').classList.remove('hidden');
+    if(form.callResult === 'noshow') document.getElementById('noshow-type-section').classList.remove('hidden');
+    if(form.callResult === 'attended') document.getElementById('attended-section').classList.remove('hidden');
+  }
   if(form.whoCancel) activateBtn('whoCancel', form.whoCancel);
+  if(form.noshowType) activateBtn('noshowType', form.noshowType);
+  if(form.pitched) {
+    activateBtn('pitched', form.pitched);
+    if(form.pitched === 'si') document.getElementById('pitched-section').classList.remove('hidden');
+  }
+  if(form.closed) activateBtn('closed', form.closed);
   document.getElementById('prospect-name').value = form.prospectName;
   document.getElementById('prospect-email').value = form.prospectEmail;
   document.getElementById('prospect-phone').value = form.prospectPhone;
@@ -409,6 +485,11 @@ function restoreFormUI() {
   document.getElementById('fathom-link').value = form.fathomLink;
   document.getElementById('fathom-transcript').value = form.fathomTranscript;
   document.getElementById('manual-notes').value = form.manualNotes;
+}
+
+function activateBtn(field, value) {
+  const map = { initial:'btn-initial', followup:'btn-followup', 'sa-dental':'btn-sa-dental', scaling:'btn-scaling' };
+  if(map[value]) { document.getElementById(map[value])?.classList.add('active'); }
 }
 
 // ===== SELECTOR =====
@@ -421,26 +502,31 @@ const selectorGroups = {
 
 function select(field, value, el) {
   form[field] = value;
-  // Deactivate siblings
   const parent = el.parentElement;
   parent.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  // Special logic
+
+  // Mostrar/ocultar secciones según selección
   if(field === 'callResult') {
-    const cancelSection = document.getElementById('who-cancel-section');
-    if(value === 'cancelled') cancelSection.classList.remove('hidden');
-    else { cancelSection.classList.add('hidden'); form.whoCancel = null; }
+    // Reset sub-campos
+    form.whoCancel = null; form.noshowType = null; form.pitched = null; form.closed = null;
+    document.querySelectorAll('#who-cancel-section, #noshow-type-section, #attended-section, #pitched-section')
+      .forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('#who-cancel-section .sel-btn, #noshow-type-section .sel-btn, #attended-section .sel-btn, #pitched-section .sel-btn')
+      .forEach(b => b.classList.remove('active'));
+
+    if(value === 'cancelled') document.getElementById('who-cancel-section').classList.remove('hidden');
+    if(value === 'noshow') document.getElementById('noshow-type-section').classList.remove('hidden');
+    if(value === 'attended') document.getElementById('attended-section').classList.remove('hidden');
   }
+
+  if(field === 'pitched') {
+    document.getElementById('pitched-section').classList.toggle('hidden', value !== 'si');
+    if(value !== 'si') { form.closed = null; document.querySelectorAll('#pitched-section .sel-btn').forEach(b=>b.classList.remove('active')); }
+  }
+
   saveFormToStorage();
   updateWizard();
-}
-
-function activateBtn(field, value) {
-  const map = { initial:'btn-initial', followup:'btn-followup' };
-  if(map[value]) { document.getElementById(map[value])?.classList.add('active'); return; }
-  // Generic: find by data or order
-  const allGroups = document.querySelectorAll('.selector-group');
-  // We'll just re-run select visually
 }
 
 // ===== FORM UPDATE =====
@@ -457,12 +543,16 @@ function saveFormToStorage() {
 
 // ===== WIZARD =====
 function isWizardComplete() {
+  if(!form.empresa) return false;
   if(!form.callType) return false;
   if(!form.prospectName.trim()) return false;
   if(!form.decisionMaker) return false;
   if(!form.monthlyRevenue.trim() || !form.bottleneck.trim()) return false;
   if(!form.callResult) return false;
   if(form.callResult === 'cancelled' && !form.whoCancel) return false;
+  if(form.callResult === 'noshow' && !form.noshowType) return false;
+  if(form.callResult === 'attended' && !form.pitched) return false;
+  if(form.callResult === 'attended' && form.pitched === 'si' && !form.closed) return false;
   return true;
 }
 
@@ -479,38 +569,74 @@ function getStage() {
 
 function updateWizard() {
   const complete = isWizardComplete();
-  const stage = getStage();
-  const stageEl = document.getElementById('stage-value');
   const saveBtn = document.getElementById('save-btn');
   const warning = document.getElementById('save-warning');
-
-  if(complete && stage) {
-    stageEl.textContent = stage;
-    stageEl.classList.add('ready');
-    stageEl.classList.remove('');
+  if(complete) {
     saveBtn.classList.remove('disabled');
     saveBtn.classList.add('enabled');
-    warning.classList.add('hidden');
+    warning.style.display = 'none';
   } else {
-    stageEl.textContent = '— pendiente, completá el wizard —';
-    stageEl.classList.remove('ready');
     saveBtn.classList.add('disabled');
     saveBtn.classList.remove('enabled');
-    warning.classList.remove('hidden');
+    warning.style.display = 'inline';
   }
 }
 
 // ===== SAVE =====
 function saveCall() {
   if(!isWizardComplete()) return;
-  const data = { ...form, stage: getStage(), savedAt: new Date().toISOString() };
-  try { localStorage.setItem('sales-script-saved', JSON.stringify(data)); } catch(e){}
-  console.log('SALES SCRIPT — LLAMADA GUARDADA:', data);
-  saved = true;
+
+  // Determinar estado para el dashboard
+  let estado = 'seguimiento';
+  if(form.callResult === 'attended') {
+    if(form.pitched === 'si' && form.closed === 'si') estado = 'cerrada';
+    else if(form.pitched === 'si' && form.closed === 'no') estado = 'seguimiento';
+    else estado = 'no-cerrada';
+  } else if(form.callResult === 'noshow') estado = 'no-cerrada';
+  else if(form.callResult === 'rescheduled') estado = 'agendada';
+  else if(form.callResult === 'cancelled') estado = 'no-cerrada';
+
+  const empresaLabel = { 'sa-dental':'SA Dental', 'scaling':'Scaling In Blue' }[form.empresa] || '';
+
+  let dashState = { calls:[], leads:[], filter:'dia' };
+  try { const s = localStorage.getItem('scd_v2'); if(s) dashState = JSON.parse(s); } catch(e){}
+
+  const notas = [
+    empresaLabel ? `Empresa: ${empresaLabel}` : '',
+    form.callResult === 'noshow' ? `No-show: ${form.noshowType === 'nunca' ? 'Nunca respondió' : 'Tuvo conversación previa'}` : '',
+    form.callResult === 'attended' && form.pitched === 'no' ? 'No se pitcheó' : '',
+    form.decisionMaker === 'champion' ? 'Champion — falta otro decisor' : '',
+    form.monthlyRevenue ? `Facturación: $${form.monthlyRevenue}/mo` : '',
+    form.manualNotes || '',
+    form.fathomLink ? `Fathom: ${form.fathomLink}` : ''
+  ].filter(Boolean).join(' | ');
+
+  dashState.calls.push({
+    id: Date.now(),
+    nombre: form.prospectName,
+    empresa: empresaLabel,
+    estado,
+    fecha: new Date().toISOString().slice(0,10),
+    objecion: form.bottleneck || '',
+    notas
+  });
+
+  try { localStorage.setItem('scd_v2', JSON.stringify(dashState)); } catch(e){}
+
+  // Reset
+  form = { empresa:null, callType:null, prospectName:'', prospectEmail:'', prospectPhone:'', decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, fathomLink:'', fathomTranscript:'', manualNotes:'' };
+  saveFormToStorage();
+
   const badge = document.getElementById('save-badge');
-  badge.textContent = '✓ Guardado';
-  badge.classList.remove('unsaved');
-  badge.classList.add('saved');
+  badge.style.display = 'inline';
+  badge.textContent = '✓ Guardado en Dashboard';
+  badge.style.color = 'var(--green)';
+  document.getElementById('save-btn').classList.add('disabled');
+  document.getElementById('save-btn').classList.remove('enabled');
+  document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.field-input, .field-textarea, .field-prefix-input').forEach(i=>i.value='');
+  document.querySelectorAll('#who-cancel-section, #noshow-type-section, #attended-section, #pitched-section').forEach(s=>s.classList.add('hidden'));
+  setTimeout(()=>{ badge.style.display='none'; }, 4000);
 }
 
 // ===== COPY =====
@@ -569,45 +695,6 @@ function closeNotes() {
 }
 document.getElementById('notes-textarea').addEventListener('input', function() {
   try { localStorage.setItem(NOTES_KEY, this.value); } catch(e){}
-});
-
-// ===== QUICK LINKS =====
-function renderLinks() {
-  const dd = document.getElementById('ql-dropdown');
-  dd.innerHTML = links.map((l,i) => `
-    <div class="ql-item" id="ql-item-${i}">
-      <span id="ql-label-${i}">
-        ${l.url
-          ? `<a class="ql-item-link" href="${l.url}" target="_blank">${l.label}</a>`
-          : `<span class="ql-item-link unset">${l.label} · (setear URL)</span>`
-        }
-      </span>
-      <button class="ql-edit-btn" onclick="editLink(${i})" title="Editar URL">✏️</button>
-    </div>
-  `).join('');
-}
-
-function editLink(i) {
-  const item = document.getElementById(`ql-item-${i}`);
-  const labelSpan = document.getElementById(`ql-label-${i}`);
-  labelSpan.innerHTML = `<input class="ql-edit-input" id="ql-input-${i}" value="${links[i].url}" placeholder="https://..." onblur="saveLink(${i})" onkeydown="if(event.key==='Enter')saveLink(${i})">`;
-  document.getElementById(`ql-input-${i}`).focus();
-}
-
-function saveLink(i) {
-  const input = document.getElementById(`ql-input-${i}`);
-  if(!input) return;
-  links[i].url = input.value.trim();
-  try { localStorage.setItem(LINKS_KEY, JSON.stringify(links)); } catch(e){}
-  renderLinks();
-}
-
-function toggleDropdown() {
-  document.getElementById('ql-dropdown').classList.toggle('open');
-}
-document.addEventListener('click', function(e) {
-  const dd = document.getElementById('ql-dropdown');
-  if(!dd.contains(e.target) && !e.target.closest('.ql-btn')) dd.classList.remove('open');
 });
 
 // ===== START =====
