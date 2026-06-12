@@ -277,97 +277,106 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <!-- 1. ¿Qué pasó con la cita? -->
     <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1. ¿Qué pasó con la cita?</div>
     <div class="selector-group cols2x2">
-      <div class="sel-btn" onclick="select('callResult','attended',this)">
-        <span class="sel-btn-emoji">✅</span>
-        <div class="sel-btn-title">Asistió</div>
-        <div class="sel-btn-sub">El lead se conectó/llegó a la demo</div>
-      </div>
-      <div class="sel-btn" onclick="select('callResult','noshow',this)">
-        <span class="sel-btn-emoji">👎</span>
-        <div class="sel-btn-title">No asistió</div>
-        <div class="sel-btn-sub">No-show — no se conectó</div>
-      </div>
-      <div class="sel-btn" onclick="select('callResult','rescheduled',this)">
-        <span class="sel-btn-emoji">📞</span>
-        <div class="sel-btn-title">Reagendada</div>
-        <div class="sel-btn-sub">Movió la fecha — nueva cita pactada</div>
-      </div>
-      <div class="sel-btn" onclick="select('callResult','cancelled',this)">
-        <span class="sel-btn-emoji">❌</span>
-        <div class="sel-btn-title">Cancelada</div>
-        <div class="sel-btn-sub">Canceló la cita sin reagendar</div>
-      </div>
+      <div class="sel-btn" onclick="select('callResult','attended',this)"><span class="sel-btn-emoji">✅</span><div class="sel-btn-title">Asistió</div><div class="sel-btn-sub">El lead se conectó/llegó a la demo</div></div>
+      <div class="sel-btn" onclick="select('callResult','noshow',this)"><span class="sel-btn-emoji">👎</span><div class="sel-btn-title">No asistió</div><div class="sel-btn-sub">No-show — no se conectó</div></div>
+      <div class="sel-btn" onclick="select('callResult','rescheduled',this)"><span class="sel-btn-emoji">📞</span><div class="sel-btn-title">Reagendada</div><div class="sel-btn-sub">Movió la fecha — nueva cita pactada</div></div>
+      <div class="sel-btn" onclick="select('callResult','cancelled',this)"><span class="sel-btn-emoji">❌</span><div class="sel-btn-title">Cancelada</div><div class="sel-btn-sub">Canceló la cita sin reagendar</div></div>
     </div>
 
-    <!-- 1b — solo si NO ASISTIÓ -->
+    <!-- 1b — NO ASISTIÓ -->
     <div id="noshow-type-section" class="hidden" style="margin-top:20px;">
       <hr class="section-divider">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. ¿Qué tipo de no-show?</div>
       <div class="selector-group cols2">
-        <div class="sel-btn" onclick="select('noshowType','nunca',this)">
-          <span class="sel-btn-emoji">🚫</span>
-          <div class="sel-btn-title">Nunca respondió</div>
-          <div class="sel-btn-sub">Nunca contestó a ningún mensaje</div>
-        </div>
-        <div class="sel-btn" onclick="select('noshowType','conversacion',this)">
-          <span class="sel-btn-emoji">💬</span>
-          <div class="sel-btn-title">Tuvo conversación previa</div>
-          <div class="sel-btn-sub">Hablamos antes pero no apareció</div>
-        </div>
+        <div class="sel-btn" onclick="select('noshowType','nunca',this)"><span class="sel-btn-emoji">🚫</span><div class="sel-btn-title">Nunca respondió</div><div class="sel-btn-sub">Nunca contestó a ningún mensaje</div></div>
+        <div class="sel-btn" onclick="select('noshowType','conversacion',this)"><span class="sel-btn-emoji">💬</span><div class="sel-btn-title">Tuvo conversación previa</div><div class="sel-btn-sub">Hablamos antes pero no apareció</div></div>
       </div>
     </div>
 
-    <!-- 2 — solo si ASISTIÓ -->
+    <!-- 2 — ASISTIÓ -->
     <div id="attended-section" class="hidden" style="margin-top:20px;">
       <hr class="section-divider">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">2. ¿Le pitcheaste el programa?</div>
       <div class="selector-group cols2">
-        <div class="sel-btn" onclick="select('pitched','si',this)">
-          <span class="sel-btn-emoji">🎯</span>
-          <div class="sel-btn-title">Sí, se le pitcheó</div>
-          <div class="sel-btn-sub">Le mostraste el programa y la oferta</div>
-        </div>
-        <div class="sel-btn" onclick="select('pitched','no',this)">
-          <span class="sel-btn-emoji">🔴</span>
-          <div class="sel-btn-title">No se le pitcheó</div>
-          <div class="sel-btn-sub">La llamada terminó sin presentar la oferta</div>
-        </div>
+        <div class="sel-btn" onclick="select('pitched','si',this)"><span class="sel-btn-emoji">🎯</span><div class="sel-btn-title">Sí, se le pitcheó</div><div class="sel-btn-sub">Le mostraste el programa y la oferta</div></div>
+        <div class="sel-btn" onclick="select('pitched','no',this)"><span class="sel-btn-emoji">🔴</span><div class="sel-btn-title">No se le pitcheó</div><div class="sel-btn-sub">La llamada terminó sin presentar la oferta</div></div>
       </div>
 
-      <!-- 3 — solo si se pitcheó -->
+      <!-- 3 — SE PITCHEÓ -->
       <div id="pitched-section" class="hidden" style="margin-top:20px;">
         <hr class="section-divider">
         <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">3. ¿Cerró?</div>
         <div class="selector-group cols2">
-          <div class="sel-btn" onclick="select('closed','si',this)">
-            <span class="sel-btn-emoji">🏆</span>
-            <div class="sel-btn-title">Sí, cerró</div>
-            <div class="sel-btn-sub">El lead dijo que sí y se procesó el pago</div>
+          <div class="sel-btn" onclick="select('closed','si',this)"><span class="sel-btn-emoji">🎉</span><div class="sel-btn-title">Cerró</div><div class="sel-btn-sub">Aceptó la oferta — cobrar y onboardear</div></div>
+          <div class="sel-btn" onclick="select('closed','no',this)"><span class="sel-btn-emoji">😓</span><div class="sel-btn-title">No cerró</div><div class="sel-btn-sub">Asistió y se le pitcheó, pero no firmó</div></div>
+        </div>
+
+        <!-- 4 — CERRÓ → PROGRAMAS -->
+        <div id="closed-si-section" class="hidden" style="margin-top:20px;">
+          <hr class="section-divider">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">4. ¿Qué programa tiene más chance de avanzar (o avanzó)?</div>
+
+          <!-- Programas SA Dental -->
+          <div id="programas-dental" class="hidden">
+            <div class="selector-group" style="grid-template-columns:1fr 1fr 1fr;gap:10px;">
+              <div class="sel-btn" onclick="select('programa','setup-paciente',this)"><span class="sel-btn-emoji">💼</span><div class="sel-btn-title">Setup fee + pago por paciente</div><div class="sel-btn-sub">Riesgo cero — solo paga por paciente que entra.</div></div>
+              <div class="sel-btn" onclick="select('programa','12-semanas',this)"><span class="sel-btn-emoji">💼</span><div class="sel-btn-title">Programa 12 semanas</div><div class="sel-btn-sub">$7.000 · pipeline calificado en 4 semanas o seguimos gratis.</div></div>
+              <div class="sel-btn" onclick="select('programa','24-semanas',this)"><span class="sel-btn-emoji">💼</span><div class="sel-btn-title">Programa 24 semanas</div><div class="sel-btn-sub">$11.000 · 6 meses de adquisición sostenida o seguimos gratis.</div></div>
+            </div>
           </div>
-          <div class="sel-btn" onclick="select('closed','no',this)">
-            <span class="sel-btn-emoji">🔄</span>
-            <div class="sel-btn-title">No cerró — seguimiento</div>
-            <div class="sel-btn-sub">Quedó en pensarlo o tiene objeciones</div>
+
+          <!-- Programas Scaling In Blue -->
+          <div id="programas-scaling" class="hidden">
+            <div class="selector-group cols2">
+              <div class="sel-btn" onclick="select('programa','fee-cuotas',this)"><span class="sel-btn-emoji">💼</span><div class="sel-btn-title">Fee + Cuotas</div><div class="sel-btn-sub">Pago inicial + cuotas mensuales</div></div>
+              <div class="sel-btn" onclick="select('programa','pif',this)"><span class="sel-btn-emoji">💼</span><div class="sel-btn-title">PIF</div><div class="sel-btn-sub">Pago único completo</div></div>
+            </div>
+          </div>
+
+          <!-- Montos del cierre -->
+          <div style="margin-top:20px;background:var(--surface2);border:1px solid rgba(16,185,129,.2);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--green);margin-bottom:6px;">💰 Montos del cierre — se graban en el dashboard</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5;"><strong>Cash collected</strong> = USD cobrados HOY (upfront, depósito). <strong>Contracted revenue</strong> = total firmado (incluye payment plan futuro). Se autocompleta del programa pero se puede editar.</div>
+            <div class="form-row">
+              <div class="field-group">
+                <div class="field-label">Cash Collected (USD)</div>
+                <div class="field-prefix-wrap"><span class="field-prefix">$</span><input class="field-prefix-input" id="cash-collected" type="number" placeholder="0" oninput="updateForm('cashCollected',this.value)"></div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Contracted Revenue (USD)</div>
+                <div class="field-prefix-wrap"><span class="field-prefix">$</span><input class="field-prefix-input" id="contracted-revenue" type="number" placeholder="0" oninput="updateForm('contractedRevenue',this.value)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 — NO CERRÓ → OBJECIÓN -->
+        <div id="closed-no-section" class="hidden" style="margin-top:20px;">
+          <hr class="section-divider">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">4. ¿Cuál fue la objeción principal?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;" id="objecion-buttons">
+            <div class="sel-btn" onclick="selectObjecion('precio',this)"><div class="sel-btn-title">💸 Precio / dinero</div></div>
+            <div class="sel-btn" onclick="selectObjecion('tiempo',this)"><div class="sel-btn-title">⏰ No tengo tiempo</div></div>
+            <div class="sel-btn" onclick="selectObjecion('decisor',this)"><div class="sel-btn-title">👥 Tengo que consultarlo</div></div>
+            <div class="sel-btn" onclick="selectObjecion('confianza',this)"><div class="sel-btn-title">🤔 No confía / necesita pensar</div></div>
+            <div class="sel-btn" onclick="selectObjecion('competencia',this)"><div class="sel-btn-title">🔄 Está viendo otras opciones</div></div>
+            <div class="sel-btn" onclick="selectObjecion('otra',this)"><div class="sel-btn-title">📝 Otra objeción</div></div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Objeción en sus palabras</div>
+            <input class="field-input" id="objecion-detalle" type="text" placeholder="Escribí exactamente lo que dijo..." oninput="updateForm('objecionDetalle',this.value)">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 1b — solo si CANCELADA -->
+    <!-- 1b — CANCELADA -->
     <div id="who-cancel-section" class="hidden" style="margin-top:20px;">
       <hr class="section-divider">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. ¿Quién canceló la demo?</div>
       <div class="selector-group cols2">
-        <div class="sel-btn" onclick="select('whoCancel','team',this)">
-          <span class="sel-btn-emoji">🏢</span>
-          <div class="sel-btn-title">Por el equipo</div>
-          <div class="sel-btn-sub">Nuestro lado tuvo que cancelar</div>
-        </div>
-        <div class="sel-btn" onclick="select('whoCancel','lead',this)">
-          <span class="sel-btn-emoji">🙅</span>
-          <div class="sel-btn-title">Por el lead</div>
-          <div class="sel-btn-sub">El lead avisó y canceló</div>
-        </div>
+        <div class="sel-btn" onclick="select('whoCancel','team',this)"><span class="sel-btn-emoji">🏢</span><div class="sel-btn-title">Por el equipo</div><div class="sel-btn-sub">Nuestro lado tuvo que cancelar</div></div>
+        <div class="sel-btn" onclick="select('whoCancel','lead',this)"><span class="sel-btn-emoji">🙅</span><div class="sel-btn-title">Por el lead</div><div class="sel-btn-sub">El lead avisó y canceló</div></div>
       </div>
     </div>
   </div>
@@ -377,6 +386,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <span class="badge">Resumen</span>
     <div class="section-title">Resumen al equipo</div>
     <div class="section-desc">Sube como nota en GHL — para que el equipo de delivery / cobranza tenga contexto completo.</div>
+
+    <div class="field-group" style="margin-bottom:16px;">
+      <div class="field-label">Objeción principal <span class="optional">si no cerró</span></div>
+      <input class="field-input" id="objecion-resumen" type="text" placeholder="¿Qué frenó al lead?" oninput="updateForm('objecionResumen',this.value)">
+    </div>
 
     <div class="field-group" style="margin-bottom:16px;">
       <div class="field-label">Call Recording (Fathom Link) <span class="optional">opcional</span></div>
@@ -439,6 +453,8 @@ let form = {
   monthlyRevenue: '', bottleneck: '',
   callResult: null, whoCancel: null,
   noshowType: null, pitched: null, closed: null,
+  programa: null, cashCollected: '', contractedRevenue: '',
+  objecionTipo: null, objecionDetalle: '', objecionResumen: '',
   fathomLink: '', fathomTranscript: '', manualNotes: ''
 };
 
@@ -506,15 +522,13 @@ function select(field, value, el) {
   parent.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 
-  // Mostrar/ocultar secciones según selección
   if(field === 'callResult') {
-    // Reset sub-campos
     form.whoCancel = null; form.noshowType = null; form.pitched = null; form.closed = null;
-    document.querySelectorAll('#who-cancel-section, #noshow-type-section, #attended-section, #pitched-section')
+    form.programa = null; form.objecionTipo = null;
+    document.querySelectorAll('#who-cancel-section,#noshow-type-section,#attended-section,#pitched-section,#closed-si-section,#closed-no-section')
       .forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('#who-cancel-section .sel-btn, #noshow-type-section .sel-btn, #attended-section .sel-btn, #pitched-section .sel-btn')
+    document.querySelectorAll('#who-cancel-section .sel-btn,#noshow-type-section .sel-btn,#attended-section .sel-btn,#pitched-section .sel-btn,#closed-si-section .sel-btn,#closed-no-section .sel-btn')
       .forEach(b => b.classList.remove('active'));
-
     if(value === 'cancelled') document.getElementById('who-cancel-section').classList.remove('hidden');
     if(value === 'noshow') document.getElementById('noshow-type-section').classList.remove('hidden');
     if(value === 'attended') document.getElementById('attended-section').classList.remove('hidden');
@@ -522,9 +536,27 @@ function select(field, value, el) {
 
   if(field === 'pitched') {
     document.getElementById('pitched-section').classList.toggle('hidden', value !== 'si');
-    if(value !== 'si') { form.closed = null; document.querySelectorAll('#pitched-section .sel-btn').forEach(b=>b.classList.remove('active')); }
+    if(value !== 'si') { form.closed = null; form.programa = null; }
   }
 
+  if(field === 'closed') {
+    document.getElementById('closed-si-section').classList.toggle('hidden', value !== 'si');
+    document.getElementById('closed-no-section').classList.toggle('hidden', value !== 'no');
+    if(value === 'si') {
+      // Mostrar programas según empresa
+      document.getElementById('programas-dental').classList.toggle('hidden', form.empresa !== 'sa-dental');
+      document.getElementById('programas-scaling').classList.toggle('hidden', form.empresa !== 'scaling');
+    }
+  }
+
+  saveFormToStorage();
+  updateWizard();
+}
+
+function selectObjecion(tipo, el) {
+  form.objecionTipo = tipo;
+  document.querySelectorAll('#objecion-buttons .sel-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
   saveFormToStorage();
   updateWizard();
 }
@@ -553,6 +585,7 @@ function isWizardComplete() {
   if(form.callResult === 'noshow' && !form.noshowType) return false;
   if(form.callResult === 'attended' && !form.pitched) return false;
   if(form.callResult === 'attended' && form.pitched === 'si' && !form.closed) return false;
+  if(form.callResult === 'attended' && form.pitched === 'si' && form.closed === 'si' && !form.programa) return false;
   return true;
 }
 
@@ -586,7 +619,6 @@ function updateWizard() {
 function saveCall() {
   if(!isWizardComplete()) return;
 
-  // Determinar estado para el dashboard
   let estado = 'seguimiento';
   if(form.callResult === 'attended') {
     if(form.pitched === 'si' && form.closed === 'si') estado = 'cerrada';
@@ -597,74 +629,66 @@ function saveCall() {
   else if(form.callResult === 'cancelled') estado = 'no-cerrada';
 
   const empresaLabel = { 'sa-dental':'SA Dental', 'scaling':'Scaling In Blue' }[form.empresa] || '';
+  const objecion = form.objecionResumen || form.objecionDetalle || form.objecionTipo || form.bottleneck || '';
 
   let dashState = { calls:[], leads:[], filter:'dia' };
   try { const s = localStorage.getItem('scd_v2'); if(s) dashState = JSON.parse(s); } catch(e){}
 
   const notas = [
     empresaLabel ? `Empresa: ${empresaLabel}` : '',
+    form.programa ? `Programa: ${form.programa}` : '',
+    form.cashCollected ? `Cash: $${form.cashCollected}` : '',
+    form.contractedRevenue ? `Contracted: $${form.contractedRevenue}` : '',
     form.callResult === 'noshow' ? `No-show: ${form.noshowType === 'nunca' ? 'Nunca respondió' : 'Tuvo conversación previa'}` : '',
-    form.callResult === 'attended' && form.pitched === 'no' ? 'No se pitcheó' : '',
     form.decisionMaker === 'champion' ? 'Champion — falta otro decisor' : '',
-    form.monthlyRevenue ? `Facturación: $${form.monthlyRevenue}/mo` : '',
+    form.monthlyRevenue ? `Problema: ${form.bottleneck}` : '',
     form.manualNotes || '',
     form.fathomLink ? `Fathom: ${form.fathomLink}` : ''
   ].filter(Boolean).join(' | ');
 
-  dashState.calls.push({
+  const newCall = {
     id: Date.now(),
     nombre: form.prospectName,
     empresa: empresaLabel,
     estado,
     fecha: new Date().toISOString().slice(0,10),
-    objecion: form.bottleneck || '',
+    objecion,
+    cashCollected: form.cashCollected ? parseFloat(form.cashCollected) : 0,
+    contractedRevenue: form.contractedRevenue ? parseFloat(form.contractedRevenue) : 0,
+    programa: form.programa || '',
     notas
-  });
-
+  };
+  dashState.calls.push(newCall);
   try { localStorage.setItem('scd_v2', JSON.stringify(dashState)); } catch(e){}
 
-  // Si quedó en seguimiento → crear automáticamente en Hot List
+  // Si quedó en seguimiento → Hot List
   if(estado === 'seguimiento' || estado === 'agendada') {
     let hotLeads = [];
     try { const h = localStorage.getItem('hotlist_leads'); if(h) hotLeads = JSON.parse(h); } catch(e){}
-    // Determinar estado hot/tibio/frio según el resultado
     let estadoHot = 'tibio';
     if(form.callResult === 'attended' && form.pitched === 'si') estadoHot = 'hot';
     else if(form.callResult === 'noshow') estadoHot = 'frio';
-    // Calcular próximo follow-up (+3 días)
     const proxFU = new Date(); proxFU.setDate(proxFU.getDate()+3);
-    const proxFUStr = proxFU.toISOString().slice(0,10);
     hotLeads.push({
-      id: Date.now()+1,
-      nombre: form.prospectName,
-      empresa: empresaLabel,
-      estado: estadoHot,
-      ultimoContacto: new Date().toISOString().slice(0,10),
-      proximoFollowup: proxFUStr,
-      transcript: form.fathomTranscript || '',
-      notas: notas,
-      objecion: form.bottleneck || '',
-      analisisCall: '',
-      puntuacion: null,
-      mensajes: [],
-      fromSalesScript: true
+      id: Date.now()+1, nombre: form.prospectName, empresa: empresaLabel,
+      estado: estadoHot, ultimoContacto: new Date().toISOString().slice(0,10),
+      proximoFollowup: proxFU.toISOString().slice(0,10),
+      transcript: form.fathomTranscript || '', notas, objecion,
+      analisisCall: '', puntuacion: null, mensajes: [], fromSalesScript: true
     });
     try { localStorage.setItem('hotlist_leads', JSON.stringify(hotLeads)); } catch(e){}
   }
 
   // Reset
-  form = { empresa:null, callType:null, prospectName:'', prospectEmail:'', prospectPhone:'', decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, fathomLink:'', fathomTranscript:'', manualNotes:'' };
+  form = { empresa:null, callType:null, prospectName:'', prospectEmail:'', prospectPhone:'', decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, programa:null, cashCollected:'', contractedRevenue:'', objecionTipo:null, objecionDetalle:'', objecionResumen:'', fathomLink:'', fathomTranscript:'', manualNotes:'' };
   saveFormToStorage();
-
   const badge = document.getElementById('save-badge');
-  badge.style.display = 'inline';
-  badge.textContent = '✓ Guardado en Dashboard';
-  badge.style.color = 'var(--green)';
+  badge.style.display = 'inline'; badge.textContent = '✓ Guardado en Dashboard'; badge.style.color = 'var(--green)';
   document.getElementById('save-btn').classList.add('disabled');
   document.getElementById('save-btn').classList.remove('enabled');
   document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.field-input, .field-textarea, .field-prefix-input').forEach(i=>i.value='');
-  document.querySelectorAll('#who-cancel-section, #noshow-type-section, #attended-section, #pitched-section').forEach(s=>s.classList.add('hidden'));
+  document.querySelectorAll('#who-cancel-section,#noshow-type-section,#attended-section,#pitched-section,#closed-si-section,#closed-no-section').forEach(s=>s.classList.add('hidden'));
   setTimeout(()=>{ badge.style.display='none'; }, 4000);
 }
 

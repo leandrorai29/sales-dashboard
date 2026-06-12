@@ -252,7 +252,6 @@ select.input{cursor:pointer;}
     </div>
     <nav>
       <div class="nav-item active" onclick="switchTab('overview')"><span class="nav-icon">📊</span> Dashboard</div>
-      <div class="nav-item" onclick="switchTab('leads')"><span class="nav-icon">👤</span> Sales Tracker <span class="nav-badge">Leandro</span></div>
       <div class="nav-item" onclick="switchTab('hotlist')"><span class="nav-icon">🔥</span> Hot List</div>
       <div class="nav-item" onclick="switchTab('performance')"><span class="nav-icon">📈</span> Performance</div>
     </nav>
@@ -368,7 +367,7 @@ select.input{cursor:pointer;}
             </div>
           </div>
         </div>
-        <!-- Objeciones -->
+        <!-- Objeciones con gráfico -->
         <div class="section">
           <div class="section-header">
             <div class="section-title">Objeciones Frecuentes</div>
@@ -378,7 +377,10 @@ select.input{cursor:pointer;}
               <button class="filter-btn" id="obj-filter-todo" onclick="setObjFilter('todo',this)" style="padding:3px 10px;font-size:11px;">Todo</button>
             </div>
           </div>
-          <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
+          <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap;">
+            <div style="flex-shrink:0;position:relative;"><canvas id="objections-chart" width="180" height="180"></canvas></div>
+            <div id="objection-list" style="flex:1;min-width:180px;"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
+          </div>
         </div>
 
         <div class="section">
@@ -388,51 +390,10 @@ select.input{cursor:pointer;}
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Fecha</th><th>Lead</th><th>Vendedor</th><th>Estado</th><th>Objeción</th><th>Notas</th><th></th></tr></thead>
+              <thead><tr><th>Fecha</th><th>Lead</th><th>Estado</th><th>Objeción</th><th>Programa</th><th>Cash</th><th></th></tr></thead>
               <tbody id="calls-table-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin calls registradas aún</td></tr></tbody>
             </table>
           </div>
-        </div>
-      </div>
-
-      <!-- ===== SALES TRACKER ===== -->
-      <div id="tab-leads" class="tab-content">
-        <div class="section" style="margin-bottom:20px">
-          <div class="section-header">
-            <div>
-              <div class="section-title">Sales Tracker — Leandro <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);font-weight:700;margin-left:8px;">Leandro</span></div>
-            </div>
-          </div>
-          <!-- TABS internos -->
-          <div style="display:flex;gap:8px;margin-bottom:20px;">
-            <button class="filter-btn active" id="st-tab-leads-btn" onclick="switchSTTab('leads')">📁 Carpetas de Leads</button>
-            <button class="filter-btn" id="st-tab-transcript-btn" onclick="switchSTTab('transcript')">🎙️ Análisis de Transcript</button>
-          </div>
-          <!-- Sub-tab: carpetas -->
-          <div id="st-tab-leads-content">
-            <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="lead-folder-name" type="text" placeholder="Nombre del cliente"></div>
-            <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="lead-transcript-input" style="min-height:150px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
-            <button class="btn btn-primary" id="btn-create-lead" onclick="createLeadFolder()">🗂️ Crear Carpeta del Lead</button>
-          </div>
-          <!-- Sub-tab: transcript -->
-          <div id="st-tab-transcript-content" style="display:none">
-            <div id="api-key-banner-transcripts"></div>
-            <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Pegá el transcript y recibí feedback detallado: qué salió bien, qué mejorar, manejo de objeciones y próximos pasos.</p>
-            <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="transcript-input" style="min-height:200px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
-            <div class="form-row">
-              <div class="input-group"><label class="input-label">Resultado de la call</label><select class="input" id="transcript-resultado"><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option></select></div>
-              <div class="input-group"><label class="input-label">Contexto adicional (opcional)</label><input class="input" id="transcript-contexto" type="text" placeholder="Ej: Lead frío, primer contacto"></div>
-            </div>
-            <button class="btn btn-primary" onclick="analyzeTranscript()">🤖 Analizar con AI</button>
-            <div class="section" id="transcript-result-section" style="display:none;margin-top:20px">
-              <div class="section-header"><div class="section-title">Feedback de la Call</div></div>
-              <div class="ai-output" id="transcript-output"></div>
-            </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="section-header"><div class="section-title">Carpetas de Leads</div><span class="section-badge" id="leads-count-badge">0 leads</span></div>
-          <div class="leads-grid" id="leads-folder-list"><div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">Aún no creaste carpetas de leads</div></div></div>
         </div>
       </div>
 
@@ -444,13 +405,13 @@ select.input{cursor:pointer;}
         </div>
         <div class="hotlist-filters">
           <button class="hl-filter active" onclick="filterHotlist('todos',this)">Todos</button>
-          <button class="hl-filter" onclick="filterHotlist('hot',this)">🔥 Hot</button>
-          <button class="hl-filter" onclick="filterHotlist('tibio',this)">⚡ Tibio</button>
-          <button class="hl-filter" onclick="filterHotlist('frio',this)">❄️ Frío</button>
+          <button class="hl-filter" onclick="filterHotlist('hot',this)">🔥 Hot (8-10)</button>
+          <button class="hl-filter" onclick="filterHotlist('tibio',this)">⚡ Tibio (4-7)</button>
+          <button class="hl-filter" onclick="filterHotlist('frio',this)">❄️ Frío (1-3)</button>
           <button class="hl-filter" onclick="filterHotlist('proximos7',this)">📅 Próximos 7 días</button>
         </div>
-        <div class="hotlist-grid" id="hotlist-grid">
-          <div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔥</div><div class="empty-state-text">No hay leads en tu Hot List aún.<br>Agregá uno con el botón de arriba.</div></div>
+        <div id="hotlist-grid">
+          <div class="empty-state"><div class="empty-state-icon">🔥</div><div class="empty-state-text">No hay leads en tu Hot List aún.<br>Agregá uno con el botón de arriba.</div></div>
         </div>
       </div>
 
@@ -712,11 +673,22 @@ function filterCalls(){
   if(state.filter==='mes')return state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
   return state.calls;
 }
+function setPuntuacion(id, val) {
+  const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  lead.puntuacion=val;
+  if(val>=8) lead.estado='hot';
+  else if(val>=4) lead.estado='tibio';
+  else lead.estado='frio';
+  saveHotList();renderHotList();
+}
+
 function setFilter(f,btn){
   state.filter=f;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   updateOverview();
+  updatePerformance();
+  renderMetasProgress();
 }
 function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada'}[e]||e;}
 function openModal(id){document.getElementById(id).classList.add('open');}
@@ -830,7 +802,7 @@ function updateOverview(){
   // Actualizar barra de ingresos y comisiones
   updateIngresosBar();
 
-  // Objeciones con filtro
+  // Objeciones con filtro y gráfico
   const m=getMonthRange();
   let callsObj=state.calls;
   if(objFilter==='semana'){const w=getWeekRange();callsObj=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);}
@@ -839,23 +811,67 @@ function updateOverview(){
   callsObj.filter(c=>c.objecion).forEach(c=>{const k=c.objecion.toLowerCase().trim();objMap[k]=(objMap[k]||0)+1;});
   const sorted=Object.entries(objMap).sort((a,b)=>b[1]-a[1]);
   const objEl=document.getElementById('objection-list');
-  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones en este período</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
+  
+  if(sorted.length===0){
+    objEl.innerHTML='<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones en este período</div></div>';
+    drawObjChart([]);
+  } else {
+    const colors=['#3b82f6','#f43f5e','#f59e0b','#10b981','#a78bfa','#fb923c','#38bdf8','#ec4899'];
+    objEl.innerHTML=sorted.map(([t,n],i)=>`
+      <div class="objection-item">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${colors[i%colors.length]};flex-shrink:0;"></div>
+          <div style="font-size:13px">${t}</div>
+        </div>
+        <div class="objection-count">${n}x</div>
+      </div>`).join('');
+    drawObjChart(sorted.map(([t,n],i)=>({label:t,value:n,color:colors[i%colors.length]})));
+  }
 
   const tbody=document.getElementById('calls-table-body');
   if(calls.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este período</td></tr>';return;}
   tbody.innerHTML=[...calls].reverse().map(c=>`
     <tr>
       <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
-      <td style="font-weight:500">${c.nombre}</td>
-      <td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--green2);color:var(--green);font-weight:600;">Leandro</span></td>
+      <td style="font-weight:500">${c.nombre}${c.empresa?'<div style="font-size:10px;color:var(--text3)">'+c.empresa+'</div>':''}</td>
       <td><span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span></td>
       <td style="color:var(--text2);font-size:12px">${c.objecion||'—'}</td>
-      <td style="color:var(--text2);font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notas||'—'}</td>
+      <td style="color:var(--text2);font-size:12px">${c.programa||'—'}</td>
+      <td style="font-family:'DM Mono';font-size:12px;color:var(--green)">${c.cashCollected?'$'+c.cashCollected.toLocaleString():'—'}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-edit btn-sm" style="margin-right:4px" onclick="openEditCall(${c.id})">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">✕</button>
       </td>
     </tr>`).join('');
+}
+
+function drawObjChart(data) {
+  const canvas = document.getElementById('objections-chart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,180,180);
+  if(!data.length) {
+    ctx.beginPath();ctx.arc(90,90,70,0,Math.PI*2);
+    ctx.strokeStyle='var(--border2,#243444)';ctx.lineWidth=20;ctx.stroke();
+    return;
+  }
+  const total=data.reduce((s,d)=>s+d.value,0);
+  let start=-Math.PI/2;
+  data.forEach(d=>{
+    const slice=(d.value/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(90,90);
+    ctx.arc(90,90,70,start,start+slice);
+    ctx.closePath();ctx.fillStyle=d.color;ctx.fill();
+    start+=slice;
+  });
+  // Donut hole
+  ctx.beginPath();ctx.arc(90,90,45,0,Math.PI*2);
+  ctx.fillStyle='#0d1520';ctx.fill();
+  // Centro
+  ctx.fillStyle='#e2eaf4';ctx.font='bold 18px DM Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(total,90,86);
+  ctx.font='10px Inter,sans-serif';ctx.fillStyle='#6b8094';
+  ctx.fillText('total',90,104);
 }
 
 // ===== ADD/EDIT CALL =====
@@ -1067,52 +1083,67 @@ function renderHotList(){
   let leads=[...hotLeads];
   const today7=new Date();today7.setDate(today7.getDate()+7);
   const t7=today7.toISOString().slice(0,10);
-  if(hlFilter==='hot')leads=leads.filter(l=>l.estado==='hot');
-  else if(hlFilter==='tibio')leads=leads.filter(l=>l.estado==='tibio');
-  else if(hlFilter==='frio')leads=leads.filter(l=>l.estado==='frio');
-  else if(hlFilter==='proximos7')leads=leads.filter(l=>l.proximoFollowup&&l.proximoFollowup<=t7&&l.proximoFollowup>=today());
+  
+  // Filtro por puntuación (hot=8-10, tibio=4-7, frio=1-3)
+  if(hlFilter==='hot') leads=leads.filter(l=>l.puntuacion>=8);
+  else if(hlFilter==='tibio') leads=leads.filter(l=>l.puntuacion>=4&&l.puntuacion<=7);
+  else if(hlFilter==='frio') leads=leads.filter(l=>!l.puntuacion||l.puntuacion<=3);
+  else if(hlFilter==='proximos7') leads=leads.filter(l=>l.proximoFollowup&&l.proximoFollowup<=t7&&l.proximoFollowup>=today());
+  
+  // Actualizar estado según puntuación
+  leads.forEach(l=>{
+    if(l.puntuacion>=8) l.estado='hot';
+    else if(l.puntuacion>=4) l.estado='tibio';
+    else if(l.puntuacion) l.estado='frio';
+  });
+
   const grid=document.getElementById('hotlist-grid');
   if(leads.length===0){
-    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔥</div><div class="empty-state-text">No hay leads con este filtro.</div></div>';
+    grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">🔥</div><div class="empty-state-text">No hay leads con este filtro.</div></div>';
     return;
   }
   const estadoEmoji={hot:'🔥',tibio:'⚡',frio:'❄️'};
-  const estadoLabel={hot:'Hot',tibio:'Tibio',frio:'Frío'};
-  const puntColor=(p)=>p>=8?'var(--green)':p>=5?'var(--yellow)':'var(--red)';
+  const estadoLabel2={hot:'Hot',tibio:'Tibio',frio:'Frío'};
+  const puntColor=(p)=>!p?'var(--text3)':p>=8?'var(--red)':p>=4?'var(--orange)':'var(--blue)';
   const mensajesPendientes=(l)=>(l.mensajes||[]).filter(m=>!m.enviado).length;
-  grid.innerHTML=leads.map(l=>`
-    <div class="hl-card ${l.estado}" style="cursor:pointer;" onclick="openHotLeadDetail(${l.id})">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-        <div>
-          <div class="hl-card-name">${l.nombre}</div>
-          ${l.empresa?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.empresa}</div>`:''}
-        </div>
-        <span class="hl-status-badge ${l.estado}">${estadoEmoji[l.estado]} ${estadoLabel[l.estado]}</span>
-      </div>
-      <!-- Puntuación -->
-      <div style="margin-bottom:10px;">
-        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600;">Calidad del lead</div>
-        <div style="display:flex;gap:4px;">
-          ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
-            <button onclick="event.stopPropagation();setPuntuacion(${l.id},${n})" style="width:24px;height:24px;border-radius:4px;border:1px solid ${l.puntuacion===n?puntColor(n):'var(--border2)'};background:${l.puntuacion===n?puntColor(n)+'22':'transparent'};color:${l.puntuacion===n?puntColor(n):'var(--text3)'};font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;">${n}</button>
-          `).join('')}
-        </div>
-      </div>
-      ${l.objecion?`<div style="font-size:12px;padding:6px 10px;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.15);border-radius:6px;color:var(--red);margin-bottom:8px;">⚠️ ${l.objecion}</div>`:''}
-      ${l.proximoFollowup?`<div class="hl-card-meta">📅 Próximo FU: <strong>${l.proximoFollowup}</strong></div>`:''}
-      ${mensajesPendientes(l)>0?`<div class="hl-card-meta" style="color:var(--yellow);">💬 ${mensajesPendientes(l)} mensaje${mensajesPendientes(l)>1?'s':''} pendiente${mensajesPendientes(l)>1?'s':''}</div>`:''}
-      <div class="hl-card-actions" style="margin-top:12px;">
-        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openEditHotLead(${l.id})">✏️ Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteHotLead(${l.id})">✕</button>
+  
+  // Agrupar por estado
+  const grupos=[
+    {key:'hot',label:'🔥 Hot — 8 a 10',leads:leads.filter(l=>l.estado==='hot')},
+    {key:'tibio',label:'⚡ Tibio — 4 a 7',leads:leads.filter(l=>l.estado==='tibio')},
+    {key:'frio',label:'❄️ Frío — 1 a 3',leads:leads.filter(l=>l.estado==='frio'||!l.puntuacion)},
+  ].filter(g=>g.leads.length>0);
+
+  grid.innerHTML = grupos.map(g=>`
+    <div style="margin-bottom:24px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);">${g.label} <span style="font-size:11px;font-weight:400;color:var(--text3);">(${g.leads.length})</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        ${g.leads.map(l=>`
+          <div class="hl-card ${l.estado}" style="cursor:pointer;" onclick="openHotLeadDetail(${l.id})">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+              <div>
+                <div class="hl-card-name">${l.nombre}</div>
+                ${l.empresa?`<div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.empresa}</div>`:''}
+              </div>
+              <div style="font-size:20px;font-weight:800;font-family:'DM Mono';color:${puntColor(l.puntuacion)};min-width:32px;text-align:right;">${l.puntuacion||'—'}</div>
+            </div>
+            <div style="display:flex;gap:4px;margin-bottom:10px;">
+              ${[1,2,3,4,5,6,7,8,9,10].map(n=>`
+                <button onclick="event.stopPropagation();setPuntuacion(${l.id},${n})" style="width:22px;height:22px;border-radius:4px;border:1px solid ${l.puntuacion===n?puntColor(n):'var(--border2)'};background:${l.puntuacion===n?puntColor(n)+'22':'transparent'};color:${l.puntuacion===n?puntColor(n):'var(--text3)'};font-size:9px;font-weight:700;cursor:pointer;transition:all .15s;">${n}</button>
+              `).join('')}
+            </div>
+            ${l.objecion?`<div style="font-size:11px;padding:5px 8px;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.15);border-radius:5px;color:var(--red);margin-bottom:8px;">⚠️ ${l.objecion}</div>`:''}
+            ${l.proximoFollowup?`<div class="hl-card-meta">📅 <strong>${l.proximoFollowup}</strong></div>`:''}
+            ${mensajesPendientes(l)>0?`<div class="hl-card-meta" style="color:var(--yellow);">💬 ${mensajesPendientes(l)} pendiente${mensajesPendientes(l)>1?'s':''}</div>`:''}
+            <div class="hl-card-actions" style="margin-top:10px;">
+              <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openEditHotLead(${l.id})">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteHotLead(${l.id})">✕</button>
+            </div>
+          </div>
+        `).join('')}
       </div>
     </div>
   `).join('');
-}
-
-function setPuntuacion(id, val) {
-  const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
-  lead.puntuacion=val;
-  saveHotList();renderHotList();
 }
 function openHotLeadDetail(id){
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
