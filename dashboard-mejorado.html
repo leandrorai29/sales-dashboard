@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -198,8 +198,8 @@
   .nav-link.active{color:var(--accent2);border-bottom-color:var(--accent);}
 </style>
 <nav class="nav-bar">
-  <a class="nav-link" href="/sales-script">ðŸ“‹ Sales Script</a>
-  <a class="nav-link active" href="/dashboard">ðŸ“Š Dashboard</a>
+  <a class="nav-link" href="/sales-script">📋 Sales Script</a>
+  <a class="nav-link active" href="/dashboard">📊 Dashboard</a>
 </nav>
 <div class="shell">
   <aside class="sidebar">
@@ -209,22 +209,22 @@
     </div>
     <nav>
       <div class="nav-section">Principal</div>
-      <div class="nav-item active" onclick="switchTab('overview')"><span class="nav-icon">ðŸ“Š</span> Overview</div>
-      <div class="nav-item" onclick="switchTab('daily')"><span class="nav-icon">ðŸ“‹</span> Reporte Diario</div>
-      <div class="nav-item" onclick="switchTab('leads')"><span class="nav-icon">ðŸ‘¥</span> Leads & Follows</div>
-      <div class="nav-item" onclick="switchTab('transcripts')"><span class="nav-icon">ðŸŽ™ï¸</span> Transcripts</div>
-      <div class="nav-section">AnÃ¡lisis</div>
-      <div class="nav-item" onclick="switchTab('report')"><span class="nav-icon">ðŸ“ˆ</span> Reporte Semanal</div>
-      <div class="nav-item" onclick="switchTab('metas')"><span class="nav-icon">ðŸ†</span> Metas</div>
+      <div class="nav-item active" onclick="switchTab('overview')"><span class="nav-icon">📊</span> Overview</div>
+      <div class="nav-item" onclick="switchTab('daily')"><span class="nav-icon">📋</span> Reporte Diario</div>
+      <div class="nav-item" onclick="switchTab('leads')"><span class="nav-icon">👥</span> Leads & Follows</div>
+      <div class="nav-item" onclick="switchTab('transcripts')"><span class="nav-icon">🎙️</span> Transcripts</div>
+      <div class="nav-section">Análisis</div>
+      <div class="nav-item" onclick="switchTab('report')"><span class="nav-icon">📈</span> Reporte Semanal</div>
+      <div class="nav-item" onclick="switchTab('metas')"><span class="nav-icon">🏆</span> Metas</div>
     </nav>
     <div class="sidebar-bottom">
-      <div class="nav-item-settings" onclick="exportData()"><span>ðŸ’¾</span> Exportar datos</div>
-      <div class="nav-item-settings" onclick="document.getElementById('import-file').click()"><span>ðŸ“‚</span> Importar datos</div>
+      <div class="nav-item-settings" onclick="exportData()"><span>💾</span> Exportar datos</div>
+      <div class="nav-item-settings" onclick="document.getElementById('import-file').click()"><span>📂</span> Importar datos</div>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
-      <div class="nav-item-settings" onclick="openModal('modal-settings')"><span>âš™ï¸</span> ConfiguraciÃ³n</div>
+      <div class="nav-item-settings" onclick="openModal('modal-settings')"><span>⚙️</span> Configuración</div>
       <div class="save-indicator">
         <div class="save-dot"></div>
-        <span id="save-status">Guardado automÃ¡tico ON</span>
+        <span id="save-status">Guardado automático ON</span>
       </div>
     </div>
   </aside>
@@ -238,7 +238,7 @@
           <button class="filter-btn" onclick="setFilter('semana',this)">Semana</button>
           <button class="filter-btn" onclick="setFilter('mes',this)">Mes</button>
         </div>
-        <button class="btn btn-danger btn-sm" onclick="confirmClearData()">ðŸ—‘ï¸ Reset</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmClearData()">🗑️ Reset</button>
       </div>
     </div>
 
@@ -247,10 +247,10 @@
       <!-- OVERVIEW -->
       <div id="tab-overview" class="tab-content active">
         <div class="stats-row">
-          <div class="stat-card purple"><div class="stat-card-icon">ðŸ“ž</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este perÃ­odo</div></div>
-          <div class="stat-card green"><div class="stat-card-icon">âœ…</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
-          <div class="stat-card red"><div class="stat-card-icon">âŒ</div><div class="stat-label">No Cerradas</div><div class="stat-value red" id="stat-no-cerradas">0</div><div class="stat-sub">Requieren follow-up</div></div>
-          <div class="stat-card yellow"><div class="stat-card-icon">ðŸ”„</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
+          <div class="stat-card purple"><div class="stat-card-icon">📞</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este período</div></div>
+          <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
+          <div class="stat-card red"><div class="stat-card-icon">❌</div><div class="stat-label">No Cerradas</div><div class="stat-value red" id="stat-no-cerradas">0</div><div class="stat-sub">Requieren follow-up</div></div>
+          <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
         </div>
         <div class="two-col">
           <div class="section">
@@ -261,7 +261,7 @@
           </div>
           <div class="section">
             <div class="section-header"><div class="section-title">Objeciones Frecuentes</div><span class="section-badge">no resueltas</span></div>
-            <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">ðŸ”</div><div class="empty-state-text">CargÃ¡ calls para ver objeciones</div></div></div>
+            <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
           </div>
         </div>
         <div class="section">
@@ -271,8 +271,8 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Fecha</th><th>Lead</th><th>Estado</th><th>ObjeciÃ³n</th><th>Notas</th><th></th></tr></thead>
-              <tbody id="calls-table-body"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls registradas aÃºn</td></tr></tbody>
+              <thead><tr><th>Fecha</th><th>Lead</th><th>Estado</th><th>Objeción</th><th>Notas</th><th></th></tr></thead>
+              <tbody id="calls-table-body"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls registradas aún</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -281,28 +281,28 @@
       <!-- REPORTE DIARIO -->
       <div id="tab-daily" class="tab-content">
         <div class="section">
-          <div class="section-header"><div class="section-title">ðŸ“‹ Reporte Diario de Calls</div><div style="font-size:12px;color:var(--text2)" id="daily-date-display"></div></div>
+          <div class="section-header"><div class="section-title">📋 Reporte Diario de Calls</div><div style="font-size:12px;color:var(--text2)" id="daily-date-display"></div></div>
           <div class="form-row">
-            <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="daily-lead-name" type="text" placeholder="Ej: MarÃ­a GarcÃ­a"></div>
-            <div class="input-group"><label class="input-label">Estado del Lead</label><select class="input" id="daily-estado"><option value="">Seleccionar estado...</option><option value="cerrada">âœ… Cerrada</option><option value="no-cerrada">âŒ No cerrada</option><option value="seguimiento">ðŸ”„ Seguimiento</option><option value="agendada">ðŸ“… Re-agendada</option></select></div>
+            <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="daily-lead-name" type="text" placeholder="Ej: María García"></div>
+            <div class="input-group"><label class="input-label">Estado del Lead</label><select class="input" id="daily-estado"><option value="">Seleccionar estado...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option></select></div>
           </div>
           <div class="form-row">
-            <div class="input-group"><label class="input-label">ObjeciÃ³n principal</label><input class="input" id="daily-objecion" type="text" placeholder="Ej: 'No tengo presupuesto ahora'"></div>
-            <div class="input-group"><label class="input-label">PrÃ³ximo paso</label><input class="input" id="daily-proximo" type="text" placeholder="Ej: Follow-up en 3 dÃ­as"></div>
+            <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="daily-objecion" type="text" placeholder="Ej: 'No tengo presupuesto ahora'"></div>
+            <div class="input-group"><label class="input-label">Próximo paso</label><input class="input" id="daily-proximo" type="text" placeholder="Ej: Follow-up en 3 días"></div>
           </div>
           <div class="input-group"><label class="input-label">Notas de la call</label><textarea class="input" id="daily-notas" placeholder="Resumen de lo que hablaron..."></textarea></div>
           <div style="display:flex;gap:10px">
             <button class="btn btn-primary" onclick="addDailyEntry()">Guardar Entrada</button>
-            <button class="btn btn-secondary" onclick="generateDailyFeedback()">âœ¨ Feedback AI del DÃ­a</button>
+            <button class="btn btn-secondary" onclick="generateDailyFeedback()">✨ Feedback AI del Día</button>
           </div>
         </div>
         <div class="section" id="daily-feedback-section" style="display:none">
-          <div class="section-header"><div class="section-title">ðŸ¤– Feedback del DÃ­a</div></div>
+          <div class="section-header"><div class="section-title">🤖 Feedback del Día</div></div>
           <div class="ai-output" id="daily-feedback-output"></div>
         </div>
         <div class="section">
           <div class="section-header"><div class="section-title">Entries de Hoy</div><span class="section-badge" id="daily-count-badge">0 calls</span></div>
-          <div id="daily-entries-list"><div class="empty-state"><div class="empty-state-icon">ðŸ“</div><div class="empty-state-text">AÃºn no cargaste calls hoy</div></div></div>
+          <div id="daily-entries-list"><div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Aún no cargaste calls hoy</div></div></div>
         </div>
       </div>
 
@@ -310,14 +310,14 @@
       <div id="tab-leads" class="tab-content">
         <div class="section" style="margin-bottom:20px">
           <div class="section-header"><div class="section-title">Generar Carpeta de Lead desde Transcript</div></div>
-          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">PegÃ¡ el transcript de tu call y la IA arma automÃ¡ticamente el perfil del lead con follow-ups detallados.</p>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Pegá el transcript de tu call y la IA arma automáticamente el perfil del lead con follow-ups detallados.</p>
           <div class="input-group"><label class="input-label">Nombre del Lead</label><input class="input" id="lead-folder-name" type="text" placeholder="Nombre del cliente"></div>
-          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="lead-transcript-input" style="min-height:150px" placeholder="PegÃ¡ aquÃ­ el transcript completo..."></textarea></div>
-          <button class="btn btn-primary" id="btn-create-lead" onclick="createLeadFolder()">ðŸ—‚ï¸ Crear Carpeta del Lead</button>
+          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="lead-transcript-input" style="min-height:150px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
+          <button class="btn btn-primary" id="btn-create-lead" onclick="createLeadFolder()">🗂️ Crear Carpeta del Lead</button>
         </div>
         <div class="section">
           <div class="section-header"><div class="section-title">Carpetas de Leads</div><span class="section-badge" id="leads-count-badge">0 leads</span></div>
-          <div class="leads-grid" id="leads-folder-list"><div class="empty-state"><div class="empty-state-icon">ðŸ“</div><div class="empty-state-text">AÃºn no creaste carpetas de leads</div></div></div>
+          <div class="leads-grid" id="leads-folder-list"><div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">Aún no creaste carpetas de leads</div></div></div>
         </div>
       </div>
 
@@ -325,14 +325,14 @@
       <div id="tab-transcripts" class="tab-content">
         <div id="api-key-banner-transcripts"></div>
         <div class="section">
-          <div class="section-header"><div class="section-title">ðŸŽ™ï¸ AnÃ¡lisis de Transcript</div></div>
-          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">PegÃ¡ el transcript y recibÃ­ feedback detallado: quÃ© saliÃ³ bien, quÃ© mejorar, manejo de objeciones y prÃ³ximos pasos.</p>
-          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="transcript-input" style="min-height:200px" placeholder="PegÃ¡ aquÃ­ el transcript completo..."></textarea></div>
+          <div class="section-header"><div class="section-title">🎙️ Análisis de Transcript</div></div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Pegá el transcript y recibí feedback detallado: qué salió bien, qué mejorar, manejo de objeciones y próximos pasos.</p>
+          <div class="input-group"><label class="input-label">Transcript de la Call</label><textarea class="input" id="transcript-input" style="min-height:200px" placeholder="Pegá aquí el transcript completo..."></textarea></div>
           <div class="form-row">
-            <div class="input-group"><label class="input-label">Resultado de la call</label><select class="input" id="transcript-resultado"><option value="cerrada">âœ… Cerrada</option><option value="no-cerrada">âŒ No cerrada</option><option value="seguimiento">ðŸ”„ Seguimiento</option></select></div>
-            <div class="input-group"><label class="input-label">Contexto adicional (opcional)</label><input class="input" id="transcript-contexto" type="text" placeholder="Ej: Lead frÃ­o, primer contacto"></div>
+            <div class="input-group"><label class="input-label">Resultado de la call</label><select class="input" id="transcript-resultado"><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option></select></div>
+            <div class="input-group"><label class="input-label">Contexto adicional (opcional)</label><input class="input" id="transcript-contexto" type="text" placeholder="Ej: Lead frío, primer contacto"></div>
           </div>
-          <button class="btn btn-primary" onclick="analyzeTranscript()">ðŸ¤– Analizar con AI</button>
+          <button class="btn btn-primary" onclick="analyzeTranscript()">🤖 Analizar con AI</button>
         </div>
         <div class="section" id="transcript-result-section" style="display:none">
           <div class="section-header"><div class="section-title">Feedback de la Call</div></div>
@@ -343,9 +343,9 @@
       <!-- REPORTE SEMANAL -->
       <div id="tab-report" class="tab-content">
         <div class="report-section">
-          <div class="report-title">ðŸ“ˆ Reporte Semanal AutomÃ¡tico</div>
+          <div class="report-title">📈 Reporte Semanal Automático</div>
           <div class="report-date" id="weekly-date-range">Semana actual</div>
-          <button class="btn btn-primary" onclick="generateWeeklyReport()">ðŸ”„ Generar Reporte Semanal</button>
+          <button class="btn btn-primary" onclick="generateWeeklyReport()">🔄 Generar Reporte Semanal</button>
         </div>
         <div class="grid2" style="margin-bottom:20px">
           <div class="stat-card purple"><div class="stat-label">Calls esta semana</div><div class="stat-value purple" id="weekly-total">0</div></div>
@@ -362,49 +362,49 @@
       <!-- METAS -->
       <div id="tab-metas" class="tab-content">
         <div class="section">
-          <div class="section-header"><div class="section-title">ðŸ† Metas Mensuales</div><span class="section-badge" id="metas-month-label"></span></div>
-          <p style="font-size:12px;color:var(--text2);margin-bottom:20px">EstablecÃ© tus objetivos mensuales y seguÃ­ tu progreso en tiempo real.</p>
+          <div class="section-header"><div class="section-title">🏆 Metas Mensuales</div><span class="section-badge" id="metas-month-label"></span></div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:20px">Establecé tus objetivos mensuales y seguí tu progreso en tiempo real.</p>
           <div class="form-row" style="margin-bottom:14px">
-            <div class="input-group"><label class="input-label">ðŸŽ¯ Calls objetivo (mes)</label><input class="input" id="meta-calls" type="number" min="1" placeholder="Ej: 60"></div>
-            <div class="input-group"><label class="input-label">âœ… Cierres objetivo (mes)</label><input class="input" id="meta-cierres" type="number" min="1" placeholder="Ej: 15"></div>
+            <div class="input-group"><label class="input-label">🎯 Calls objetivo (mes)</label><input class="input" id="meta-calls" type="number" min="1" placeholder="Ej: 60"></div>
+            <div class="input-group"><label class="input-label">✅ Cierres objetivo (mes)</label><input class="input" id="meta-cierres" type="number" min="1" placeholder="Ej: 15"></div>
           </div>
-          <div class="input-group" style="max-width:50%"><label class="input-label">ðŸ“Š Tasa de cierre objetivo (%)</label><input class="input" id="meta-tasa" type="number" min="1" max="100" placeholder="Ej: 25"></div>
-          <button class="btn btn-primary" onclick="saveMetas()">ðŸ’¾ Guardar Metas</button>
+          <div class="input-group" style="max-width:50%"><label class="input-label">📊 Tasa de cierre objetivo (%)</label><input class="input" id="meta-tasa" type="number" min="1" max="100" placeholder="Ej: 25"></div>
+          <button class="btn btn-primary" onclick="saveMetas()">💾 Guardar Metas</button>
         </div>
 
         <div id="metas-progress-section">
           <div class="meta-card">
             <div class="meta-header">
               <div>
-                <div class="meta-title">ðŸ“ž Calls realizadas</div>
-                <div class="meta-values" id="meta-calls-vals">â€” / â€” calls</div>
+                <div class="meta-title">📞 Calls realizadas</div>
+                <div class="meta-values" id="meta-calls-vals">— / — calls</div>
               </div>
-              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--accent2)" id="meta-calls-pct">â€”</div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--accent2)" id="meta-calls-pct">—</div>
             </div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill purple" id="meta-calls-bar" style="width:0%"></div></div>
-            <div class="meta-pct" id="meta-calls-status">EstablecÃ© una meta para ver el progreso</div>
+            <div class="meta-pct" id="meta-calls-status">Establecé una meta para ver el progreso</div>
           </div>
           <div class="meta-card">
             <div class="meta-header">
               <div>
-                <div class="meta-title">ðŸ… Cierres logrados</div>
-                <div class="meta-values" id="meta-cierres-vals">â€” / â€” cierres</div>
+                <div class="meta-title">🏅 Cierres logrados</div>
+                <div class="meta-values" id="meta-cierres-vals">— / — cierres</div>
               </div>
-              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)" id="meta-cierres-pct">â€”</div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--green)" id="meta-cierres-pct">—</div>
             </div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill green" id="meta-cierres-bar" style="width:0%"></div></div>
-            <div class="meta-pct" id="meta-cierres-status">EstablecÃ© una meta para ver el progreso</div>
+            <div class="meta-pct" id="meta-cierres-status">Establecé una meta para ver el progreso</div>
           </div>
           <div class="meta-card">
             <div class="meta-header">
               <div>
-                <div class="meta-title">ðŸ“ˆ Tasa de cierre actual</div>
-                <div class="meta-values" id="meta-tasa-vals">â€”% / â€”% objetivo</div>
+                <div class="meta-title">📈 Tasa de cierre actual</div>
+                <div class="meta-values" id="meta-tasa-vals">—% / —% objetivo</div>
               </div>
-              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--yellow)" id="meta-tasa-pct">â€”</div>
+              <div style="font-size:22px;font-weight:700;font-family:'JetBrains Mono';color:var(--yellow)" id="meta-tasa-pct">—</div>
             </div>
             <div class="meta-bar-wrap"><div class="meta-bar-fill yellow" id="meta-tasa-bar" style="width:0%"></div></div>
-            <div class="meta-pct" id="meta-tasa-status">EstablecÃ© una meta para ver el progreso</div>
+            <div class="meta-pct" id="meta-tasa-status">Establecé una meta para ver el progreso</div>
           </div>
         </div>
       </div>
@@ -418,15 +418,15 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="modal-call-title">Nueva Call</div>
-      <span class="modal-close" onclick="closeModal('modal-add-call')">Ã—</span>
+      <span class="modal-close" onclick="closeModal('modal-add-call')">×</span>
     </div>
     <div class="form-row">
       <div class="input-group"><label class="input-label">Nombre del Lead *</label><input class="input" id="call-lead-name" type="text" placeholder="Nombre completo"></div>
       <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="call-fecha" type="date"></div>
     </div>
     <div class="form-row">
-      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">âœ… Cerrada</option><option value="no-cerrada">âŒ No cerrada</option><option value="seguimiento">ðŸ”„ Seguimiento</option><option value="agendada">ðŸ“… Re-agendada</option></select></div>
-      <div class="input-group"><label class="input-label">ObjeciÃ³n principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerrÃ³..."></div>
+      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option></select></div>
+      <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerró..."></div>
     </div>
     <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
     <input type="hidden" id="call-edit-id">
@@ -442,7 +442,7 @@
   <div class="modal modal-sm">
     <div class="modal-header">
       <div class="modal-title">Editar Lead</div>
-      <span class="modal-close" onclick="closeModal('modal-edit-lead')">Ã—</span>
+      <span class="modal-close" onclick="closeModal('modal-edit-lead')">×</span>
     </div>
     <div class="input-group"><label class="input-label">Nombre</label><input class="input" id="edit-lead-nombre" type="text"></div>
     <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="edit-lead-fecha" type="date"></div>
@@ -462,7 +462,7 @@
   <div class="modal" style="width:680px">
     <div class="modal-header">
       <div class="modal-title" id="modal-lead-title">Carpeta del Lead</div>
-      <span class="modal-close" onclick="closeModal('modal-lead-detail')">Ã—</span>
+      <span class="modal-close" onclick="closeModal('modal-lead-detail')">×</span>
     </div>
     <div id="modal-lead-content"></div>
   </div>
@@ -472,14 +472,14 @@
 <div class="modal-overlay" id="modal-settings">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <div class="modal-title">âš™ï¸ ConfiguraciÃ³n</div>
-      <span class="modal-close" onclick="closeModal('modal-settings')">Ã—</span>
+      <div class="modal-title">⚙️ Configuración</div>
+      <span class="modal-close" onclick="closeModal('modal-settings')">×</span>
     </div>
     <div style="margin-bottom:18px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)">ðŸ”‘ API Key de OpenAI</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)">🔑 API Key de OpenAI</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
-        NecesitÃ¡s una API key para usar las funciones de anÃ¡lisis con IA.<br>
-        <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">â†’ Crear una API key en OpenAI</a>
+        Necesitás una API key para usar las funciones de análisis con IA.<br>
+        <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">→ Crear una API key en OpenAI</a>
       </div>
       <div class="input-group">
         <label class="input-label">Tu API Key</label>
@@ -490,7 +490,7 @@
     <hr class="divider">
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-secondary" onclick="closeModal('modal-settings')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveApiKey()">ðŸ’¾ Guardar Key</button>
+      <button class="btn btn-primary" onclick="saveApiKey()">💾 Guardar Key</button>
     </div>
   </div>
 </div>
@@ -506,7 +506,7 @@ function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     const el = document.getElementById('save-status');
-    if(el){ el.textContent='Guardado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); setTimeout(()=>el.textContent='Guardado automÃ¡tico ON',2000); }
+    if(el){ el.textContent='Guardado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); setTimeout(()=>el.textContent='Guardado automático ON',2000); }
   } catch(e) {}
 }
 let state = loadState();
@@ -515,26 +515,26 @@ let state = loadState();
 function getApiKey() { return localStorage.getItem('openai_api_key') || ''; }
 function saveApiKey() {
   const k = document.getElementById('settings-api-key').value.trim();
-  if (!k) { alert('IngresÃ¡ tu API key'); return; }
+  if (!k) { alert('Ingresá tu API key'); return; }
   localStorage.setItem('openai_api_key', k);
   closeModal('modal-settings');
   renderApiKeyStatus();
-  alert('âœ… API key guardada correctamente');
+  alert('✅ API key guardada correctamente');
 }
 function renderApiKeyStatus() {
   const k = getApiKey();
   const statusEl = document.getElementById('settings-key-status');
   if(statusEl) {
-    if(k) statusEl.innerHTML = `<span class="api-key-indicator ok">âœ“ Key guardada (${k.slice(0,8)}...)</span>`;
-    else statusEl.innerHTML = `<span class="api-key-indicator missing">âœ— No configurada</span>`;
+    if(k) statusEl.innerHTML = `<span class="api-key-indicator ok">✓ Key guardada (${k.slice(0,8)}...)</span>`;
+    else statusEl.innerHTML = `<span class="api-key-indicator missing">✗ No configurada</span>`;
   }
   // banner in transcripts
   const banner = document.getElementById('api-key-banner-transcripts');
   if(banner) {
     if(!k) {
-      banner.innerHTML = `<div class="api-banner"><div class="api-banner-text">âš ï¸ <strong>API key de OpenAI no configurada.</strong> Para usar el anÃ¡lisis de transcripts necesitÃ¡s ingresar tu key.<br><a href="https://platform.openai.com/api-keys" target="_blank">â†’ Crear una API key aquÃ­</a></div><button class="btn btn-primary btn-sm" onclick="openSettingsModal()">Configurar Key</button></div>`;
+      banner.innerHTML = `<div class="api-banner"><div class="api-banner-text">⚠️ <strong>API key de OpenAI no configurada.</strong> Para usar el análisis de transcripts necesitás ingresar tu key.<br><a href="https://platform.openai.com/api-keys" target="_blank">→ Crear una API key aquí</a></div><button class="btn btn-primary btn-sm" onclick="openSettingsModal()">Configurar Key</button></div>`;
     } else {
-      banner.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><span class="api-key-indicator ok">âœ“ OpenAI conectado</span></div>`;
+      banner.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><span class="api-key-indicator ok">✓ OpenAI conectado</span></div>`;
     }
   }
 }
@@ -546,7 +546,7 @@ function openSettingsModal() {
 }
 
 // ===== NAV =====
-const titles = {overview:'Overview',daily:'Reporte Diario',leads:'Leads & Follow-ups',transcripts:'AnÃ¡lisis de Transcripts',report:'Reporte Semanal',metas:'Metas Mensuales'};
+const titles = {overview:'Overview',daily:'Reporte Diario',leads:'Leads & Follow-ups',transcripts:'Análisis de Transcripts',report:'Reporte Semanal',metas:'Metas Mensuales'};
 const tabOrder = ['overview','daily','leads','transcripts','report','metas'];
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -584,7 +584,7 @@ function filterCalls() {
   if(state.filter==='mes') return state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
   return state.calls;
 }
-function estadoLabel(e) { return {cerrada:'âœ… Cerrada','no-cerrada':'âŒ No cerrada',seguimiento:'ðŸ”„ Seguimiento',agendada:'ðŸ“… Re-agendada'}[e]||e; }
+function estadoLabel(e) { return {cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada'}[e]||e; }
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
@@ -607,20 +607,20 @@ function updateOverview() {
   calls.filter(c=>c.objecion).forEach(c=>{ const k=c.objecion.toLowerCase().trim(); objMap[k]=(objMap[k]||0)+1; });
   const sorted=Object.entries(objMap).sort((a,b)=>b[1]-a[1]);
   const objEl=document.getElementById('objection-list');
-  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">âœ…</div><div class="empty-state-text">Sin objeciones registradas</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
+  objEl.innerHTML=sorted.length===0?'<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones registradas</div></div>':sorted.map(([t,n])=>`<div class="objection-item"><div style="font-size:13px">${t}</div><div class="objection-count">${n}x</div></div>`).join('');
   // Tabla
   const tbody=document.getElementById('calls-table-body');
-  if(calls.length===0){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este perÃ­odo</td></tr>'; return; }
+  if(calls.length===0){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este período</td></tr>'; return; }
   tbody.innerHTML=[...calls].reverse().map(c=>`
     <tr>
       <td style="font-family:'JetBrains Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
       <td style="font-weight:500">${c.nombre}</td>
       <td><span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span></td>
-      <td style="color:var(--text2);font-size:12px">${c.objecion||'â€”'}</td>
-      <td style="color:var(--text2);font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notas||'â€”'}</td>
+      <td style="color:var(--text2);font-size:12px">${c.objecion||'—'}</td>
+      <td style="color:var(--text2);font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.notas||'—'}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-edit btn-sm" style="margin-right:4px" onclick="openEditCall(${c.id})">âœï¸</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">âœ•</button>
+        <button class="btn btn-edit btn-sm" style="margin-right:4px" onclick="openEditCall(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">✕</button>
       </td>
     </tr>`).join('');
 }
@@ -656,7 +656,7 @@ function saveCall() {
   const objecion=document.getElementById('call-objecion').value.trim();
   const notas=document.getElementById('call-notas').value.trim();
   const editId=document.getElementById('call-edit-id').value;
-  if(!nombre||!estado){ alert('CompletÃ¡ nombre y estado'); return; }
+  if(!nombre||!estado){ alert('Completá nombre y estado'); return; }
   if(editId) {
     const idx=state.calls.findIndex(c=>c.id==editId);
     if(idx>-1) state.calls[idx]={...state.calls[idx],nombre,estado,fecha:fecha||today(),objecion,notas};
@@ -667,7 +667,7 @@ function saveCall() {
   updateOverview(); updateDailyEntries();
 }
 function deleteCall(id) {
-  if(!confirm('Â¿Eliminar esta call? Esta acciÃ³n no se puede deshacer.')) return;
+  if(!confirm('¿Eliminar esta call? Esta acción no se puede deshacer.')) return;
   state.calls=state.calls.filter(c=>c.id!==id);
   saveState(); updateOverview(); updateDailyEntries();
 }
@@ -679,7 +679,7 @@ function initDaily() {
 function addDailyEntry() {
   const nombre=document.getElementById('daily-lead-name').value.trim();
   const estado=document.getElementById('daily-estado').value;
-  if(!nombre||!estado){ alert('CompletÃ¡ al menos nombre y estado'); return; }
+  if(!nombre||!estado){ alert('Completá al menos nombre y estado'); return; }
   state.calls.push({id:Date.now(),nombre,estado,fecha:today(),objecion:document.getElementById('daily-objecion').value.trim(),proximo:document.getElementById('daily-proximo').value.trim(),notas:document.getElementById('daily-notas').value.trim()});
   saveState();
   ['daily-lead-name','daily-objecion','daily-proximo','daily-notas'].forEach(i=>document.getElementById(i).value='');
@@ -690,18 +690,18 @@ function updateDailyEntries() {
   const todayCalls=state.calls.filter(c=>c.fecha===today());
   document.getElementById('daily-count-badge').textContent=todayCalls.length+' calls';
   const list=document.getElementById('daily-entries-list');
-  if(todayCalls.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">ðŸ“</div><div class="empty-state-text">AÃºn no cargaste calls hoy</div></div>'; return; }
+  if(todayCalls.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Aún no cargaste calls hoy</div></div>'; return; }
   list.innerHTML=todayCalls.map(c=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border)">
       <div>
         <div style="font-weight:600;font-size:13px">${c.nombre}</div>
-        ${c.objecion?`<div style="font-size:12px;color:var(--red);margin-top:2px">ObjeciÃ³n: ${c.objecion}</div>`:''}
-        ${c.proximo?`<div style="font-size:12px;color:var(--text2);margin-top:2px">â†’ ${c.proximo}</div>`:''}
+        ${c.objecion?`<div style="font-size:12px;color:var(--red);margin-top:2px">Objeción: ${c.objecion}</div>`:''}
+        ${c.proximo?`<div style="font-size:12px;color:var(--text2);margin-top:2px">→ ${c.proximo}</div>`:''}
       </div>
       <div style="display:flex;gap:6px;align-items:center">
         <span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span>
-        <button class="btn btn-edit btn-sm" onclick="openEditCall(${c.id})">âœï¸</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">âœ•</button>
+        <button class="btn btn-edit btn-sm" onclick="openEditCall(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCall(${c.id})">✕</button>
       </div>
     </div>`).join('');
 }
@@ -721,7 +721,7 @@ async function callOpenAI(prompt) {
 }
 
 function noKeyMessage(outputEl) {
-  outputEl.innerHTML=`<div style="padding:8px 0;color:var(--text2)">âš ï¸ <strong>API key no configurada.</strong> Para usar esta funciÃ³n necesitÃ¡s ingresar tu key de OpenAI.<br><br><a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">â†’ Crear una API key aquÃ­</a> &nbsp;Â·&nbsp; <span style="color:var(--accent2);cursor:pointer" onclick="openSettingsModal()">â†’ Configurar ahora</span></div>`;
+  outputEl.innerHTML=`<div style="padding:8px 0;color:var(--text2)">⚠️ <strong>API key no configurada.</strong> Para usar esta función necesitás ingresar tu key de OpenAI.<br><br><a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent2)">→ Crear una API key aquí</a> &nbsp;·&nbsp; <span style="color:var(--accent2);cursor:pointer" onclick="openSettingsModal()">→ Configurar ahora</span></div>`;
 }
 
 async function generateDailyFeedback() {
@@ -730,9 +730,9 @@ async function generateDailyFeedback() {
   const section=document.getElementById('daily-feedback-section');
   const output=document.getElementById('daily-feedback-output');
   section.style.display='block';
-  output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Analizando tu dÃ­a...</div>';
-  const resumen=todayCalls.map((c,i)=>`${i+1}. Lead: ${c.nombre} | Estado: ${estadoLabel(c.estado)} | ObjeciÃ³n: ${c.objecion||'ninguna'} | Notas: ${c.notas||'sin notas'}`).join('\n');
-  const prompt=`Eres un coach de ventas experto en High Ticket Closing. Analiza el reporte de calls del dÃ­a:\n\n${resumen}\n\nFeedback estructurado:\n1. **Resumen del dÃ­a**\n2. **QuÃ© hiciste bien** (2-3 puntos)\n3. **Ãreas de mejora** (2-3 puntos)\n4. **Objeciones no resueltas** (cÃ³mo manejarlas)\n5. **RecomendaciÃ³n para maÃ±ana**\n\nDirecto, especÃ­fico, en espaÃ±ol.`;
+  output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Analizando tu día...</div>';
+  const resumen=todayCalls.map((c,i)=>`${i+1}. Lead: ${c.nombre} | Estado: ${estadoLabel(c.estado)} | Objeción: ${c.objecion||'ninguna'} | Notas: ${c.notas||'sin notas'}`).join('\n');
+  const prompt=`Eres un coach de ventas experto en High Ticket Closing. Analiza el reporte de calls del día:\n\n${resumen}\n\nFeedback estructurado:\n1. **Resumen del día**\n2. **Qué hiciste bien** (2-3 puntos)\n3. **Áreas de mejora** (2-3 puntos)\n4. **Objeciones no resueltas** (cómo manejarlas)\n5. **Recomendación para mañana**\n\nDirecto, específico, en español.`;
   try { output.textContent=await callOpenAI(prompt); }
   catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
 }
@@ -741,12 +741,12 @@ async function analyzeTranscript() {
   const transcript=document.getElementById('transcript-input').value.trim();
   const resultado=document.getElementById('transcript-resultado').value;
   const contexto=document.getElementById('transcript-contexto').value.trim();
-  if(!transcript){ alert('PegÃ¡ el transcript primero'); return; }
+  if(!transcript){ alert('Pegá el transcript primero'); return; }
   const section=document.getElementById('transcript-result-section');
   const output=document.getElementById('transcript-output');
   section.style.display='block';
   output.innerHTML='<div class="ai-loading"><div class="spinner"></div> Analizando transcript...</div>';
-  const prompt=`Eres un coach de ventas experto en High Ticket Closing ($2.8k-$12k USD). Analiza el transcript.\n\nRESULTADO: ${resultado}\n${contexto?'CONTEXTO: '+contexto:''}\n\nTRANSCRIPT:\n${transcript}\n\n**1. DIAGNÃ“STICO RÃPIDO**\n**2. LO QUE HICISTE BIEN âœ…** (3-4 puntos)\n**3. ÃREAS DE MEJORA ðŸŽ¯** (3-4 puntos)\n**4. MANEJO DE OBJECIONES ðŸ’¡**\n**5. MOMENTOS CLAVE ðŸ”‘**\n**6. PRÃ“XIMOS PASOS ðŸš€**\n\nEspecÃ­fico, con ejemplos del transcript, en espaÃ±ol.`;
+  const prompt=`Eres un coach de ventas experto en High Ticket Closing ($2.8k-$12k USD). Analiza el transcript.\n\nRESULTADO: ${resultado}\n${contexto?'CONTEXTO: '+contexto:''}\n\nTRANSCRIPT:\n${transcript}\n\n**1. DIAGNÓSTICO RÁPIDO**\n**2. LO QUE HICISTE BIEN ✅** (3-4 puntos)\n**3. ÁREAS DE MEJORA 🎯** (3-4 puntos)\n**4. MANEJO DE OBJECIONES 💡**\n**5. MOMENTOS CLAVE 🔑**\n**6. PRÓXIMOS PASOS 🚀**\n\nEspecífico, con ejemplos del transcript, en español.`;
   try { output.textContent=await callOpenAI(prompt); }
   catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
 }
@@ -764,8 +764,8 @@ async function generateWeeklyReport() {
   const objMap={};
   calls.filter(c=>c.objecion).forEach(c=>{ const k=c.objecion.toLowerCase().trim(); objMap[k]=(objMap[k]||0)+1; });
   const objText=Object.entries(objMap).sort((a,b)=>b[1]-a[1]).map(([o,n])`=>"- \"${o}\" (${n}x)"`).join('\n');
-  const resumenCalls=calls.map((c,i)=>`${i+1}. ${c.nombre} - ${estadoLabel(c.estado)} - ObjeciÃ³n: ${c.objecion||'ninguna'}`).join('\n');
-  const prompt=`Coach de ventas, genera REPORTE SEMANAL de un High Ticket Closer.\n\nSEMANA: ${w.start} al ${w.end}\nTOTAL: ${total} | CERRADAS: ${cerradas} (${rate}%) | NO CERRADAS: ${calls.filter(c=>c.estado==='no-cerrada').length}\n\nOBJECIONES:\n${objText||'Ninguna'}\n\nCALLS:\n${resumenCalls}\n\n**ðŸ“Š RESUMEN DE LA SEMANA**\n**ðŸ† LOGROS**\n**âš ï¸ PATRÃ“N DE OBJECIONES** (con scripts)\n**ðŸŽ¯ FOCO DE MEJORA**\n**ðŸ“ˆ OBJETIVO PRÃ“XIMA SEMANA**\n\nEn espaÃ±ol, especÃ­fico y motivador.`;
+  const resumenCalls=calls.map((c,i)=>`${i+1}. ${c.nombre} - ${estadoLabel(c.estado)} - Objeción: ${c.objecion||'ninguna'}`).join('\n');
+  const prompt=`Coach de ventas, genera REPORTE SEMANAL de un High Ticket Closer.\n\nSEMANA: ${w.start} al ${w.end}\nTOTAL: ${total} | CERRADAS: ${cerradas} (${rate}%) | NO CERRADAS: ${calls.filter(c=>c.estado==='no-cerrada').length}\n\nOBJECIONES:\n${objText||'Ninguna'}\n\nCALLS:\n${resumenCalls}\n\n**📊 RESUMEN DE LA SEMANA**\n**🏆 LOGROS**\n**⚠️ PATRÓN DE OBJECIONES** (con scripts)\n**🎯 FOCO DE MEJORA**\n**📈 OBJETIVO PRÓXIMA SEMANA**\n\nEn español, específico y motivador.`;
   try { output.textContent=await callOpenAI(prompt); }
   catch(e){ if(e.message==='NO_KEY') noKeyMessage(output); else output.textContent='Error: '+e.message; }
 }
@@ -774,10 +774,10 @@ async function generateWeeklyReport() {
 async function createLeadFolder() {
   const nombre=document.getElementById('lead-folder-name').value.trim();
   const transcript=document.getElementById('lead-transcript-input').value.trim();
-  if(!nombre||!transcript){ alert('CompletÃ¡ nombre y transcript'); return; }
+  if(!nombre||!transcript){ alert('Completá nombre y transcript'); return; }
   const btn=document.getElementById('btn-create-lead');
-  btn.textContent='â³ Procesando...'; btn.disabled=true;
-  const prompt=`Eres un asistente de ventas high ticket. Analiza el transcript y crea carpeta para "${nombre}".\n\nTRANSCRIPT:\n${transcript}\n\nResponde SOLO JSON vÃ¡lido:\n{"resumen":"2-3 oraciones","perfil":{"necesidades":"...","presupuesto":"...","urgencia":"Alta/Media/Baja","objeciones":["obj1"]},"estado":"cerrada|no-cerrada|seguimiento","followups":[{"dia":"N","accion":"...","mensaje_sugerido":"..."}],"notas_importantes":["nota1"],"probabilidad_cierre":"Alta/Media/Baja"}`;
+  btn.textContent='⏳ Procesando...'; btn.disabled=true;
+  const prompt=`Eres un asistente de ventas high ticket. Analiza el transcript y crea carpeta para "${nombre}".\n\nTRANSCRIPT:\n${transcript}\n\nResponde SOLO JSON válido:\n{"resumen":"2-3 oraciones","perfil":{"necesidades":"...","presupuesto":"...","urgencia":"Alta/Media/Baja","objeciones":["obj1"]},"estado":"cerrada|no-cerrada|seguimiento","followups":[{"dia":"N","accion":"...","mensaje_sugerido":"..."}],"notas_importantes":["nota1"],"probabilidad_cierre":"Alta/Media/Baja"}`;
   try {
     let text=await callOpenAI(prompt);
     text=text.replace(/```json|```/g,'').trim();
@@ -788,30 +788,30 @@ async function createLeadFolder() {
     document.getElementById('lead-transcript-input').value='';
     updateLeadsList();
   } catch(e){
-    if(e.message==='NO_KEY'){ alert('ConfigurÃ¡ tu API key de OpenAI primero.\nAndÃ¡ a âš™ï¸ ConfiguraciÃ³n en el sidebar.'); openSettingsModal(); }
+    if(e.message==='NO_KEY'){ alert('Configurá tu API key de OpenAI primero.\nAndá a ⚙️ Configuración en el sidebar.'); openSettingsModal(); }
     else alert('Error al procesar: '+e.message);
   }
-  btn.textContent='ðŸ—‚ï¸ Crear Carpeta del Lead'; btn.disabled=false;
+  btn.textContent='🗂️ Crear Carpeta del Lead'; btn.disabled=false;
 }
 function updateLeadsList() {
   document.getElementById('leads-count-badge').textContent=state.leads.length+' leads';
   const list=document.getElementById('leads-folder-list');
-  if(state.leads.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">ðŸ“</div><div class="empty-state-text">AÃºn no creaste carpetas de leads</div></div>'; return; }
+  if(state.leads.length===0){ list.innerHTML='<div class="empty-state"><div class="empty-state-icon">📁</div><div class="empty-state-text">Aún no creaste carpetas de leads</div></div>'; return; }
   list.innerHTML=state.leads.map(lead=>{
     const d=lead.data, fc=d.followups?.length||0;
     const probColor={Alta:'var(--green)',Media:'var(--yellow)',Baja:'var(--red)'}[d.probabilidad_cierre]||'var(--text2)';
     return `<div class="lead-card">
       <div class="lead-card-header">
-        <div><div class="lead-name">ðŸ“ ${lead.nombre}</div><div class="lead-meta">${lead.fecha} Â· ${fc} follow-ups</div></div>
+        <div><div class="lead-name">📁 ${lead.nombre}</div><div class="lead-meta">${lead.fecha} · ${fc} follow-ups</div></div>
         <div style="display:flex;gap:6px;align-items:center">
-          <span style="font-size:11px;color:${probColor};font-weight:600">â— ${d.probabilidad_cierre||'?'}</span>
+          <span style="font-size:11px;color:${probColor};font-weight:600">● ${d.probabilidad_cierre||'?'}</span>
           <button class="btn btn-secondary btn-sm" onclick="openLeadDetail(${lead.id})">Ver</button>
-          <button class="btn btn-edit btn-sm" onclick="openEditLead(${lead.id})">âœï¸</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteLead(${lead.id})">âœ•</button>
+          <button class="btn btn-edit btn-sm" onclick="openEditLead(${lead.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLead(${lead.id})">✕</button>
         </div>
       </div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5">${d.resumen||''}</div>
-      ${fc>0?`<div class="lead-followups">${d.followups.slice(0,2).map(f=>`<div class="followup-item"><span style="color:var(--accent2)">ðŸ“…</span><span><strong>+${f.dia} dÃ­as:</strong> ${f.accion}</span></div>`).join('')}${fc>2?`<div style="font-size:11px;color:var(--text3);padding-left:10px">+${fc-2} mÃ¡s...</div>`:''}</div>`:''}
+      ${fc>0?`<div class="lead-followups">${d.followups.slice(0,2).map(f=>`<div class="followup-item"><span style="color:var(--accent2)">📅</span><span><strong>+${f.dia} días:</strong> ${f.accion}</span></div>`).join('')}${fc>2?`<div style="font-size:11px;color:var(--text3);padding-left:10px">+${fc-2} más...</div>`:''}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -832,24 +832,24 @@ function saveEditLead() {
   saveState(); closeModal('modal-edit-lead'); updateLeadsList();
 }
 function deleteLead(id) {
-  if(!confirm('Â¿Eliminar esta carpeta de lead? Esta acciÃ³n no se puede deshacer.')) return;
+  if(!confirm('¿Eliminar esta carpeta de lead? Esta acción no se puede deshacer.')) return;
   state.leads=state.leads.filter(l=>l.id!==id); saveState(); updateLeadsList();
 }
 function openLeadDetail(id) {
   const lead=state.leads.find(l=>l.id===id); if(!lead) return;
   const d=lead.data;
-  document.getElementById('modal-lead-title').textContent='ðŸ“ '+lead.nombre;
+  document.getElementById('modal-lead-title').textContent='📁 '+lead.nombre;
   document.getElementById('modal-lead-content').innerHTML=`
     <div style="margin-bottom:16px"><div style="font-size:12px;color:var(--text2);margin-bottom:8px">Resumen</div><div style="font-size:13px;line-height:1.6">${d.resumen||''}</div></div>
     <div class="form-row" style="margin-bottom:16px">
-      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Necesidades</div><div style="font-size:13px">${d.perfil?.necesidades||'â€”'}</div></div>
-      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Urgencia</div><div style="font-size:13px">${d.perfil?.urgencia||'â€”'}</div></div>
+      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Necesidades</div><div style="font-size:13px">${d.perfil?.necesidades||'—'}</div></div>
+      <div style="background:var(--surface2);border-radius:8px;padding:14px"><div style="font-size:11px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Urgencia</div><div style="font-size:13px">${d.perfil?.urgencia||'—'}</div></div>
     </div>
-    ${d.perfil?.objeciones?.length>0?`<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeciones</div>${d.perfil.objeciones.map(o=>`<div style="padding:8px 12px;background:rgba(244,63,110,.08);border:1px solid rgba(244,63,110,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--red)">âš ï¸ ${o}</div>`).join('')}</div>`:''}
+    ${d.perfil?.objeciones?.length>0?`<div style="margin-bottom:16px"><div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Objeciones</div>${d.perfil.objeciones.map(o=>`<div style="padding:8px 12px;background:rgba(244,63,110,.08);border:1px solid rgba(244,63,110,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--red)">⚠️ ${o}</div>`).join('')}</div>`:''}
     <hr class="divider">
-    <div style="margin-bottom:12px;font-size:13px;font-weight:600">ðŸ“… Plan de Follow-ups</div>
-    ${d.followups?.map(f=>`<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:13px">DÃ­a +${f.dia}</div><span style="font-size:11px;color:var(--accent2);padding:2px 8px;background:rgba(124,106,245,.1);border-radius:4px">Programado</span></div><div style="font-size:13px;margin-bottom:8px">${f.accion}</div>${f.mensaje_sugerido?`<div style="font-size:12px;color:var(--text2);padding:10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);font-style:italic">"${f.mensaje_sugerido}"</div>`:''}</div>`).join('')||'<div style="color:var(--text3);font-size:13px">Sin follow-ups</div>'}
-    ${d.notas_importantes?.length>0?`<hr class="divider"><div style="font-size:13px;font-weight:600;margin-bottom:10px">ðŸ“Œ Notas importantes</div>${d.notas_importantes.map(n=>`<div style="padding:8px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--yellow)">â€¢ ${n}</div>`).join('')}`:''}`;
+    <div style="margin-bottom:12px;font-size:13px;font-weight:600">📅 Plan de Follow-ups</div>
+    ${d.followups?.map(f=>`<div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:10px;border:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:13px">Día +${f.dia}</div><span style="font-size:11px;color:var(--accent2);padding:2px 8px;background:rgba(124,106,245,.1);border-radius:4px">Programado</span></div><div style="font-size:13px;margin-bottom:8px">${f.accion}</div>${f.mensaje_sugerido?`<div style="font-size:12px;color:var(--text2);padding:10px;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);font-style:italic">"${f.mensaje_sugerido}"</div>`:''}</div>`).join('')||'<div style="color:var(--text3);font-size:13px">Sin follow-ups</div>'}
+    ${d.notas_importantes?.length>0?`<hr class="divider"><div style="font-size:13px;font-weight:600;margin-bottom:10px">📌 Notas importantes</div>${d.notas_importantes.map(n=>`<div style="padding:8px 12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:6px;font-size:12px;margin-bottom:6px;color:var(--yellow)">• ${n}</div>`).join('')}`:''}`;
   openModal('modal-lead-detail');
 }
 
@@ -872,10 +872,10 @@ function saveMetas() {
   const calls=document.getElementById('meta-calls').value;
   const cierres=document.getElementById('meta-cierres').value;
   const tasa=document.getElementById('meta-tasa').value;
-  if(!calls&&!cierres&&!tasa){ alert('IngresÃ¡ al menos una meta'); return; }
+  if(!calls&&!cierres&&!tasa){ alert('Ingresá al menos una meta'); return; }
   localStorage.setItem('scd_metas',JSON.stringify({calls,cierres,tasa}));
   renderMetasProgress();
-  alert('âœ… Metas guardadas');
+  alert('✅ Metas guardadas');
 }
 function renderMetasProgress() {
   const metas=loadMetas();
@@ -898,13 +898,13 @@ function renderMetasProgress() {
     const meta=hasMeta?parseInt(metaVal):0;
     const pct=hasMeta?Math.min(Math.round((realVal/meta)*100),100):0;
     document.getElementById(barId).style.width=(hasMeta?pct:0)+'%';
-    document.getElementById(valId).textContent=`${realVal}${unit} / ${hasMeta?metaVal+unit:'â€”'} objetivo`;
-    document.getElementById(pctId).textContent=hasMeta?pct+'%':'â€”';
+    document.getElementById(valId).textContent=`${realVal}${unit} / ${hasMeta?metaVal+unit:'—'} objetivo`;
+    document.getElementById(pctId).textContent=hasMeta?pct+'%':'—';
     const statusEl=document.getElementById(statusId);
-    if(!hasMeta){ statusEl.innerHTML='EstablecÃ© una meta para ver el progreso'; return; }
+    if(!hasMeta){ statusEl.innerHTML='Establecé una meta para ver el progreso'; return; }
     const remaining=meta-realVal;
-    if(pct>=100) statusEl.innerHTML=`<span style="color:var(--green)">ðŸŽ‰ Â¡Meta alcanzada!</span>`;
-    else statusEl.innerHTML=`<span>${remaining} ${unit||'unidades'} para la meta Â· ${pct}% completado</span>`;
+    if(pct>=100) statusEl.innerHTML=`<span style="color:var(--green)">🎉 ¡Meta alcanzada!</span>`;
+    else statusEl.innerHTML=`<span>${remaining} ${unit||'unidades'} para la meta · ${pct}% completado</span>`;
   }
 
   updateBar(realCalls,metas.calls,'meta-calls-bar','meta-calls-vals','meta-calls-pct','meta-calls-status',' calls');
@@ -935,8 +935,8 @@ function importData(event) {
   reader.onload = function(e) {
     try {
       const data = JSON.parse(e.target.result);
-      if (!data.calls || !data.leads) { alert('Archivo invÃ¡lido'); return; }
-      if (!confirm(`Â¿Importar ${data.calls.length} calls y ${data.leads.length} leads? Esto reemplazarÃ¡ los datos actuales.`)) return;
+      if (!data.calls || !data.leads) { alert('Archivo inválido'); return; }
+      if (!confirm(`¿Importar ${data.calls.length} calls y ${data.leads.length} leads? Esto reemplazará los datos actuales.`)) return;
       state.calls = data.calls;
       state.leads = data.leads;
       if (data.metas) localStorage.setItem('scd_metas', JSON.stringify(data.metas));
@@ -945,7 +945,7 @@ function importData(event) {
       updateDailyEntries();
       updateLeadsList();
       renderMetasProgress();
-      alert('âœ… Datos importados correctamente');
+      alert('✅ Datos importados correctamente');
     } catch(e) {
       alert('Error al leer el archivo: ' + e.message);
     }
@@ -956,7 +956,7 @@ function importData(event) {
 
 // ===== RESET =====
 function confirmClearData() {
-  if(!confirm('Â¿Borrar TODOS los datos (calls y leads)? Esta acciÃ³n no se puede deshacer.')) return;
+  if(!confirm('¿Borrar TODOS los datos (calls y leads)? Esta acción no se puede deshacer.')) return;
   state.calls=[]; state.leads=[];
   saveState(); updateOverview(); updateDailyEntries(); updateLeadsList();
 }
