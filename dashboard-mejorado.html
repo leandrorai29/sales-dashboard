@@ -292,40 +292,95 @@ select.input{cursor:pointer;}
           <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
         </div>
         <div class="two-col">
+          <!-- CUADRADO 1: Calculadora inversa -->
           <div class="section">
-            <div class="section-header">
-              <div class="section-title">Tasa de Cierre</div>
+            <div class="section-header" style="margin-bottom:16px;">
+              <div class="section-title">🧮 Calculadora de Meta</div>
             </div>
-            <div id="cierre-rate-text" style="font-size:28px;font-weight:700;font-family:'DM Mono';color:var(--green)">0%</div>
-            <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:12px">de calls cerradas</div>
-            <div class="rate-bar"><div class="rate-fill" id="rate-bar-fill" style="width:0%"></div></div>
-            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-              <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">💰 Comisiones estimadas</div>
-              <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;flex:1;border:1px solid var(--border)">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SA Dental</div>
-                  <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--green)" id="comision-sa">$0</div>
-                </div>
-                <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;flex:1;border:1px solid var(--border)">
-                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Scaling In Blue</div>
-                  <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--accent2)" id="comision-scaling">$0</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Ingresá tu meta y ticket promedio para saber cuántas calls necesitás.</div>
+            <div class="form-row" style="margin-bottom:12px;">
+              <div class="input-group">
+                <label class="input-label">Meta de ingresos ($)</label>
+                <div style="display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                  <span style="padding:10px 10px 10px 12px;color:var(--text2);font-weight:600;font-size:13px;">$</span>
+                  <input id="calc-meta-ingresos" type="number" placeholder="5000" style="flex:1;background:transparent;border:none;padding:10px 12px 10px 0;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;" oninput="updateCalculadora()">
                 </div>
               </div>
-              <div style="font-size:11px;color:var(--text3);margin-top:8px;">Ticket promedio SA: $4k · Scaling: $6k · Comisión: 10%</div>
+              <div class="input-group">
+                <label class="input-label">Ticket promedio ($)</label>
+                <div style="display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                  <span style="padding:10px 10px 10px 12px;color:var(--text2);font-weight:600;font-size:13px;">$</span>
+                  <input id="calc-ticket" type="number" placeholder="3000" value="3000" style="flex:1;background:transparent;border:none;padding:10px 12px 10px 0;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;" oninput="updateCalculadora()">
+                </div>
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:16px;">
+              <div class="input-group">
+                <label class="input-label">Tasa de cierre esperada (%)</label>
+                <div style="display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                  <input id="calc-tasa" type="number" placeholder="28" value="28" style="flex:1;background:transparent;border:none;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;" oninput="updateCalculadora()">
+                  <span style="padding:10px 12px 10px 0;color:var(--text2);font-weight:600;font-size:13px;">%</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label class="input-label">Comisión (%)</label>
+                <div style="display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+                  <input id="calc-comision" type="number" placeholder="10" value="10" style="flex:1;background:transparent;border:none;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;" oninput="updateCalculadora()">
+                  <span style="padding:10px 12px 10px 0;color:var(--text2);font-weight:600;font-size:13px;">%</span>
+                </div>
+              </div>
+            </div>
+            <div id="calculadora-result" style="background:var(--surface2);border-radius:var(--radius-sm);padding:16px;border:1px solid var(--border);">
+              <div style="font-size:12px;color:var(--text3);text-align:center;">Completá los campos para ver el cálculo</div>
             </div>
           </div>
+
+          <!-- CUADRADO 2: Barra de ingresos del mes -->
           <div class="section">
-            <div class="section-header">
-              <div class="section-title">Objeciones Frecuentes</div>
-              <div style="display:flex;gap:4px;background:var(--surface2);padding:3px;border-radius:6px;border:1px solid var(--border)">
-                <button class="filter-btn active" id="obj-filter-semana" onclick="setObjFilter('semana',this)" style="padding:3px 10px;font-size:11px;">Semana</button>
-                <button class="filter-btn" id="obj-filter-mes" onclick="setObjFilter('mes',this)" style="padding:3px 10px;font-size:11px;">Mes</button>
-                <button class="filter-btn" id="obj-filter-todo" onclick="setObjFilter('todo',this)" style="padding:3px 10px;font-size:11px;">Todo</button>
+            <div class="section-header" style="margin-bottom:16px;">
+              <div class="section-title">💰 Ingresos del Mes</div>
+              <span class="section-badge" id="ingresos-mes-label"></span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+              <div style="font-size:36px;font-weight:800;font-family:'DM Mono';color:var(--green)" id="ingresos-actuales">$0</div>
+              <div style="font-size:14px;color:var(--text2);">/ <span id="ingresos-meta-label" style="color:var(--text);">—</span></div>
+            </div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">comisiones este mes</div>
+            <div style="height:12px;background:var(--surface2);border-radius:6px;overflow:hidden;margin-bottom:10px;border:1px solid var(--border);">
+              <div id="ingresos-bar" style="height:100%;border-radius:6px;background:linear-gradient(90deg,var(--green),#34d399);transition:width .6s cubic-bezier(.4,0,.2,1);width:0%;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+              <div style="font-size:11px;color:var(--text3)" id="ingresos-pct">0% completado</div>
+              <div style="font-size:11px;color:var(--text3)" id="ingresos-falta">— para la meta</div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;">
+              <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-weight:600;">Por agencia</div>
+              <div style="display:flex;gap:10px;">
+                <div style="background:var(--surface2);border-radius:8px;padding:12px 16px;flex:1;border:1px solid var(--border)">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SA Dental</div>
+                  <div style="font-size:18px;font-weight:700;font-family:'DM Mono';color:var(--green)" id="comision-sa">$0</div>
+                </div>
+                <div style="background:var(--surface2);border-radius:8px;padding:12px 16px;flex:1;border:1px solid var(--border)">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Scaling In Blue</div>
+                  <div style="font-size:18px;font-weight:700;font-family:'DM Mono';color:var(--accent2)" id="comision-scaling">$0</div>
+                </div>
               </div>
             </div>
-            <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
           </div>
         </div>
+        <!-- Objeciones -->
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">Objeciones Frecuentes</div>
+            <div style="display:flex;gap:4px;background:var(--surface2);padding:3px;border-radius:6px;border:1px solid var(--border)">
+              <button class="filter-btn active" id="obj-filter-semana" onclick="setObjFilter('semana',this)" style="padding:3px 10px;font-size:11px;">Semana</button>
+              <button class="filter-btn" id="obj-filter-mes" onclick="setObjFilter('mes',this)" style="padding:3px 10px;font-size:11px;">Mes</button>
+              <button class="filter-btn" id="obj-filter-todo" onclick="setObjFilter('todo',this)" style="padding:3px 10px;font-size:11px;">Todo</button>
+            </div>
+          </div>
+          <div class="objection-list" id="objection-list"><div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Cargá calls para ver objeciones</div></div></div>
+        </div>
+
         <div class="section">
           <div class="section-header">
             <div class="section-title">Historial de Calls</div>
@@ -667,6 +722,98 @@ function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrad
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
+// ===== CALCULADORA INVERSA =====
+function updateCalculadora(){
+  const meta=parseFloat(document.getElementById('calc-meta-ingresos')?.value)||0;
+  const ticket=parseFloat(document.getElementById('calc-ticket')?.value)||3000;
+  const tasa=parseFloat(document.getElementById('calc-tasa')?.value)||28;
+  const comision=parseFloat(document.getElementById('calc-comision')?.value)||10;
+  const el=document.getElementById('calculadora-result');
+  if(!el)return;
+  if(!meta||!ticket||!tasa){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;">Completá los campos para ver el cálculo</div>';
+    return;
+  }
+  const ingresoPorCierre=ticket*(comision/100);
+  const cierresNecesarios=Math.ceil(meta/ingresoPorCierre);
+  const callsNecesarias=Math.ceil(cierresNecesarios/(tasa/100));
+  const callsPorDia=Math.ceil(callsNecesarias/22); // 22 días hábiles
+  const callsPorSemana=Math.ceil(callsNecesarias/4);
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="text-align:center;padding:12px;background:var(--surface3);border-radius:8px;border:1px solid var(--border2);">
+        <div style="font-size:28px;font-weight:800;font-family:'DM Mono';color:var(--accent2);">${cierresNecesarios}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">cierres necesarios</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--surface3);border-radius:8px;border:1px solid var(--border2);">
+        <div style="font-size:28px;font-weight:800;font-family:'DM Mono';color:var(--yellow);">${callsNecesarias}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">calls totales</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <div style="flex:1;text-align:center;padding:8px;background:var(--surface3);border-radius:6px;">
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--text);">${callsPorSemana}</div>
+        <div style="font-size:10px;color:var(--text3);">calls/semana</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:8px;background:var(--surface3);border-radius:6px;">
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--text);">${callsPorDia}</div>
+        <div style="font-size:10px;color:var(--text3);">calls/día</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:8px;background:var(--surface3);border-radius:6px;">
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono';color:var(--green);">$${ingresoPorCierre.toLocaleString()}</div>
+        <div style="font-size:10px;color:var(--text3);">por cierre</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:10px;text-align:center;">Con ticket $${ticket.toLocaleString()} · ${tasa}% cierre · ${comision}% comisión</div>
+  `;
+  // Guardar config para la barra de ingresos
+  try{localStorage.setItem('calc_config',JSON.stringify({meta,ticket,tasa,comision}));}catch(e){}
+  updateIngresosBar();
+}
+
+function loadCalcConfig(){
+  try{const c=localStorage.getItem('calc_config');if(c){const d=JSON.parse(c);
+    if(d.meta)document.getElementById('calc-meta-ingresos').value=d.meta;
+    if(d.ticket)document.getElementById('calc-ticket').value=d.ticket;
+    if(d.tasa)document.getElementById('calc-tasa').value=d.tasa;
+    if(d.comision)document.getElementById('calc-comision').value=d.comision;
+  }}catch(e){}
+  updateCalculadora();
+}
+
+function updateIngresosBar(){
+  try{
+    const c=localStorage.getItem('calc_config');
+    const config=c?JSON.parse(c):{meta:0,ticket:3000,tasa:28,comision:10};
+    const m=getMonthRange();
+    const callsMesCerradas=state.calls.filter(c2=>c2.fecha>=m.start&&c2.fecha<=m.end&&c2.estado==='cerrada');
+    const cierresSA=callsMesCerradas.filter(c2=>c2.notas&&c2.notas.includes('SA Dental')).length;
+    const cierresScaling=callsMesCerradas.filter(c2=>c2.notas&&c2.notas.includes('Scaling')).length;
+    const otrosCierres=callsMesCerradas.length-cierresSA-cierresScaling;
+    const ticket=config.ticket||3000;
+    const com=config.comision||10;
+    const comSA=cierresSA*ticket*(com/100);
+    const comScaling=cierresScaling*ticket*(com/100);
+    const comOtros=otrosCierres*ticket*(com/100);
+    const totalIngresos=comSA+comScaling+comOtros;
+    const meta=config.meta||0;
+    const pct=meta>0?Math.min(Math.round((totalIngresos/meta)*100),100):0;
+    const falta=Math.max(0,meta-totalIngresos);
+    const now=new Date();
+    const mesLabel=now.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+    document.getElementById('ingresos-mes-label').textContent=mesLabel;
+    document.getElementById('ingresos-actuales').textContent='$'+totalIngresos.toLocaleString();
+    document.getElementById('ingresos-meta-label').textContent=meta>0?'$'+meta.toLocaleString():'sin meta';
+    document.getElementById('ingresos-bar').style.width=pct+'%';
+    const barColor=pct>=100?'var(--green)':pct>=60?'linear-gradient(90deg,var(--yellow),#fbbf24)':'linear-gradient(90deg,var(--accent),#60a5fa)';
+    document.getElementById('ingresos-bar').style.background=barColor;
+    document.getElementById('ingresos-pct').textContent=pct+'% completado';
+    document.getElementById('ingresos-falta').textContent=meta>0&&falta>0?'$'+falta.toLocaleString()+' para la meta':'';
+    document.getElementById('comision-sa').textContent='$'+comSA.toLocaleString();
+    document.getElementById('comision-scaling').textContent='$'+comScaling.toLocaleString();
+  }catch(e){}
+}
+
 // ===== OVERVIEW =====
 function updateOverview(){
   const calls=filterCalls(),total=calls.length;
@@ -679,21 +826,12 @@ function updateOverview(){
   document.getElementById('stat-no-cerradas').textContent=noCerradas;
   document.getElementById('stat-seguimiento').textContent=seguimiento;
   document.getElementById('stat-rate').textContent=rate+'% tasa de cierre';
-  document.getElementById('cierre-rate-text').textContent=rate+'%';
-  document.getElementById('rate-bar-fill').style.width=rate+'%';
 
-  // Comisiones (basado en todas las calls cerradas del mes)
-  const m=getMonthRange();
-  const callsMesCerradas=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end&&c.estado==='cerrada');
-  const cierresSA=callsMesCerradas.filter(c=>c.notas&&c.notas.includes('SA Dental')).length;
-  const cierresScaling=callsMesCerradas.filter(c=>c.notas&&c.notas.includes('Scaling')).length;
-  const otrosCierres=callsMesCerradas.length-cierresSA-cierresScaling;
-  // Si no tiene empresa registrada, dividir por igual
-  const totalSA=cierresSA+(otrosCierres>0?0:0);
-  document.getElementById('comision-sa').textContent='$'+((cierresSA*4000*0.1).toLocaleString());
-  document.getElementById('comision-scaling').textContent='$'+((cierresScaling*6000*0.1).toLocaleString());
+  // Actualizar barra de ingresos y comisiones
+  updateIngresosBar();
 
   // Objeciones con filtro
+  const m=getMonthRange();
   let callsObj=state.calls;
   if(objFilter==='semana'){const w=getWeekRange();callsObj=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);}
   else if(objFilter==='mes'){callsObj=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);}
@@ -1260,6 +1398,7 @@ updateLeadsList();
 renderApiKeyStatus();
 renderMetasProgress();
 renderHotList();
+loadCalcConfig();
 </script>
 </body>
 </html>
