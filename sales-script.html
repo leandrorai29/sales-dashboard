@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -149,14 +149,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <!-- NAV -->
 <nav class="nav-bar">
-  <a class="nav-link active" href="/sales-script" id="nav-script">ðŸ“‹ Sales Script</a>
-  <a class="nav-link" href="/dashboard" id="nav-dashboard">ðŸ“Š Dashboard</a>
+  <a class="nav-link active" href="/sales-script" id="nav-script">📋 Sales Script</a>
+  <a class="nav-link" href="/dashboard" id="nav-dashboard">📊 Dashboard</a>
 </nav>
 
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <button class="ql-btn" onclick="toggleDropdown()">ðŸ”— QUICK LINKS â–¼</button>
+    <button class="ql-btn" onclick="toggleDropdown()">🔗 QUICK LINKS ▼</button>
     <div class="ql-dropdown" id="ql-dropdown"></div>
   </div>
   <div class="topbar-title">SALES SCRIPT</div>
@@ -164,39 +164,39 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <span class="timer-display" id="timer">00:00</span>
     <button class="tb-btn" id="timer-start-btn" onclick="toggleTimer()">START</button>
     <button class="tb-btn" onclick="resetTimer()">RESET</button>
-    <button class="tb-btn" onclick="openNotes()">ðŸ“ NOTES</button>
+    <button class="tb-btn" onclick="openNotes()">📝 NOTES</button>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- SECCIÃ“N 1 â€” TIPO DE LLAMADA -->
+  <!-- SECCIÓN 1 — TIPO DE LLAMADA -->
   <div class="section">
-    <span class="badge">EmpezÃ¡ acÃ¡</span>
+    <span class="badge">Empezá acá</span>
     <div class="section-title">Tipo de llamada</div>
-    <div class="section-desc">Initial Call para primeras conversaciones. Follow-Up / DecisiÃ³n cuando ya vieron el plan y esta llamada es para decidir SÃ­ / No.</div>
+    <div class="section-desc">Initial Call para primeras conversaciones. Follow-Up / Decisión cuando ya vieron el plan y esta llamada es para decidir Sí / No.</div>
     <div class="selector-group cols2">
       <div class="sel-btn" id="btn-initial" onclick="select('callType','initial',this)">
         <div class="sel-btn-title">INITIAL CALL</div>
-        <div class="sel-btn-sub">Primera conversaciÃ³n con el prospecto</div>
+        <div class="sel-btn-sub">Primera conversación con el prospecto</div>
       </div>
       <div class="sel-btn" id="btn-followup" onclick="select('callType','followup',this)">
-        <div class="sel-btn-title">FOLLOW-UP / DECISIÃ“N</div>
-        <div class="sel-btn-sub">Ya vieron el plan â€” deciden SÃ­ / No</div>
+        <div class="sel-btn-title">FOLLOW-UP / DECISIÓN</div>
+        <div class="sel-btn-sub">Ya vieron el plan — deciden Sí / No</div>
       </div>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 2 â€” INFO DEL PROSPECTO -->
+  <!-- SECCIÓN 2 — INFO DEL PROSPECTO -->
   <div class="section">
     <span class="badge">Completar</span>
     <div class="section-header">
       <div>
         <div class="section-title">Info del Prospecto</div>
-        <div class="section-desc">BuscÃ¡ el lead con la ðŸ” o cargalo manual antes de arrancar la llamada.</div>
+        <div class="section-desc">Buscá el lead con la 🔍 o cargalo manual antes de arrancar la llamada.</div>
       </div>
-      <button class="search-btn">ðŸ” BUSCAR LEAD</button>
+      <button class="search-btn">🔍 BUSCAR LEAD</button>
     </div>
     <div class="prospect-row">
       <div class="field-group">
@@ -210,18 +210,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <button class="copy-btn" onclick="copyField('prospect-email',this)">COPIAR</button>
       </div>
       <div class="field-group">
-        <div class="field-label">TelÃ©fono</div>
+        <div class="field-label">Teléfono</div>
         <input class="field-input" id="prospect-phone" type="tel" placeholder="+54 9 11..." oninput="updateForm('prospectPhone',this.value)">
         <button class="copy-btn" onclick="copyField('prospect-phone',this)">COPIAR</button>
       </div>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 3 â€” DECISOR -->
+  <!-- SECCIÓN 3 — DECISOR -->
   <div class="section">
-    <span class="badge">PreguntÃ¡ ahora</span>
-    <div class="section-title">Â¿Deciden ellos o hay otros?</div>
-    <div class="section-desc">"Aparte de vos, Â¿quiÃ©n mÃ¡s necesita estar cÃ³modo con esto si decidimos que es el camino correcto?"</div>
+    <span class="badge">Preguntá ahora</span>
+    <div class="section-title">¿Deciden ellos o hay otros?</div>
+    <div class="section-desc">"Aparte de vos, ¿quién más necesita estar cómodo con esto si decidimos que es el camino correcto?"</div>
     <div class="selector-group cols2">
       <div class="sel-btn" onclick="select('decisionMaker','solo',this)">
         <div class="sel-btn-title">DECIDEN ELLOS</div>
@@ -229,19 +229,19 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="sel-btn" onclick="select('decisionMaker','champion',this)">
         <div class="sel-btn-title">HAY OTROS</div>
-        <div class="sel-btn-sub">CHAMPION â€” falta otro decisor</div>
+        <div class="sel-btn-sub">CHAMPION — falta otro decisor</div>
       </div>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 4 â€” CONTEXTO -->
+  <!-- SECCIÓN 4 — CONTEXTO -->
   <div class="section">
-    <span class="badge">CapturÃ¡</span>
+    <span class="badge">Capturá</span>
     <div class="section-title">Contexto</div>
-    <div class="section-desc">SÃ³lo 2 cosas â€” los nÃºmeros importantes y quÃ© dice el lead que lo estÃ¡ frenando.</div>
+    <div class="section-desc">Sólo 2 cosas — los números importantes y qué dice el lead que lo está frenando.</div>
     <div class="context-row">
       <div class="field-group">
-        <div class="field-label">FacturaciÃ³n mensual actual</div>
+        <div class="field-label">Facturación mensual actual</div>
         <div class="field-prefix-wrap">
           <span class="field-prefix">$</span>
           <input class="field-prefix-input" id="monthly-revenue" type="text" placeholder="0" oninput="updateForm('monthlyRevenue',this.value)">
@@ -249,91 +249,91 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
       </div>
       <div class="field-group">
-        <div class="field-label">Cuello de botella â€” en sus palabras</div>
+        <div class="field-label">Cuello de botella — en sus palabras</div>
         <input class="field-input" id="bottleneck" type="text" placeholder="(en sus palabras)" oninput="updateForm('bottleneck',this.value)">
       </div>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 5 â€” POST-LLAMADA -->
+  <!-- SECCIÓN 5 — POST-LLAMADA -->
   <div class="section">
     <span class="badge">Post-llamada</span>
-    <div class="section-title">Â¿QuÃ© pasÃ³ con la llamada?</div>
-    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1. Â¿QuÃ© pasÃ³ con la cita?</div>
+    <div class="section-title">¿Qué pasó con la llamada?</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1. ¿Qué pasó con la cita?</div>
     <div class="selector-group cols2x2">
       <div class="sel-btn" onclick="select('callResult','attended',this)">
-        <span class="sel-btn-emoji">âœ…</span>
-        <div class="sel-btn-title">AsistiÃ³</div>
-        <div class="sel-btn-sub">El lead se conectÃ³/llegÃ³ a la demo</div>
+        <span class="sel-btn-emoji">✅</span>
+        <div class="sel-btn-title">Asistió</div>
+        <div class="sel-btn-sub">El lead se conectó/llegó a la demo</div>
       </div>
       <div class="sel-btn" onclick="select('callResult','noshow',this)">
-        <span class="sel-btn-emoji">ðŸ‘Ž</span>
-        <div class="sel-btn-title">No asistiÃ³</div>
-        <div class="sel-btn-sub">No-show â€” no se conectÃ³</div>
+        <span class="sel-btn-emoji">👎</span>
+        <div class="sel-btn-title">No asistió</div>
+        <div class="sel-btn-sub">No-show — no se conectó</div>
       </div>
       <div class="sel-btn" onclick="select('callResult','rescheduled',this)">
-        <span class="sel-btn-emoji">ðŸ“ž</span>
+        <span class="sel-btn-emoji">📞</span>
         <div class="sel-btn-title">Reagendada</div>
-        <div class="sel-btn-sub">MoviÃ³ la fecha â€” nueva cita pactada</div>
+        <div class="sel-btn-sub">Movió la fecha — nueva cita pactada</div>
       </div>
       <div class="sel-btn" onclick="select('callResult','cancelled',this)">
-        <span class="sel-btn-emoji">âŒ</span>
+        <span class="sel-btn-emoji">❌</span>
         <div class="sel-btn-title">Cancelada</div>
-        <div class="sel-btn-sub">CancelÃ³ la cita sin reagendar</div>
+        <div class="sel-btn-sub">Canceló la cita sin reagendar</div>
       </div>
     </div>
 
-    <!-- 1b â€” solo si cancelada -->
+    <!-- 1b — solo si cancelada -->
     <div id="who-cancel-section" class="hidden" style="margin-top:20px;">
       <hr class="section-divider">
-      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. Â¿QuiÃ©n cancelÃ³ la demo?</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">1b. ¿Quién canceló la demo?</div>
       <div class="selector-group cols2">
         <div class="sel-btn" onclick="select('whoCancel','team',this)">
-          <span class="sel-btn-emoji">ðŸ¢</span>
+          <span class="sel-btn-emoji">🏢</span>
           <div class="sel-btn-title">Por el equipo</div>
           <div class="sel-btn-sub">Nuestro lado tuvo que cancelar</div>
         </div>
         <div class="sel-btn" onclick="select('whoCancel','lead',this)">
-          <span class="sel-btn-emoji">ðŸ™…</span>
+          <span class="sel-btn-emoji">🙅</span>
           <div class="sel-btn-title">Por el lead</div>
-          <div class="sel-btn-sub">El lead avisÃ³ y cancelÃ³</div>
+          <div class="sel-btn-sub">El lead avisó y canceló</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 6 â€” RESUMEN AL EQUIPO -->
+  <!-- SECCIÓN 6 — RESUMEN AL EQUIPO -->
   <div class="section">
     <span class="badge">Resumen</span>
     <div class="section-title">Resumen al equipo</div>
-    <div class="section-desc">Sube como nota en GHL â€” para que el equipo de delivery / cobranza tenga contexto completo.</div>
+    <div class="section-desc">Sube como nota en GHL — para que el equipo de delivery / cobranza tenga contexto completo.</div>
 
     <div class="field-group" style="margin-bottom:16px;">
       <div class="field-label">Call Recording (Fathom Link) <span class="optional">opcional</span></div>
-      <input class="field-input" id="fathom-link" type="text" placeholder="https://fathom.video/share/â€¦" oninput="updateForm('fathomLink',this.value)">
+      <input class="field-input" id="fathom-link" type="text" placeholder="https://fathom.video/share/…" oninput="updateForm('fathomLink',this.value)">
       <div class="field-note">Se guarda como Call Recording (llamada inicial) en bookings.</div>
     </div>
 
     <div class="field-group" style="margin-bottom:16px;">
-      <div class="field-label">TranscripciÃ³n de Fathom <span class="optional">opcional</span></div>
-      <textarea class="field-textarea" id="fathom-transcript" rows="5" placeholder="PegÃ¡ la transcripciÃ³n de Fathom acÃ¡ si la tenÃ©s a manoâ€¦" oninput="updateForm('fathomTranscript',this.value)"></textarea>
+      <div class="field-label">Transcripción de Fathom <span class="optional">opcional</span></div>
+      <textarea class="field-textarea" id="fathom-transcript" rows="5" placeholder="Pegá la transcripción de Fathom acá si la tenés a mano…" oninput="updateForm('fathomTranscript',this.value)"></textarea>
     </div>
 
     <div class="field-group">
       <div class="field-label">Notas manuales para el equipo <span class="optional">opcional</span></div>
-      <textarea class="field-textarea" id="manual-notes" rows="3" placeholder="Cualquier contexto adicional para el equipoâ€¦" oninput="updateForm('manualNotes',this.value)"></textarea>
+      <textarea class="field-textarea" id="manual-notes" rows="3" placeholder="Cualquier contexto adicional para el equipo…" oninput="updateForm('manualNotes',this.value)"></textarea>
     </div>
   </div>
 
-  <!-- SECCIÃ“N 7 â€” GUARDAR -->
+  <!-- SECCIÓN 7 — GUARDAR -->
   <div class="save-block">
     <div class="stage-label">Stage que se va a aplicar (auto-derivado del wizard)</div>
-    <div class="stage-value" id="stage-value">â€” pendiente, completÃ¡ el wizard â€”</div>
+    <div class="stage-value" id="stage-value">— pendiente, completá el wizard —</div>
     <button class="save-btn disabled" id="save-btn" onclick="saveCall()">GUARDAR LLAMADA Y MOVER PIPELINE</button>
     <div class="save-status">
-      <span class="save-badge unsaved" id="save-badge">â— Cambios sin guardar</span>
+      <span class="save-badge unsaved" id="save-badge">● Cambios sin guardar</span>
     </div>
-    <div class="save-warning" id="save-warning">âš  CompletÃ¡ el wizard de arriba (todas las preguntas) antes de guardar.</div>
+    <div class="save-warning" id="save-warning">⚠ Completá el wizard de arriba (todas las preguntas) antes de guardar.</div>
   </div>
 
 </div>
@@ -342,10 +342,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <div class="notes-overlay" id="notes-overlay" onclick="closeNotes()"></div>
 <div class="notes-panel" id="notes-panel">
   <div class="notes-header">
-    <div class="notes-title">ðŸ“ NOTAS DE LA LLAMADA</div>
-    <button class="notes-close" onclick="closeNotes()">âœ•</button>
+    <div class="notes-title">📝 NOTAS DE LA LLAMADA</div>
+    <button class="notes-close" onclick="closeNotes()">✕</button>
   </div>
-  <textarea class="notes-textarea" id="notes-textarea" placeholder="AnotÃ¡ lo que necesitÃ¡s..."></textarea>
+  <textarea class="notes-textarea" id="notes-textarea" placeholder="Anotá lo que necesitás..."></textarea>
 </div>
 
 <script>
@@ -356,9 +356,9 @@ const LINKS_KEY = 'sales-script-links';
 
 const defaultLinks = [
   { label: 'Links de pago', url: '' },
-  { label: 'PresentaciÃ³n Miro', url: '' },
-  { label: 'PresentaciÃ³n de precios', url: '' },
-  { label: 'Proyecciones y Costo de InacciÃ³n', url: '' },
+  { label: 'Presentación Miro', url: '' },
+  { label: 'Presentación de precios', url: '' },
+  { label: 'Proyecciones y Costo de Inacción', url: '' },
   { label: 'Guion de ventas', url: '' },
   { label: 'Activos de venta', url: '' },
   { label: 'Formulario para crear contratos en tiempo real', url: '' },
@@ -492,7 +492,7 @@ function updateWizard() {
     saveBtn.classList.add('enabled');
     warning.classList.add('hidden');
   } else {
-    stageEl.textContent = 'â€” pendiente, completÃ¡ el wizard â€”';
+    stageEl.textContent = '— pendiente, completá el wizard —';
     stageEl.classList.remove('ready');
     saveBtn.classList.add('disabled');
     saveBtn.classList.remove('enabled');
@@ -505,10 +505,10 @@ function saveCall() {
   if(!isWizardComplete()) return;
   const data = { ...form, stage: getStage(), savedAt: new Date().toISOString() };
   try { localStorage.setItem('sales-script-saved', JSON.stringify(data)); } catch(e){}
-  console.log('SALES SCRIPT â€” LLAMADA GUARDADA:', data);
+  console.log('SALES SCRIPT — LLAMADA GUARDADA:', data);
   saved = true;
   const badge = document.getElementById('save-badge');
-  badge.textContent = 'âœ“ Guardado';
+  badge.textContent = '✓ Guardado';
   badge.classList.remove('unsaved');
   badge.classList.add('saved');
 }
@@ -518,7 +518,7 @@ function copyField(id, btn) {
   const val = document.getElementById(id).value;
   if(!val) return;
   navigator.clipboard.writeText(val).then(() => {
-    btn.textContent = 'âœ“ Copiado';
+    btn.textContent = '✓ Copiado';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'COPIAR'; btn.classList.remove('copied'); }, 2000);
   });
@@ -579,10 +579,10 @@ function renderLinks() {
       <span id="ql-label-${i}">
         ${l.url
           ? `<a class="ql-item-link" href="${l.url}" target="_blank">${l.label}</a>`
-          : `<span class="ql-item-link unset">${l.label} Â· (setear URL)</span>`
+          : `<span class="ql-item-link unset">${l.label} · (setear URL)</span>`
         }
       </span>
-      <button class="ql-edit-btn" onclick="editLink(${i})" title="Editar URL">âœï¸</button>
+      <button class="ql-edit-btn" onclick="editLink(${i})" title="Editar URL">✏️</button>
     </div>
   `).join('');
 }
