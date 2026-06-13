@@ -274,6 +274,11 @@ select.input{cursor:pointer;}
       <div class="page-title" id="pageTitle">Dashboard</div>
       <div style="display:flex;gap:10px;align-items:center">
         <div class="filter-group">
+          <button class="filter-btn active" id="ag-filter-todas" onclick="setAgencia('todas',this)">Todas</button>
+          <button class="filter-btn" id="ag-filter-dental" onclick="setAgencia('SA Dental',this)">🦷 SA Dental</button>
+          <button class="filter-btn" id="ag-filter-scaling" onclick="setAgencia('Scaling In Blue',this)">🏗️ Scaling</button>
+        </div>
+        <div class="filter-group">
           <button class="filter-btn active" onclick="setFilter('dia',this)">Hoy</button>
           <button class="filter-btn" onclick="setFilter('semana',this)">Semana</button>
           <button class="filter-btn" onclick="setFilter('mes',this)">Mes</button>
@@ -393,7 +398,7 @@ select.input{cursor:pointer;}
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Fecha</th><th>Lead</th><th>Estado</th><th>Objeción</th><th>Programa</th><th>Cash</th><th></th></tr></thead>
+              <thead><tr><th>Fecha</th><th>Lead</th><th>Agencia</th><th>Estado</th><th>Objeción</th><th>Programa</th><th>Cash</th><th></th></tr></thead>
               <tbody id="calls-table-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin calls registradas aún</td></tr></tbody>
             </table>
           </div>
@@ -596,6 +601,14 @@ function saveState(){
   }catch(e){}
 }
 let state=loadState();
+let agenciaFilter='todas';
+
+function setAgencia(ag, btn){
+  agenciaFilter=ag;
+  document.querySelectorAll('#ag-filter-todas,#ag-filter-dental,#ag-filter-scaling').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateOverview();
+}
 
 // ===== HOT LIST STATE =====
 function loadHotList(){try{const h=localStorage.getItem(HL_KEY);return h?JSON.parse(h):[]}catch(e){return[];}}
@@ -671,10 +684,12 @@ function getMonthRange(){
 }
 function filterCalls(){
   const t=today(),w=getWeekRange(),m=getMonthRange();
-  if(state.filter==='dia')return state.calls.filter(c=>c.fecha===t);
-  if(state.filter==='semana')return state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
-  if(state.filter==='mes')return state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
-  return state.calls;
+  let calls=state.calls;
+  if(state.filter==='dia') calls=calls.filter(c=>c.fecha===t);
+  else if(state.filter==='semana') calls=calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+  else if(state.filter==='mes') calls=calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
+  if(agenciaFilter!=='todas') calls=calls.filter(c=>c.empresa===agenciaFilter||(c.notas&&c.notas.includes(agenciaFilter)));
+  return calls;
 }
 function setPuntuacion(id, val) {
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
@@ -849,7 +864,8 @@ function updateOverview(){
   tbody.innerHTML=[...calls].reverse().map(c=>`
     <tr>
       <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
-      <td style="font-weight:500">${c.nombre}${c.empresa?'<div style="font-size:10px;color:var(--text3)">'+c.empresa+'</div>':''}</td>
+      <td style="font-weight:500">${c.nombre}</td>
+      <td>${c.empresa==='SA Dental'?'<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(16,185,129,.1);color:var(--green);font-weight:600;">🦷 SA Dental</span>':c.empresa==='Scaling In Blue'?'<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(59,130,246,.1);color:var(--accent2);font-weight:600;">🏗️ Scaling</span>':'<span style="font-size:11px;color:var(--text3);">—</span>'}</td>
       <td><span class="badge badge-${c.estado}">${estadoLabel(c.estado)}</span></td>
       <td style="color:var(--text2);font-size:12px">${c.objecion||'—'}</td>
       <td style="color:var(--text2);font-size:12px">${c.programa||'—'}</td>
