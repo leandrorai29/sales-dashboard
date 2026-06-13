@@ -675,6 +675,7 @@ function saveCall() {
   if(form.callResult === 'attended') {
     if(form.pitched === 'si' && form.closed === 'si') estado = 'cerrada';
     else if(form.pitched === 'si' && form.closed === 'no') estado = 'seguimiento';
+    else if(form.pitched === 'no' && form.noPitchReason === 'descalificado') estado = 'no-califica';
     else estado = 'no-cerrada';
   } else if(form.callResult === 'noshow') estado = 'no-cerrada';
   else if(form.callResult === 'rescheduled') estado = 'agendada';

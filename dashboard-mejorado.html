@@ -101,6 +101,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 .badge-cerrada{background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);}
 .badge-no-cerrada{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
+.badge-no-califica{background:var(--surface3);color:var(--text3);border:1px solid var(--border2);}
 .badge-seguimiento{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
 .badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
 
@@ -284,11 +285,12 @@ select.input{cursor:pointer;}
 
       <!-- ===== OVERVIEW ===== -->
       <div id="tab-overview" class="tab-content active">
-        <div class="stats-row">
+        <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
           <div class="stat-card purple"><div class="stat-card-icon">📞</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este período</div></div>
           <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
           <div class="stat-card red"><div class="stat-card-icon">❌</div><div class="stat-label">No Cerradas</div><div class="stat-value red" id="stat-no-cerradas">0</div><div class="stat-sub">Requieren follow-up</div></div>
           <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
+          <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">🚫</div><div class="stat-label">No Calificaba</div><div class="stat-value" style="color:var(--text3)" id="stat-no-califica">0</div><div class="stat-sub">No se cuentan en tasa</div></div>
         </div>
         <div class="two-col">
           <!-- CUADRADO 1: Calculadora inversa -->
@@ -497,7 +499,7 @@ select.input{cursor:pointer;}
       <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="call-fecha" type="date"></div>
     </div>
     <div class="form-row">
-      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option></select></div>
+      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-califica">🚫 No calificaba</option></select></div>
       <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerró..."></div>
     </div>
     <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
@@ -690,7 +692,7 @@ function setFilter(f,btn){
   updatePerformance();
   renderMetasProgress();
 }
-function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada'}[e]||e;}
+function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada','no-califica':'🚫 No calificaba'}[e]||e;}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
@@ -789,15 +791,20 @@ function updateIngresosBar(){
 // ===== OVERVIEW =====
 function updateOverview(){
   const calls=filterCalls(),total=calls.length;
-  const cerradas=calls.filter(c=>c.estado==='cerrada').length;
-  const noCerradas=calls.filter(c=>c.estado==='no-cerrada').length;
-  const seguimiento=calls.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
-  const rate=total>0?Math.round((cerradas/total)*100):0;
+  const noCalifica=calls.filter(c=>c.estado==='no-califica').length;
+  const callsValidas=calls.filter(c=>c.estado!=='no-califica');
+  const totalValidas=callsValidas.length;
+  const cerradas=callsValidas.filter(c=>c.estado==='cerrada').length;
+  const noCerradas=callsValidas.filter(c=>c.estado==='no-cerrada').length;
+  const seguimiento=callsValidas.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+  const rate=totalValidas>0?Math.round((cerradas/totalValidas)*100):0;
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-cerradas').textContent=cerradas;
   document.getElementById('stat-no-cerradas').textContent=noCerradas;
   document.getElementById('stat-seguimiento').textContent=seguimiento;
-  document.getElementById('stat-rate').textContent=rate+'% tasa de cierre';
+  document.getElementById('stat-rate').textContent=rate+'% tasa de cierre (excl. no califica)';
+  const ncEl=document.getElementById('stat-no-califica');
+  if(ncEl) ncEl.textContent=noCalifica;
 
   // Actualizar barra de ingresos y comisiones
   updateIngresosBar();
