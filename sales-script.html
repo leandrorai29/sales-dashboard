@@ -166,6 +166,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <!-- MAIN -->
 <div class="main">
 
+  <!-- FECHA DE LA LLAMADA -->
+  <div class="section" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:13px;font-weight:600;color:var(--text2);">📅 Fecha de la llamada</span>
+      <input type="date" id="call-date-input" class="field-input" style="width:auto;padding:7px 12px;font-size:13px;" oninput="updateForm('callDate',this.value)">
+    </div>
+    <div style="font-size:11px;color:var(--text3);">Podés cargar llamadas de días anteriores</div>
+  </div>
+
   <!-- SECCIÓN 0 — EMPRESA -->
   <div class="section">
     <span class="badge">Empezá acá</span>
@@ -468,6 +477,7 @@ const defaultLinks = [
 let form = {
   empresa: null,
   callType: null,
+  callDate: '',
   prospectName: '', prospectEmail: '', prospectPhone: '',
   puntuacionLead: null,
   decisionMaker: null,
@@ -510,6 +520,9 @@ function init() {
   restoreFormUI();
   updateWizard();
   initPuntButtons();
+  // Fecha de hoy por defecto
+  const dateInput = document.getElementById('call-date-input');
+  if(dateInput) dateInput.value = form.callDate || new Date().toISOString().slice(0,10);
 }
 
 function restoreFormUI() {
@@ -685,12 +698,14 @@ function saveCall() {
     form.fathomLink ? `Fathom: ${form.fathomLink}` : ''
   ].filter(Boolean).join(' | ');
 
+  const fechaCall = form.callDate || new Date().toISOString().slice(0,10);
+
   const newCall = {
     id: Date.now(),
     nombre: form.prospectName,
     empresa: empresaLabel,
     estado,
-    fecha: new Date().toISOString().slice(0,10),
+    fecha: fechaCall,
     objecion,
     cashCollected: form.cashCollected ? parseFloat(form.cashCollected) : 0,
     contractedRevenue: form.contractedRevenue ? parseFloat(form.contractedRevenue) : 0,
@@ -710,7 +725,7 @@ function saveCall() {
     const proxFU = new Date(); proxFU.setDate(proxFU.getDate()+3);
     hotLeads.push({
       id: Date.now()+1, nombre: form.prospectName, empresa: empresaLabel,
-      estado: estadoHot, ultimoContacto: new Date().toISOString().slice(0,10),
+      estado: estadoHot, ultimoContacto: fechaCall,
       proximoFollowup: proxFU.toISOString().slice(0,10),
       transcript: form.fathomTranscript || '', notas, objecion,
       analisisCall: '', puntuacion: form.puntuacionLead || null, mensajes: [], fromSalesScript: true
@@ -719,7 +734,7 @@ function saveCall() {
   }
 
   // Reset
-  form = { empresa:null, callType:null, prospectName:'', prospectEmail:'', prospectPhone:'', puntuacionLead:null, decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, programa:null, cashCollected:'', contractedRevenue:'', objecionTipo:null, objecionDetalle:'', objecionResumen:'', fathomLink:'', fathomTranscript:'', manualNotes:'' };
+  form = { empresa:null, callType:null, callDate:'', prospectName:'', prospectEmail:'', prospectPhone:'', puntuacionLead:null, decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, noPitchReason:null, programa:null, cashCollected:'', contractedRevenue:'', objecionTipo:null, objecionDetalle:'', objecionResumen:'', fathomLink:'', fathomTranscript:'', manualNotes:'' };
   saveFormToStorage();
   const badge = document.getElementById('save-badge');
   badge.style.display = 'inline'; badge.textContent = '✓ Guardado en Dashboard'; badge.style.color = 'var(--green)';
@@ -731,6 +746,8 @@ function saveCall() {
   // Reset puntuación
   [1,2,3,4,5,6,7,8,9,10].forEach(i=>{const btn=document.getElementById(`punt-btn-${i}`);if(btn){btn.style.borderColor='var(--border2)';btn.style.background='transparent';btn.style.color='var(--text3)';}});
   const pl=document.getElementById('punt-label');if(pl)pl.innerHTML='Sin puntuar todavía';
+  // Resetear fecha a hoy
+  const di=document.getElementById('call-date-input');if(di)di.value=new Date().toISOString().slice(0,10);
   setTimeout(()=>{ badge.style.display='none'; }, 4000);
 }
 
