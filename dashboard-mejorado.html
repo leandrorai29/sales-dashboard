@@ -799,11 +799,13 @@ function updateOverview(){
   const calls=filterCalls(),total=calls.length;
   const noCalifica=calls.filter(c=>c.estado==='no-califica').length;
   const noPitcheo=calls.filter(c=>c.estado==='no-pitcheo').length;
-  const callsValidas=calls.filter(c=>c.estado!=='no-califica'&&c.estado!=='no-pitcheo');
-  const totalValidas=callsValidas.length;
-  const cerradas=callsValidas.filter(c=>c.estado==='cerrada').length;
-  const seguimiento=callsValidas.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
-  const rate=totalValidas>0?Math.round((cerradas/totalValidas)*100):0;
+  const cerradas=calls.filter(c=>c.estado==='cerrada').length;
+  const seguimiento=calls.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+  const noCerradas=calls.filter(c=>c.estado==='no-cerrada').length;
+  // Tasa de cierre: cerradas / (cerradas + no cerradas + seguimiento)
+  // Excluye: no-califica, no-pitcheo, reagendada, no-show
+  const denominador=cerradas+noCerradas+seguimiento;
+  const rate=denominador>0?Math.round((cerradas/denominador)*100):0;
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-cerradas').textContent=cerradas;
   document.getElementById('stat-seguimiento').textContent=seguimiento;
@@ -1280,7 +1282,10 @@ function updatePerformance(){
   const callsMes=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
   const totalMes=callsMes.length;
   const cerradasMes=callsMes.filter(c=>c.estado==='cerrada').length;
-  const tasaMes=totalMes>0?Math.round((cerradasMes/totalMes)*100):0;
+  const noCerradasMes=callsMes.filter(c=>c.estado==='no-cerrada').length;
+  const seguimientoMes=callsMes.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+  const denomMes=cerradasMes+noCerradasMes+seguimientoMes;
+  const tasaMes=denomMes>0?Math.round((cerradasMes/denomMes)*100):0;
   const leadsActivos=state.calls.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
   document.getElementById('perf-calls').textContent=totalMes;
   document.getElementById('perf-tasa').textContent=tasaMes+'%';
