@@ -310,6 +310,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="sel-btn" onclick="select('pitched','no',this)"><span class="sel-btn-emoji">🔴</span><div class="sel-btn-title">No se le pitcheó</div><div class="sel-btn-sub">La llamada terminó sin presentar la oferta</div></div>
       </div>
 
+      <!-- 2b — por qué no se pitcheó -->
+      <div id="no-pitched-section" class="hidden" style="margin-top:20px;">
+        <hr class="section-divider">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;">2b. ¿Por qué no se le pitcheó?</div>
+        <div class="selector-group" style="grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="sel-btn" onclick="select('noPitchReason','descalificado',this)"><span class="sel-btn-emoji">🚫</span><div class="sel-btn-title">Descalificado</div><div class="sel-btn-sub">No es ICP / no podemos ayudarlo</div></div>
+          <div class="sel-btn" onclick="select('noPitchReason','decisores',this)"><span class="sel-btn-emoji">👥</span><div class="sel-btn-title">Faltaban decisores</div><div class="sel-btn-sub">No estaban los tomadores de decisión</div></div>
+          <div class="sel-btn" onclick="select('noPitchReason','lugar',this)"><span class="sel-btn-emoji">🚗</span><div class="sel-btn-title">Lugar inadecuado</div><div class="sel-btn-sub">Estaba en un contexto que no daba para pitchear</div></div>
+          <div class="sel-btn" onclick="select('noPitchReason','tarde',this)"><span class="sel-btn-emoji">⏰</span><div class="sel-btn-title">Llegó tarde</div><div class="sel-btn-sub">Asistió tarde, no alcanzó el tiempo</div></div>
+        </div>
+      </div>
+
       <!-- 3 — SE PITCHEÓ -->
       <div id="pitched-section" class="hidden" style="margin-top:20px;">
         <hr class="section-divider">
@@ -461,7 +473,7 @@ let form = {
   decisionMaker: null,
   monthlyRevenue: '', bottleneck: '',
   callResult: null, whoCancel: null,
-  noshowType: null, pitched: null, closed: null,
+  noshowType: null, pitched: null, closed: null, noPitchReason: null,
   programa: null, cashCollected: '', contractedRevenue: '',
   objecionTipo: null, objecionDetalle: '', objecionResumen: '',
   fathomLink: '', fathomTranscript: '', manualNotes: ''
@@ -560,7 +572,9 @@ function select(field, value, el) {
 
   if(field === 'pitched') {
     document.getElementById('pitched-section').classList.toggle('hidden', value !== 'si');
+    document.getElementById('no-pitched-section').classList.toggle('hidden', value !== 'no');
     if(value !== 'si') { form.closed = null; form.programa = null; }
+    if(value !== 'no') { form.noPitchReason = null; }
   }
 
   if(field === 'closed') {
@@ -663,6 +677,7 @@ function saveCall() {
     form.programa ? `Programa: ${form.programa}` : '',
     form.cashCollected ? `Cash: $${form.cashCollected}` : '',
     form.contractedRevenue ? `Contracted: $${form.contractedRevenue}` : '',
+    form.callResult === 'attended' && form.pitched === 'no' ? `No pitcheó: ${{'descalificado':'Descalificado','decisores':'Faltaban decisores','lugar':'Lugar inadecuado','tarde':'Llegó tarde'}[form.noPitchReason]||''}` : '',
     form.callResult === 'noshow' ? `No-show: ${form.noshowType === 'nunca' ? 'Nunca respondió' : 'Tuvo conversación previa'}` : '',
     form.decisionMaker === 'champion' ? 'Champion — falta otro decisor' : '',
     form.monthlyRevenue ? `Problema: ${form.bottleneck}` : '',
@@ -712,7 +727,7 @@ function saveCall() {
   document.getElementById('save-btn').classList.remove('enabled');
   document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.field-input, .field-textarea, .field-prefix-input').forEach(i=>i.value='');
-  document.querySelectorAll('#who-cancel-section,#noshow-type-section,#attended-section,#pitched-section,#closed-si-section,#closed-no-section').forEach(s=>s.classList.add('hidden'));
+  document.querySelectorAll('#who-cancel-section,#noshow-type-section,#attended-section,#pitched-section,#no-pitched-section,#closed-si-section,#closed-no-section').forEach(s=>s.classList.add('hidden'));
   // Reset puntuación
   [1,2,3,4,5,6,7,8,9,10].forEach(i=>{const btn=document.getElementById(`punt-btn-${i}`);if(btn){btn.style.borderColor='var(--border2)';btn.style.background='transparent';btn.style.color='var(--text3)';}});
   const pl=document.getElementById('punt-label');if(pl)pl.innerHTML='Sin puntuar todavía';
