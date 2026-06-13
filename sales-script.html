@@ -682,7 +682,8 @@ function saveCall() {
   else if(form.callResult === 'cancelled') estado = 'no-cerrada';
 
   const empresaLabel = { 'sa-dental':'SA Dental', 'scaling':'Scaling In Blue' }[form.empresa] || '';
-  const objecion = form.objecionResumen || form.objecionDetalle || form.objecionTipo || form.bottleneck || '';
+  // La objeción solo viene del campo de objeción real, nunca del cuello de botella
+  const objecion = estado === 'no-califica' ? '' : (form.objecionResumen || form.objecionDetalle || ({'precio':'Precio / dinero','tiempo':'No tengo tiempo','decisor':'Tengo que consultarlo','confianza':'No confía / necesita pensar','competencia':'Está viendo otras opciones','socio':'Socio / Pareja','otra':'Otra objeción'}[form.objecionTipo] || ''));
 
   let dashState = { calls:[], leads:[], filter:'dia' };
   try { const s = localStorage.getItem('scd_v2'); if(s) dashState = JSON.parse(s); } catch(e){}
