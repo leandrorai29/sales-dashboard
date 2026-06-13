@@ -102,6 +102,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .badge-cerrada{background:var(--green2);color:var(--green);border:1px solid rgba(16,217,160,.2);}
 .badge-no-cerrada{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
 .badge-no-califica{background:var(--surface3);color:var(--text3);border:1px solid var(--border2);}
+.badge-no-pitcheo{background:var(--orange2);color:var(--orange);border:1px solid rgba(251,146,60,.2);}
 .badge-seguimiento{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
 .badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
 
@@ -288,9 +289,9 @@ select.input{cursor:pointer;}
         <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
           <div class="stat-card purple"><div class="stat-card-icon">📞</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este período</div></div>
           <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
-          <div class="stat-card red"><div class="stat-card-icon">❌</div><div class="stat-label">No Cerradas</div><div class="stat-value red" id="stat-no-cerradas">0</div><div class="stat-sub">Requieren follow-up</div></div>
           <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
-          <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">🚫</div><div class="stat-label">No Calificaba</div><div class="stat-value" style="color:var(--text3)" id="stat-no-califica">0</div><div class="stat-sub">No se cuentan en tasa</div></div>
+          <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">⏸️</div><div class="stat-label">No se Pitcheó</div><div class="stat-value" style="color:var(--orange)" id="stat-no-pitcheo">0</div><div class="stat-sub">No entra en tasa</div></div>
+          <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">🚫</div><div class="stat-label">Descalificada</div><div class="stat-value" style="color:var(--text3)" id="stat-no-califica">0</div><div class="stat-sub">No entra en tasa</div></div>
         </div>
         <div class="two-col">
           <!-- CUADRADO 1: Calculadora inversa -->
@@ -499,7 +500,7 @@ select.input{cursor:pointer;}
       <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="call-fecha" type="date"></div>
     </div>
     <div class="form-row">
-      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-califica">🚫 No calificaba</option></select></div>
+      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-pitcheo">⏸️ No se pitcheó</option><option value="no-califica">🚫 No calificaba</option></select></div>
       <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerró..."></div>
     </div>
     <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
@@ -692,7 +693,7 @@ function setFilter(f,btn){
   updatePerformance();
   renderMetasProgress();
 }
-function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada','no-califica':'🚫 No calificaba'}[e]||e;}
+function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada','no-califica':'🚫 No calificaba','no-pitcheo':'⏸️ No se pitcheó'}[e]||e;}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
@@ -761,30 +762,35 @@ function updateIngresosBar(){
     const config=c?JSON.parse(c):{meta:0,ticket:3000,tasa:28,comision:10};
     const m=getMonthRange();
     const callsMesCerradas=state.calls.filter(c2=>c2.fecha>=m.start&&c2.fecha<=m.end&&c2.estado==='cerrada');
-    const cierresSA=callsMesCerradas.filter(c2=>c2.notas&&c2.notas.includes('SA Dental')).length;
-    const cierresScaling=callsMesCerradas.filter(c2=>c2.notas&&c2.notas.includes('Scaling')).length;
-    const otrosCierres=callsMesCerradas.length-cierresSA-cierresScaling;
-    const ticket=config.ticket||3000;
     const com=config.comision||10;
-    const comSA=cierresSA*ticket*(com/100);
-    const comScaling=cierresScaling*ticket*(com/100);
-    const comOtros=otrosCierres*ticket*(com/100);
+
+    // Calcular comisión sobre cash collected real de cada call
+    let comSA=0, comScaling=0, comOtros=0;
+    callsMesCerradas.forEach(c2=>{
+      const cash=c2.cashCollected||0;
+      const comision=cash*(com/100);
+      if(c2.notas&&c2.notas.includes('SA Dental')) comSA+=comision;
+      else if(c2.notas&&c2.notas.includes('Scaling')) comScaling+=comision;
+      else comOtros+=comision;
+    });
     const totalIngresos=comSA+comScaling+comOtros;
     const meta=config.meta||0;
     const pct=meta>0?Math.min(Math.round((totalIngresos/meta)*100),100):0;
     const falta=Math.max(0,meta-totalIngresos);
     const now=new Date();
     const mesLabel=now.toLocaleDateString('es-AR',{month:'long',year:'numeric'});
-    document.getElementById('ingresos-mes-label').textContent=mesLabel;
-    document.getElementById('ingresos-actuales').textContent='$'+totalIngresos.toLocaleString();
-    document.getElementById('ingresos-meta-label').textContent=meta>0?'$'+meta.toLocaleString():'sin meta';
-    document.getElementById('ingresos-bar').style.width=pct+'%';
-    const barColor=pct>=100?'var(--green)':pct>=60?'linear-gradient(90deg,var(--yellow),#fbbf24)':'linear-gradient(90deg,var(--accent),#60a5fa)';
-    document.getElementById('ingresos-bar').style.background=barColor;
-    document.getElementById('ingresos-pct').textContent=pct+'% completado';
-    document.getElementById('ingresos-falta').textContent=meta>0&&falta>0?'$'+falta.toLocaleString()+' para la meta':'';
-    document.getElementById('comision-sa').textContent='$'+comSA.toLocaleString();
-    document.getElementById('comision-scaling').textContent='$'+comScaling.toLocaleString();
+    const elMes=document.getElementById('ingresos-mes-label');if(elMes)elMes.textContent=mesLabel;
+    const elAct=document.getElementById('ingresos-actuales');if(elAct)elAct.textContent='$'+totalIngresos.toLocaleString();
+    const elMeta=document.getElementById('ingresos-meta-label');if(elMeta)elMeta.textContent=meta>0?'$'+meta.toLocaleString():'sin meta';
+    const elBar=document.getElementById('ingresos-bar');
+    if(elBar){
+      elBar.style.width=pct+'%';
+      elBar.style.background=pct>=100?'var(--green)':pct>=60?'linear-gradient(90deg,var(--yellow),#fbbf24)':'linear-gradient(90deg,var(--accent),#60a5fa)';
+    }
+    const elPct=document.getElementById('ingresos-pct');if(elPct)elPct.textContent=pct+'% completado';
+    const elFalta=document.getElementById('ingresos-falta');if(elFalta)elFalta.textContent=meta>0&&falta>0?'$'+falta.toLocaleString()+' para la meta':'';
+    const elSA=document.getElementById('comision-sa');if(elSA)elSA.textContent='$'+Math.round(comSA).toLocaleString();
+    const elSc=document.getElementById('comision-scaling');if(elSc)elSc.textContent='$'+Math.round(comScaling).toLocaleString();
   }catch(e){}
 }
 
@@ -792,19 +798,20 @@ function updateIngresosBar(){
 function updateOverview(){
   const calls=filterCalls(),total=calls.length;
   const noCalifica=calls.filter(c=>c.estado==='no-califica').length;
-  const callsValidas=calls.filter(c=>c.estado!=='no-califica');
+  const noPitcheo=calls.filter(c=>c.estado==='no-pitcheo').length;
+  const callsValidas=calls.filter(c=>c.estado!=='no-califica'&&c.estado!=='no-pitcheo');
   const totalValidas=callsValidas.length;
   const cerradas=callsValidas.filter(c=>c.estado==='cerrada').length;
-  const noCerradas=callsValidas.filter(c=>c.estado==='no-cerrada').length;
   const seguimiento=callsValidas.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
   const rate=totalValidas>0?Math.round((cerradas/totalValidas)*100):0;
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-cerradas').textContent=cerradas;
-  document.getElementById('stat-no-cerradas').textContent=noCerradas;
   document.getElementById('stat-seguimiento').textContent=seguimiento;
-  document.getElementById('stat-rate').textContent=rate+'% tasa de cierre (excl. no califica)';
+  document.getElementById('stat-rate').textContent=rate+'% tasa de cierre';
   const ncEl=document.getElementById('stat-no-califica');
   if(ncEl) ncEl.textContent=noCalifica;
+  const npEl=document.getElementById('stat-no-pitcheo');
+  if(npEl) npEl.textContent=noPitcheo;
 
   // Actualizar barra de ingresos y comisiones
   updateIngresosBar();
