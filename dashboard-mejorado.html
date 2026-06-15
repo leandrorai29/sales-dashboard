@@ -291,12 +291,44 @@ select.input{cursor:pointer;}
 
       <!-- ===== OVERVIEW ===== -->
       <div id="tab-overview" class="tab-content active">
-        <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
+        <!-- Stats principales -->
+        <div class="stats-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;">
           <div class="stat-card purple"><div class="stat-card-icon">📞</div><div class="stat-label">Calls Totales</div><div class="stat-value purple" id="stat-total">0</div><div class="stat-sub">Este período</div></div>
           <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cerradas</div><div class="stat-value green" id="stat-cerradas">0</div><div class="stat-sub" id="stat-rate">0% tasa de cierre</div></div>
           <div class="stat-card yellow"><div class="stat-card-icon">🔄</div><div class="stat-label">En Seguimiento</div><div class="stat-value yellow" id="stat-seguimiento">0</div><div class="stat-sub">Pendientes</div></div>
           <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">⏸️</div><div class="stat-label">No se Pitcheó</div><div class="stat-value" style="color:var(--orange)" id="stat-no-pitcheo">0</div><div class="stat-sub">No entra en tasa</div></div>
           <div class="stat-card" style="border-color:var(--border2);"><div class="stat-card-icon" style="background:var(--surface3);">🚫</div><div class="stat-label">Descalificada</div><div class="stat-value" style="color:var(--text3)" id="stat-no-califica">0</div><div class="stat-sub">No entra en tasa</div></div>
+        </div>
+
+        <!-- Tasa de cierre por empresa -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+          <!-- Total -->
+          <div class="section" style="margin-bottom:0;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:12px;">📊 Tasa Total</div>
+            <div style="font-size:42px;font-weight:800;font-family:'DM Mono';color:var(--green);line-height:1;" id="tasa-total">0%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:10px;" id="tasa-total-sub">0 cerradas / 0 calls</div>
+            <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border);">
+              <div id="tasa-total-bar" style="height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:4px;width:0%;transition:width .6s;"></div>
+            </div>
+          </div>
+          <!-- SA Dental -->
+          <div class="section" style="margin-bottom:0;border-color:rgba(16,185,129,.2);">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--green);margin-bottom:12px;">🦷 SA Dental</div>
+            <div style="font-size:42px;font-weight:800;font-family:'DM Mono';color:var(--green);line-height:1;" id="tasa-dental">0%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:10px;" id="tasa-dental-sub">0 cerradas / 0 calls</div>
+            <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border);">
+              <div id="tasa-dental-bar" style="height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:4px;width:0%;transition:width .6s;"></div>
+            </div>
+          </div>
+          <!-- Scaling In Blue -->
+          <div class="section" style="margin-bottom:0;border-color:rgba(59,130,246,.2);">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent2);margin-bottom:12px;">🏗️ Scaling In Blue</div>
+            <div style="font-size:42px;font-weight:800;font-family:'DM Mono';color:var(--accent2);line-height:1;" id="tasa-scaling">0%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;margin-bottom:10px;" id="tasa-scaling-sub">0 cerradas / 0 calls</div>
+            <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border);">
+              <div id="tasa-scaling-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:4px;width:0%;transition:width .6s;"></div>
+            </div>
+          </div>
         </div>
         <div class="two-col">
           <!-- CUADRADO 1: Calculadora inversa -->
@@ -682,6 +714,14 @@ function getMonthRange(){
   const now=new Date();
   return{start:new Date(now.getFullYear(),now.getMonth(),1).toISOString().slice(0,10),end:new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().slice(0,10)};
 }
+function filterCallsByPeriod(){
+  const t=today(),w=getWeekRange(),m=getMonthRange();
+  if(state.filter==='dia') return state.calls.filter(c=>c.fecha===t);
+  if(state.filter==='semana') return state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);
+  if(state.filter==='mes') return state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);
+  return state.calls;
+}
+
 function filterCalls(){
   const t=today(),w=getWeekRange(),m=getMonthRange();
   let calls=state.calls;
@@ -830,8 +870,28 @@ function updateOverview(){
   const npEl=document.getElementById('stat-no-pitcheo');
   if(npEl) npEl.textContent=noPitcheo;
 
-  // Actualizar barra de ingresos y comisiones
-  updateIngresosBar();
+  // Tasa de cierre total
+  document.getElementById('tasa-total').textContent=rate+'%';
+  document.getElementById('tasa-total-sub').textContent=cerradas+' cerradas / '+denominador+' calls válidas';
+  document.getElementById('tasa-total-bar').style.width=rate+'%';
+
+  // Tasa por empresa — usar todas las calls del período (sin filtro de agencia)
+  function calcTasaEmpresa(empresa) {
+    const callsEmp = filterCallsByPeriod().filter(c => c.empresa===empresa || (c.notas&&c.notas.includes(empresa)));
+    const cerr = callsEmp.filter(c=>c.estado==='cerrada').length;
+    const noCerr = callsEmp.filter(c=>c.estado==='no-cerrada').length;
+    const seg = callsEmp.filter(c=>c.estado==='seguimiento'||c.estado==='agendada').length;
+    const den = cerr+noCerr+seg;
+    return { tasa: den>0?Math.round((cerr/den)*100):0, cerradas:cerr, total:den };
+  }
+  const dental = calcTasaEmpresa('SA Dental');
+  const scaling = calcTasaEmpresa('Scaling In Blue');
+  document.getElementById('tasa-dental').textContent=dental.tasa+'%';
+  document.getElementById('tasa-dental-sub').textContent=dental.cerradas+' cerradas / '+dental.total+' calls válidas';
+  document.getElementById('tasa-dental-bar').style.width=dental.tasa+'%';
+  document.getElementById('tasa-scaling').textContent=scaling.tasa+'%';
+  document.getElementById('tasa-scaling-sub').textContent=scaling.cerradas+' cerradas / '+scaling.total+' calls válidas';
+  document.getElementById('tasa-scaling-bar').style.width=scaling.tasa+'%';
 
   // Objeciones con filtro y gráfico
   const m=getMonthRange();
