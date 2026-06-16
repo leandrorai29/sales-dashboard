@@ -460,6 +460,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 // ===== STATE =====
+// ===== SUPABASE =====
+const SUPABASE_URL = 'https://hxerooaiefldjqlowepv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4ZXJvb2FpZWZsZGpxbG93ZXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NTUxMzIsImV4cCI6MjA5NzEzMTEzMn0.hyz8POxc2eAg4YhwtPRNEGLHWmF3hA4SlWWQLAKP2EI';
+async function sbSaveCall(call){
+  try{await fetch(`${SUPABASE_URL}/rest/v1/calls?on_conflict=id`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({id:call.id,nombre:call.nombre,empresa:call.empresa||'',estado:call.estado,fecha:call.fecha,objecion:call.objecion||'',programa:call.programa||'',cash_collected:call.cashCollected||0,contracted_revenue:call.contractedRevenue||0,notas:call.notas||''})});}catch(e){console.error('SB call error:',e);}
+}
+async function sbSaveHotLead(lead){
+  try{await fetch(`${SUPABASE_URL}/rest/v1/hot_leads?on_conflict=id`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({id:lead.id,nombre:lead.nombre,empresa:lead.empresa||'',estado:lead.estado,ultimo_contacto:lead.ultimoContacto||'',proximo_followup:lead.proximoFollowup||'',transcript:lead.transcript||'',notas:lead.notas||'',objecion:lead.objecion||'',analisis_call:lead.analisisCall||'',puntuacion:lead.puntuacion||null,mensajes:lead.mensajes||[]})});}catch(e){console.error('SB HL error:',e);}
+}
+
 const FORM_KEY = 'sales-script-form';
 const NOTES_KEY = 'sales-script-notes';
 const LINKS_KEY = 'sales-script-links';
@@ -676,6 +686,7 @@ function saveCall() {
     if(form.pitched === 'si' && form.closed === 'si') estado = 'cerrada';
     else if(form.pitched === 'si' && form.closed === 'no') estado = 'seguimiento';
     else if(form.pitched === 'no' && form.noPitchReason === 'descalificado') estado = 'no-califica';
+    else if(form.pitched === 'no') estado = 'no-pitcheo';
     else estado = 'no-cerrada';
   } else if(form.callResult === 'noshow') estado = 'no-cerrada';
   else if(form.callResult === 'rescheduled') estado = 'agendada';
@@ -717,6 +728,8 @@ function saveCall() {
   };
   dashState.calls.push(newCall);
   try { localStorage.setItem('scd_v2', JSON.stringify(dashState)); } catch(e){}
+  // Sincronizar con Supabase
+  sbSaveCall(newCall);
 
   // Si quedó en seguimiento → Hot List
   if(estado === 'seguimiento' || estado === 'agendada') {
@@ -734,6 +747,8 @@ function saveCall() {
       analisisCall: '', puntuacion: form.puntuacionLead || null, mensajes: [], fromSalesScript: true
     });
     try { localStorage.setItem('hotlist_leads', JSON.stringify(hotLeads)); } catch(e){}
+    // Sincronizar hot lead con Supabase
+    sbSaveHotLead(hotLeads[hotLeads.length-1]);
   }
 
   // Reset

@@ -621,7 +621,76 @@ select.input{cursor:pointer;}
 </div>
 
 <script>
-// ===== STORAGE =====
+// ===== SUPABASE =====
+const SUPABASE_URL = 'https://hxerooaiefldjqlowepv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4ZXJvb2FpZWZsZGpxbG93ZXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NTUxMzIsImV4cCI6MjA5NzEzMTEzMn0.hyz8POxc2eAg4YhwtPRNEGLHWmF3hA4SlWWQLAKP2EI';
+
+async function sbFetch(table, method='GET', body=null, query=''){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${query}`, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': method==='POST'?'return=minimal':'',
+    },
+    body: body ? JSON.stringify(body) : null
+  });
+  if(!res.ok) { const e=await res.text(); console.error('Supabase error:',e); return null; }
+  if(method==='GET') return await res.json();
+  return true;
+}
+
+async function loadCalls(){
+  const data = await sbFetch('calls','GET',null,'?order=created_at.asc');
+  if(!data) return [];
+  return data.map(c=>({
+    id:c.id, nombre:c.nombre, empresa:c.empresa||'', estado:c.estado,
+    fecha:c.fecha, objecion:c.objecion||'', programa:c.programa||'',
+    cashCollected:c.cash_collected||0, contractedRevenue:c.contracted_revenue||0, notas:c.notas||''
+  }));
+}
+
+async function saveCall_sb(call){
+  // Upsert — si existe lo actualiza, si no lo crea
+  await sbFetch('calls','POST',{
+    id:call.id, nombre:call.nombre, empresa:call.empresa||'', estado:call.estado,
+    fecha:call.fecha, objecion:call.objecion||'', programa:call.programa||'',
+    cash_collected:call.cashCollected||0, contracted_revenue:call.contractedRevenue||0, notas:call.notas||''
+  },'?on_conflict=id');
+}
+
+async function deleteCall_sb(id){
+  await sbFetch('calls','DELETE',null,`?id=eq.${id}`);
+}
+
+async function loadHotLeads_sb(){
+  const data = await sbFetch('hot_leads','GET',null,'?order=created_at.asc');
+  if(!data) return [];
+  return data.map(h=>({
+    id:h.id, nombre:h.nombre, empresa:h.empresa||'', estado:h.estado,
+    ultimoContacto:h.ultimo_contacto||'', proximoFollowup:h.proximo_followup||'',
+    transcript:h.transcript||'', notas:h.notas||'', objecion:h.objecion||'',
+    analisisCall:h.analisis_call||'', puntuacion:h.puntuacion||null,
+    mensajes:h.mensajes||[]
+  }));
+}
+
+async function saveHotLead_sb(lead){
+  await sbFetch('hot_leads','POST',{
+    id:lead.id, nombre:lead.nombre, empresa:lead.empresa||'', estado:lead.estado,
+    ultimo_contacto:lead.ultimoContacto||'', proximo_followup:lead.proximoFollowup||'',
+    transcript:lead.transcript||'', notas:lead.notas||'', objecion:lead.objecion||'',
+    analisis_call:lead.analisisCall||'', puntuacion:lead.puntuacion||null,
+    mensajes:lead.mensajes||[]
+  },'?on_conflict=id');
+}
+
+async function deleteHotLead_sb(id){
+  await sbFetch('hot_leads','DELETE',null,`?id=eq.${id}`);
+}
+
+// ===== STORAGE LOCAL (cache) =====
 const STORAGE_KEY='scd_v2';
 const HL_KEY='hotlist_leads';
 function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);if(s)return JSON.parse(s);}catch(e){}return{calls:[],leads:[],filter:'dia'};}
@@ -644,7 +713,9 @@ function setAgencia(ag, btn){
 
 // ===== HOT LIST STATE =====
 function loadHotList(){try{const h=localStorage.getItem(HL_KEY);return h?JSON.parse(h):[]}catch(e){return[];}}
-function saveHotList(){try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}}
+async function saveHotList(){
+  try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
+}
 let hotLeads=loadHotList();
 let hlFilter='todos';
 let objFilter='semana';
@@ -737,7 +808,9 @@ function setPuntuacion(id, val) {
   if(val>=8) lead.estado='hot';
   else if(val>=4) lead.estado='tibio';
   else lead.estado='frio';
-  saveHotList();renderHotList();
+  saveHotList();
+  saveHotLead_sb(lead).catch(e=>console.error('Supabase punt sync:',e));
+  renderHotList();
 }
 
 function setFilter(f,btn){
@@ -988,7 +1061,7 @@ function openEditCall(id){
   document.getElementById('call-edit-id').value=id;
   openModal('modal-add-call');
 }
-function saveCall(){
+async function saveCall(){
   const nombre=document.getElementById('call-lead-name').value.trim();
   const estado=document.getElementById('call-estado').value;
   const fecha=document.getElementById('call-fecha').value;
@@ -996,18 +1069,29 @@ function saveCall(){
   const notas=document.getElementById('call-notas').value.trim();
   const editId=document.getElementById('call-edit-id').value;
   if(!nombre||!estado){alert('Completá nombre y estado');return;}
+  let callObj;
   if(editId){
     const idx=state.calls.findIndex(c=>c.id==editId);
-    if(idx>-1)state.calls[idx]={...state.calls[idx],nombre,estado,fecha:fecha||today(),objecion,notas};
+    if(idx>-1){
+      state.calls[idx]={...state.calls[idx],nombre,estado,fecha:fecha||today(),objecion,notas};
+      callObj=state.calls[idx];
+    }
   }else{
-    state.calls.push({id:Date.now(),nombre,estado,fecha:fecha||today(),objecion,notas});
+    callObj={id:Date.now(),nombre,empresa:'',estado,fecha:fecha||today(),objecion,notas,cashCollected:0,contractedRevenue:0,programa:''};
+    state.calls.push(callObj);
   }
-  saveState();closeModal('modal-add-call');updateOverview();
+  saveState();
+  closeModal('modal-add-call');
+  updateOverview();
+  // Sincronizar con Supabase
+  if(callObj) saveCall_sb(callObj).catch(e=>console.error('Supabase sync error:',e));
 }
-function deleteCall(id){
+
+async function deleteCall(id){
   if(!confirm('¿Eliminar esta call?'))return;
   state.calls=state.calls.filter(c=>c.id!==id);
   saveState();updateOverview();
+  deleteCall_sb(id).catch(e=>console.error('Supabase delete error:',e));
 }
 
 // ===== AI =====
@@ -1139,7 +1223,7 @@ function openEditHotLead(id){
   document.getElementById('hl-notas').value=lead.notas||'';
   openModal('modal-add-hot-lead');
 }
-function saveHotLead(){
+async function saveHotLead(){
   const nombre=document.getElementById('hl-nombre').value.trim();
   if(!nombre){alert('Ingresá el nombre del lead');return;}
   const editId=document.getElementById('hl-edit-id').value;
@@ -1159,11 +1243,16 @@ function saveHotLead(){
     data.id=Date.now();
     hotLeads.push(data);
   }
-  saveHotList();closeModal('modal-add-hot-lead');renderHotList();
+  await saveHotList();
+  saveHotLead_sb(data).catch(e=>console.error('Supabase HL sync:',e));
+  closeModal('modal-add-hot-lead');renderHotList();
 }
-function deleteHotLead(id){
+async function deleteHotLead(id){
   if(!confirm('¿Eliminar este lead de la Hot List?'))return;
-  hotLeads=hotLeads.filter(l=>l.id!==id);saveHotList();renderHotList();
+  hotLeads=hotLeads.filter(l=>l.id!==id);
+  await saveHotList();
+  deleteHotLead_sb(id).catch(e=>console.error('Supabase HL delete:',e));
+  renderHotList();
 }
 function filterHotlist(filter,btn){
   hlFilter=filter;
@@ -1328,6 +1417,7 @@ function saveLeadField(id, field, value) {
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
   lead[field]=value;
   saveHotList();
+  saveHotLead_sb(lead).catch(e=>console.error('Supabase field sync:',e));
   renderHotList();
 }
 function addFollowupMessage(leadId){
@@ -1512,19 +1602,45 @@ function importData(event){
 }
 
 // ===== RESET =====
-function confirmClearData(){
+async function confirmClearData(){
   if(!confirm('¿Borrar TODOS los datos? Esta accion no se puede deshacer.'))return;
+  // Borrar en Supabase
+  await sbFetch('calls','DELETE',null,'?id=gt.0');
   state.calls=[];state.leads=[];
-  saveState();updateOverview();updateLeadsList();
+  saveState();updateOverview();
 }
 
 // ===== INIT =====
-updateOverview();
-updateLeadsList();
-renderApiKeyStatus();
-renderMetasProgress();
-renderHotList();
-loadCalcConfig();
+async function init(){
+  // Mostrar loading
+  const el=document.getElementById('save-status');
+  if(el) el.textContent='Cargando datos...';
+  try {
+    // Cargar calls desde Supabase
+    const calls = await loadCalls();
+    if(calls && calls.length>0){
+      state.calls = calls;
+      saveState(); // cache local
+    }
+    // Cargar hot leads desde Supabase
+    const hl = await loadHotLeads_sb();
+    if(hl && hl.length>0){
+      hotLeads = hl;
+      try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
+    }
+    if(el) el.textContent='✓ Conectado a Supabase';
+    setTimeout(()=>{if(el)el.textContent='Guardado automático ON';},2000);
+  } catch(e){
+    console.error('Error cargando desde Supabase:', e);
+    if(el) el.textContent='Sin conexión — usando datos locales';
+  }
+  updateOverview();
+  renderApiKeyStatus();
+  renderMetasProgress();
+  renderHotList();
+  loadCalcConfig();
+}
+init();
 </script>
 </body>
 </html>
