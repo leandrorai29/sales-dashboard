@@ -283,7 +283,6 @@ select.input{cursor:pointer;}
           <button class="filter-btn" onclick="setFilter('semana',this)">Semana</button>
           <button class="filter-btn" onclick="setFilter('mes',this)">Mes</button>
         </div>
-        <button class="btn btn-danger btn-sm" onclick="confirmClearData()">🗑️ Reset</button>
       </div>
     </div>
 
@@ -697,9 +696,29 @@ function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);if(s)return J
 function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    // Backup automático con timestamp — nunca sobrescribe, solo agrega
+    const backupKey = 'scd_v2_backup_' + new Date().toISOString().slice(0,10);
+    localStorage.setItem(backupKey, JSON.stringify(state));
+    // Limpiar backups de más de 30 días para no llenar el storage
+    cleanOldBackups();
     const el=document.getElementById('save-status');
     if(el){el.textContent='Guardado '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});setTimeout(()=>el.textContent='Guardado automático ON',2000);}
   }catch(e){}
+}
+function cleanOldBackups(){
+  try{
+    const keys = Object.keys(localStorage).filter(k=>k.startsWith('scd_v2_backup_'));
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-30);
+    keys.forEach(k=>{
+      const dateStr = k.replace('scd_v2_backup_','');
+      if(new Date(dateStr) < cutoff) localStorage.removeItem(k);
+    });
+  }catch(e){}
+}
+function listBackups(){
+  try{
+    return Object.keys(localStorage).filter(k=>k.startsWith('scd_v2_backup_')).sort().reverse();
+  }catch(e){return [];}
 }
 let state=loadState();
 let agenciaFilter='todas';
@@ -1601,33 +1620,42 @@ function importData(event){
   reader.readAsText(file);event.target.value='';
 }
 
-// ===== RESET =====
-async function confirmClearData(){
-  if(!confirm('¿Borrar TODOS los datos? Esta accion no se puede deshacer.'))return;
-  // Borrar en Supabase
-  await sbFetch('calls','DELETE',null,'?id=gt.0');
-  state.calls=[];state.leads=[];
-  saveState();updateOverview();
-}
-
 // ===== INIT =====
 async function init(){
-  // Mostrar loading
   const el=document.getElementById('save-status');
   if(el) el.textContent='Cargando datos...';
   try {
     // Cargar calls desde Supabase
-    const calls = await loadCalls();
-    if(calls && calls.length>0){
-      state.calls = calls;
-      saveState(); // cache local
+    const sbCalls = await loadCalls();
+    // Merge: combinar calls de Supabase con las locales, sin duplicar por ID, sin perder ninguna
+    const localCalls = state.calls || [];
+    const mergedMap = {};
+    localCalls.forEach(c => mergedMap[c.id] = c);
+    if(sbCalls) sbCalls.forEach(c => mergedMap[c.id] = c);
+    state.calls = Object.values(mergedMap);
+
+    // Si había calls locales que no estaban en Supabase, subirlas ahora
+    if(sbCalls){
+      const sbIds = new Set(sbCalls.map(c=>c.id));
+      const faltantes = localCalls.filter(c => !sbIds.has(c.id));
+      for(const c of faltantes){ await saveCall_sb(c).catch(()=>{}); }
     }
-    // Cargar hot leads desde Supabase
-    const hl = await loadHotLeads_sb();
-    if(hl && hl.length>0){
-      hotLeads = hl;
-      try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
+    saveState();
+
+    // Cargar hot leads desde Supabase con el mismo merge
+    const sbHL = await loadHotLeads_sb();
+    const localHL = hotLeads || [];
+    const mergedHLMap = {};
+    localHL.forEach(h => mergedHLMap[h.id] = h);
+    if(sbHL) sbHL.forEach(h => mergedHLMap[h.id] = h);
+    hotLeads = Object.values(mergedHLMap);
+    if(sbHL){
+      const sbHLIds = new Set(sbHL.map(h=>h.id));
+      const faltantesHL = localHL.filter(h => !sbHLIds.has(h.id));
+      for(const h of faltantesHL){ await saveHotLead_sb(h).catch(()=>{}); }
     }
+    try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
+
     if(el) el.textContent='✓ Conectado a Supabase';
     setTimeout(()=>{if(el)el.textContent='Guardado automático ON';},2000);
   } catch(e){
