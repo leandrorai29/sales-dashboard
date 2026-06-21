@@ -537,7 +537,7 @@ select.input{cursor:pointer;}
     </div>
     <div class="form-row">
       <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-pitcheo">⏸️ No se pitcheó</option><option value="no-califica">🚫 No calificaba</option></select></div>
-      <div class="input-group"><label class="input-label">Objeción principal</label><input class="input" id="call-objecion" type="text" placeholder="Si no cerró..."></div>
+      <div class="input-group"><label class="input-label">Objeción principal</label><select class="input" id="call-objecion"><option value="">Sin objeción</option><option value="🌫️ Bomba de Humo">🌫️ Bomba de Humo</option><option value="💰 Dinero">💰 Dinero</option><option value="🚚 Logística">🚚 Logística</option><option value="😰 Miedo">😰 Miedo</option></select></div>
     </div>
     <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
     <input type="hidden" id="call-edit-id">
@@ -985,30 +985,45 @@ function updateOverview(){
   document.getElementById('tasa-scaling-sub').textContent=scaling.cerradas+' cerradas / '+scaling.total+' calls válidas';
   document.getElementById('tasa-scaling-bar').style.width=scaling.tasa+'%';
 
-  // Objeciones con filtro y gráfico
+  // Objeciones con filtro y gráfico — agrupadas por las 4 categorías
   const m=getMonthRange();
   let callsObj=state.calls;
   if(objFilter==='semana'){const w=getWeekRange();callsObj=state.calls.filter(c=>c.fecha>=w.start&&c.fecha<=w.end);}
   else if(objFilter==='mes'){callsObj=state.calls.filter(c=>c.fecha>=m.start&&c.fecha<=m.end);}
+
+  function categorizarObjecion(texto){
+    const t=(texto||'').toLowerCase();
+    if(t.includes('bomba de humo')) return 'Bomba de Humo';
+    if(t.includes('miedo')) return 'Miedo';
+    if(t.includes('dinero')) return 'Dinero';
+    if(t.includes('logística')||t.includes('logistica')) return 'Logística';
+    return null;
+  }
+
   const objMap={};
-  callsObj.filter(c=>c.objecion).forEach(c=>{const k=c.objecion.toLowerCase().trim();objMap[k]=(objMap[k]||0)+1;});
-  const sorted=Object.entries(objMap).sort((a,b)=>b[1]-a[1]);
+  callsObj.filter(c=>c.objecion).forEach(c=>{
+    const cat=categorizarObjecion(c.objecion);
+    if(cat) objMap[cat]=(objMap[cat]||0)+1;
+  });
+  const catOrder=['Bomba de Humo','Dinero','Logística','Miedo'];
+  const catColors={'Bomba de Humo':'#94a3b8','Dinero':'#10b981','Logística':'#f59e0b','Miedo':'#f43f5e'};
+  const catIcons={'Bomba de Humo':'🌫️','Dinero':'💰','Logística':'🚚','Miedo':'😰'};
+  const sorted=catOrder.filter(c=>objMap[c]).map(c=>[c,objMap[c]]).sort((a,b)=>b[1]-a[1]);
   const objEl=document.getElementById('objection-list');
-  
+
   if(sorted.length===0){
     objEl.innerHTML='<div class="empty-state"><div class="empty-state-icon">✅</div><div class="empty-state-text">Sin objeciones en este período</div></div>';
     drawObjChart([]);
   } else {
-    const colors=['#3b82f6','#f43f5e','#f59e0b','#10b981','#a78bfa','#fb923c','#38bdf8','#ec4899'];
-    objEl.innerHTML=sorted.map(([t,n],i)=>`
+    objEl.innerHTML=sorted.map(([t,n])=>`
       <div class="objection-item">
         <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:10px;height:10px;border-radius:50%;background:${colors[i%colors.length]};flex-shrink:0;"></div>
-          <div style="font-size:13px">${t}</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:${catColors[t]};flex-shrink:0;"></div>
+          <div style="font-size:13px">${catIcons[t]} ${t}</div>
         </div>
         <div class="objection-count">${n}x</div>
       </div>`).join('');
-    drawObjChart(sorted.map(([t,n],i)=>({label:t,value:n,color:colors[i%colors.length]})));
+    drawObjChart(sorted.map(([t,n])=>({label:t,value:n,color:catColors[t]})));
   }
 
   const tbody=document.getElementById('calls-table-body');
@@ -1381,7 +1396,13 @@ function openHotLeadDetail(id){
     <!-- Objeción principal -->
     <div style="margin-bottom:16px;">
       <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">⚠️ Objeción principal</div>
-      <input id="hl-detail-objecion-${id}" class="input" type="text" value="${(lead.objecion||'').replace(/"/g,'&quot;')}" placeholder="¿Cuál es la objeción del lead?" style="font-size:13px;" onchange="saveLeadField(${id},'objecion',this.value)">
+      <select id="hl-detail-objecion-${id}" class="input" style="font-size:13px;" onchange="saveLeadField(${id},'objecion',this.value)">
+        <option value="" ${!lead.objecion?'selected':''}>Sin objeción</option>
+        <option value="🌫️ Bomba de Humo" ${lead.objecion==='🌫️ Bomba de Humo'?'selected':''}>🌫️ Bomba de Humo</option>
+        <option value="💰 Dinero" ${lead.objecion==='💰 Dinero'?'selected':''}>💰 Dinero</option>
+        <option value="🚚 Logística" ${lead.objecion==='🚚 Logística'?'selected':''}>🚚 Logística</option>
+        <option value="😰 Miedo" ${lead.objecion==='😰 Miedo'?'selected':''}>😰 Miedo</option>
+      </select>
     </div>
 
     <!-- Análisis de la call -->
