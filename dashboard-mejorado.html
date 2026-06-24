@@ -103,6 +103,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 .badge-no-cerrada{background:var(--red2);color:var(--red);border:1px solid rgba(244,63,110,.2);}
 .badge-no-califica{background:var(--surface3);color:var(--text3);border:1px solid var(--border2);}
 .badge-no-pitcheo{background:var(--orange2);color:var(--orange);border:1px solid rgba(251,146,60,.2);}
+.badge-cuota-cobrada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
 .badge-seguimiento{background:var(--yellow2);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
 .badge-agendada{background:var(--accent3);color:var(--accent2);border:1px solid rgba(59,130,246,.2);}
 
@@ -255,6 +256,7 @@ select.input{cursor:pointer;}
     <nav>
       <div class="nav-item active" onclick="switchTab('overview')"><span class="nav-icon">📊</span> Dashboard</div>
       <div class="nav-item" onclick="switchTab('hotlist')"><span class="nav-icon">🔥</span> Hot List</div>
+      <div class="nav-item" onclick="switchTab('cuotas')"><span class="nav-icon">💳</span> Cuotas</div>
       <div class="nav-item" onclick="switchTab('performance')"><span class="nav-icon">📈</span> Performance</div>
     </nav>
     <div class="sidebar-bottom">
@@ -451,6 +453,33 @@ select.input{cursor:pointer;}
         </div>
         <div id="hotlist-grid">
           <div class="empty-state"><div class="empty-state-icon">🔥</div><div class="empty-state-text">No hay leads en tu Hot List aún.<br>Agregá uno con el botón de arriba.</div></div>
+        </div>
+      </div>
+
+      <!-- ===== CUOTAS ===== -->
+      <div id="tab-cuotas" class="tab-content">
+        <div class="section-header" style="margin-bottom:20px;">
+          <div style="font-size:17px;font-weight:700;">💳 Cuotas — Plan de Pagos</div>
+        </div>
+        <div class="stats-row" style="margin-bottom:20px;">
+          <div class="stat-card yellow"><div class="stat-card-icon">⏳</div><div class="stat-label">Pendientes</div><div class="stat-value yellow" id="cuotas-stat-pendientes">0</div><div class="stat-sub">Por cobrar</div></div>
+          <div class="stat-card green"><div class="stat-card-icon">✅</div><div class="stat-label">Cobradas</div><div class="stat-value green" id="cuotas-stat-cobradas">0</div><div class="stat-sub">Este período</div></div>
+          <div class="stat-card red"><div class="stat-card-icon">⚠️</div><div class="stat-label">Vencidas</div><div class="stat-value red" id="cuotas-stat-vencidas">0</div><div class="stat-sub">Sin cobrar, fecha pasada</div></div>
+          <div class="stat-card purple"><div class="stat-card-icon">💰</div><div class="stat-label">Monto Pendiente</div><div class="stat-value purple" id="cuotas-stat-monto">$0</div><div class="stat-sub">Total por cobrar</div></div>
+        </div>
+        <div class="hotlist-filters">
+          <button class="hl-filter active" onclick="filterCuotas('todas',this)">Todas</button>
+          <button class="hl-filter" onclick="filterCuotas('pendientes',this)">⏳ Pendientes</button>
+          <button class="hl-filter" onclick="filterCuotas('vencidas',this)">⚠️ Vencidas</button>
+          <button class="hl-filter" onclick="filterCuotas('cobradas',this)">✅ Cobradas</button>
+        </div>
+        <div class="section">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Cliente</th><th>Empresa</th><th>Cuota</th><th>Monto</th><th>Fecha</th><th>Estado</th><th></th></tr></thead>
+              <tbody id="cuotas-table-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin cuotas registradas aún</td></tr></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -689,6 +718,24 @@ async function deleteHotLead_sb(id){
   await sbFetch('hot_leads','DELETE',null,`?id=eq.${id}`);
 }
 
+async function loadCuotas_sb(){
+  const data = await sbFetch('cuotas','GET',null,'?order=fecha_estimada.asc');
+  if(!data) return [];
+  return data.map(c=>({
+    id:c.id, callId:c.call_id, nombreCliente:c.nombre_cliente, empresa:c.empresa||'',
+    numeroCuota:c.numero_cuota, totalCuotas:c.total_cuotas, monto:c.monto||0,
+    fechaEstimada:c.fecha_estimada, pagada:c.pagada||false, fechaPagada:c.fecha_pagada
+  }));
+}
+
+async function saveCuota_sb(cuota){
+  await sbFetch('cuotas','POST',{
+    id:cuota.id, call_id:cuota.callId, nombre_cliente:cuota.nombreCliente, empresa:cuota.empresa||'',
+    numero_cuota:cuota.numeroCuota, total_cuotas:cuota.totalCuotas, monto:cuota.monto||0,
+    fecha_estimada:cuota.fechaEstimada, pagada:cuota.pagada||false, fecha_pagada:cuota.fechaPagada||null
+  },'?on_conflict=id');
+}
+
 // ===== STORAGE LOCAL (cache) =====
 const STORAGE_KEY='scd_v2';
 const HL_KEY='hotlist_leads';
@@ -736,6 +783,92 @@ async function saveHotList(){
   try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
 }
 let hotLeads=loadHotList();
+
+// ===== CUOTAS STATE =====
+const CUOTAS_KEY='cuotas_cache';
+function loadCuotasLocal(){try{const c=localStorage.getItem(CUOTAS_KEY);return c?JSON.parse(c):[]}catch(e){return[];}}
+function saveCuotasLocal(){try{localStorage.setItem(CUOTAS_KEY,JSON.stringify(cuotas));}catch(e){}}
+let cuotas=loadCuotasLocal();
+let cuotasFilter='todas';
+
+function filterCuotas(f, btn){
+  cuotasFilter=f;
+  document.querySelectorAll('#tab-cuotas .hl-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCuotas();
+}
+
+function renderCuotas(){
+  const t=today();
+  const pendientes=cuotas.filter(c=>!c.pagada && c.fechaEstimada>=t);
+  const vencidas=cuotas.filter(c=>!c.pagada && c.fechaEstimada<t);
+  const cobradas=cuotas.filter(c=>c.pagada);
+  const montoPendiente=[...pendientes,...vencidas].reduce((s,c)=>s+(c.monto||0),0);
+
+  document.getElementById('cuotas-stat-pendientes').textContent=pendientes.length;
+  document.getElementById('cuotas-stat-cobradas').textContent=cobradas.length;
+  document.getElementById('cuotas-stat-vencidas').textContent=vencidas.length;
+  document.getElementById('cuotas-stat-monto').textContent='$'+montoPendiente.toLocaleString();
+
+  let lista=[...cuotas];
+  if(cuotasFilter==='pendientes') lista=pendientes;
+  else if(cuotasFilter==='vencidas') lista=vencidas;
+  else if(cuotasFilter==='cobradas') lista=cobradas;
+  lista.sort((a,b)=>a.fechaEstimada.localeCompare(b.fechaEstimada));
+
+  const tbody=document.getElementById('cuotas-table-body');
+  if(lista.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin cuotas en este filtro</td></tr>';return;}
+  tbody.innerHTML=lista.map(c=>{
+    let estadoBadge;
+    if(c.pagada) estadoBadge='<span class="badge badge-cerrada">✅ Cobrada</span>';
+    else if(c.fechaEstimada<t) estadoBadge='<span class="badge badge-no-cerrada">⚠️ Vencida</span>';
+    else estadoBadge='<span class="badge badge-seguimiento">⏳ Pendiente</span>';
+    return `<tr>
+      <td style="font-weight:500">${c.nombreCliente}</td>
+      <td>${c.empresa==='SA Dental'?'🦷 SA Dental':c.empresa==='Scaling In Blue'?'🏗️ Scaling':'<span style="color:var(--text3)">—</span>'}</td>
+      <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.numeroCuota}/${c.totalCuotas}</td>
+      <td style="font-family:'DM Mono';font-size:13px;color:var(--green)">$${(c.monto||0).toLocaleString()}</td>
+      <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fechaEstimada}</td>
+      <td>${estadoBadge}</td>
+      <td>${c.pagada?`<button class="btn btn-secondary btn-sm" onclick="marcarCuotaNoPagada(${c.id})">Deshacer</button>`:`<button class="btn btn-primary btn-sm" onclick="marcarCuotaPagada(${c.id})">✓ Marcar pagada</button>`}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function marcarCuotaPagada(id){
+  const cuota=cuotas.find(c=>c.id===id);if(!cuota)return;
+  cuota.pagada=true;
+  cuota.fechaPagada=today();
+  saveCuotasLocal();
+  saveCuota_sb(cuota).catch(e=>console.error('Supabase cuota sync:',e));
+  // Agregar al historial de calls como ingreso del mes (no afecta tasa de cierre)
+  let dashCalls=state.calls;
+  dashCalls.push({
+    id: Date.now()+Math.floor(Math.random()*1000),
+    nombre: cuota.nombreCliente,
+    empresa: cuota.empresa,
+    estado: 'cuota-cobrada',
+    fecha: cuota.fechaPagada,
+    objecion: '',
+    cashCollected: cuota.monto,
+    contractedRevenue: 0,
+    programa: `Cuota ${cuota.numeroCuota}/${cuota.totalCuotas}`,
+    notas: `Empresa: ${cuota.empresa} | Cuota ${cuota.numeroCuota} de ${cuota.totalCuotas}`
+  });
+  saveState();
+  renderCuotas();
+  updateOverview();
+}
+
+async function marcarCuotaNoPagada(id){
+  const cuota=cuotas.find(c=>c.id===id);if(!cuota)return;
+  cuota.pagada=false;
+  cuota.fechaPagada=null;
+  saveCuotasLocal();
+  saveCuota_sb(cuota).catch(e=>console.error('Supabase cuota sync:',e));
+  renderCuotas();
+  updateOverview();
+}
 let hlFilter='todos';
 let objFilter='semana';
 
@@ -772,7 +905,7 @@ function renderApiKeyStatus(){
 function openSettingsModal(){const k=getApiKey();if(k)document.getElementById('settings-api-key').value=k;renderApiKeyStatus();openModal('modal-settings');}
 
 // ===== NAV =====
-const tabTitles={overview:'Dashboard',leads:'Sales Tracker',hotlist:'Hot List',performance:'Performance'};
+const tabTitles={overview:'Dashboard',leads:'Sales Tracker',hotlist:'Hot List',cuotas:'Cuotas',performance:'Performance'};
 function switchTab(tab){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -781,6 +914,7 @@ function switchTab(tab){
   event.currentTarget.classList.add('active');
   if(tab==='performance'){renderMetasProgress();updatePerformance();}
   if(tab==='hotlist'){renderHotList();}
+  if(tab==='cuotas'){renderCuotas();}
 }
 
 function switchSTTab(tab){
@@ -840,7 +974,7 @@ function setFilter(f,btn){
   updatePerformance();
   renderMetasProgress();
 }
-function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada','no-califica':'🚫 No calificaba','no-pitcheo':'⏸️ No se pitcheó'}[e]||e;}
+function estadoLabel(e){return{cerrada:'✅ Cerrada','no-cerrada':'❌ No cerrada',seguimiento:'🔄 Seguimiento',agendada:'📅 Re-agendada','no-califica':'🚫 No calificaba','no-pitcheo':'⏸️ No se pitcheó','cuota-cobrada':'💳 Cuota cobrada'}[e]||e;}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
@@ -908,7 +1042,7 @@ function updateIngresosBar(){
     const c=localStorage.getItem('calc_config');
     const config=c?JSON.parse(c):{meta:0,ticket:3000,tasa:28,comision:10};
     const m=getMonthRange();
-    const callsMesCerradas=state.calls.filter(c2=>c2.fecha>=m.start&&c2.fecha<=m.end&&c2.estado==='cerrada');
+    const callsMesCerradas=state.calls.filter(c2=>c2.fecha>=m.start&&c2.fecha<=m.end&&(c2.estado==='cerrada'||c2.estado==='cuota-cobrada'));
     const com=config.comision||10;
 
     // Calcular comisión sobre cash collected real de cada call
@@ -1677,6 +1811,20 @@ async function init(){
     }
     try{localStorage.setItem(HL_KEY,JSON.stringify(hotLeads));}catch(e){}
 
+    // Cargar cuotas desde Supabase con el mismo merge
+    const sbCuotas = await loadCuotas_sb();
+    const localCuotas = cuotas || [];
+    const mergedCuotasMap = {};
+    localCuotas.forEach(c => mergedCuotasMap[c.id] = c);
+    if(sbCuotas) sbCuotas.forEach(c => mergedCuotasMap[c.id] = c);
+    cuotas = Object.values(mergedCuotasMap);
+    if(sbCuotas){
+      const sbCuotasIds = new Set(sbCuotas.map(c=>c.id));
+      const faltantesCuotas = localCuotas.filter(c => !sbCuotasIds.has(c.id));
+      for(const c of faltantesCuotas){ await saveCuota_sb(c).catch(()=>{}); }
+    }
+    saveCuotasLocal();
+
     if(el) el.textContent='✓ Conectado a Supabase';
     setTimeout(()=>{if(el)el.textContent='Guardado automático ON';},2000);
   } catch(e){
@@ -1687,6 +1835,7 @@ async function init(){
   renderApiKeyStatus();
   renderMetasProgress();
   renderHotList();
+  renderCuotas();
   loadCalcConfig();
 }
 init();

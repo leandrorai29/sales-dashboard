@@ -379,6 +379,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 <div class="field-prefix-wrap"><span class="field-prefix">$</span><input class="field-prefix-input" id="contracted-revenue" type="number" placeholder="0" oninput="updateForm('contractedRevenue',this.value)"></div>
               </div>
             </div>
+
+            <!-- Plan de cuotas -->
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(16,185,129,.15);">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:12px;">
+                <input type="checkbox" id="usa-cuotas" onchange="toggleCuotas(this.checked)" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer;">
+                <span style="font-size:12px;font-weight:600;color:var(--text);">¿Este cliente paga en cuotas?</span>
+              </label>
+              <div id="cuotas-config" class="hidden" style="display:flex;gap:12px;align-items:flex-end;">
+                <div class="field-group" style="flex:1;">
+                  <div class="field-label">Cantidad de cuotas</div>
+                  <input class="field-input" id="cant-cuotas" type="number" min="2" max="24" placeholder="Ej: 4" oninput="updateForm('cantCuotas',this.value)">
+                </div>
+                <div class="field-group" style="flex:1;">
+                  <div class="field-label">Monto por cuota (USD)</div>
+                  <div class="field-prefix-wrap"><span class="field-prefix">$</span><input class="field-prefix-input" id="monto-cuota" type="number" placeholder="0" oninput="updateForm('montoCuota',this.value)"></div>
+                </div>
+                <div class="field-group" style="flex:1;">
+                  <div class="field-label">Fecha 1ra cuota</div>
+                  <input class="field-input" id="fecha-primera-cuota" type="date" oninput="updateForm('fechaPrimeraCuota',this.value)">
+                </div>
+              </div>
+              <div id="cuotas-preview" style="font-size:11px;color:var(--text3);margin-top:8px;"></div>
+            </div>
           </div>
         </div>
 
@@ -504,6 +527,9 @@ async function sbSaveCall(call){
 async function sbSaveHotLead(lead){
   try{await fetch(`${SUPABASE_URL}/rest/v1/hot_leads?on_conflict=id`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({id:lead.id,nombre:lead.nombre,empresa:lead.empresa||'',estado:lead.estado,ultimo_contacto:lead.ultimoContacto||'',proximo_followup:lead.proximoFollowup||'',transcript:lead.transcript||'',notas:lead.notas||'',objecion:lead.objecion||'',analisis_call:lead.analisisCall||'',puntuacion:lead.puntuacion||null,mensajes:lead.mensajes||[]})});}catch(e){console.error('SB HL error:',e);}
 }
+async function sbSaveCuota(cuota){
+  try{await fetch(`${SUPABASE_URL}/rest/v1/cuotas?on_conflict=id`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({id:cuota.id,call_id:cuota.call_id,nombre_cliente:cuota.nombre_cliente,empresa:cuota.empresa||'',numero_cuota:cuota.numero_cuota,total_cuotas:cuota.total_cuotas,monto:cuota.monto||0,fecha_estimada:cuota.fecha_estimada,pagada:cuota.pagada||false,fecha_pagada:cuota.fecha_pagada||null})});}catch(e){console.error('SB cuota error:',e);}
+}
 
 const FORM_KEY = 'sales-script-form';
 const NOTES_KEY = 'sales-script-notes';
@@ -531,6 +557,7 @@ let form = {
   callResult: null, whoCancel: null,
   noshowType: null, pitched: null, closed: null, noPitchReason: null,
   programa: null, cashCollected: '', contractedRevenue: '',
+  usaCuotas: false, cantCuotas: '', montoCuota: '', fechaPrimeraCuota: '',
   objecionCategoria: null, objecionSub: null, objecionMiedoTags: [], objecionMiedoCombo: [], objecionDetalle: '', objecionResumen: '',
   fathomLink: '', fathomTranscript: '', manualNotes: ''
 };
@@ -697,6 +724,9 @@ function updateForm(field, value) {
   saved = false;
   saveFormToStorage();
   updateWizard();
+  if(field === 'cantCuotas' || field === 'montoCuota' || field === 'fechaPrimeraCuota') {
+    updateCuotasPreview();
+  }
 }
 
 function saveFormToStorage() {
@@ -816,6 +846,30 @@ function saveCall() {
   // Sincronizar con Supabase
   sbSaveCall(newCall);
 
+  // Generar cuotas si aplica
+  if(form.usaCuotas && form.cantCuotas && form.montoCuota && form.fechaPrimeraCuota) {
+    const cant = parseInt(form.cantCuotas);
+    const monto = parseFloat(form.montoCuota);
+    const base = new Date(form.fechaPrimeraCuota + 'T00:00:00');
+    for(let i=0; i<cant; i++) {
+      const f = new Date(base);
+      f.setDate(f.getDate() + (i*30));
+      const cuota = {
+        id: Date.now() + i + 1000,
+        call_id: newCall.id,
+        nombre_cliente: form.prospectName,
+        empresa: empresaLabel,
+        numero_cuota: i+1,
+        total_cuotas: cant,
+        monto: monto,
+        fecha_estimada: f.toISOString().slice(0,10),
+        pagada: false,
+        fecha_pagada: null
+      };
+      sbSaveCuota(cuota);
+    }
+  }
+
   // Si quedó en seguimiento → Hot List
   if(estado === 'seguimiento' || estado === 'agendada') {
     let hotLeads = [];
@@ -837,7 +891,7 @@ function saveCall() {
   }
 
   // Reset
-  form = { empresa:null, callType:null, callDate:'', prospectName:'', prospectEmail:'', prospectPhone:'', puntuacionLead:null, decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, noPitchReason:null, programa:null, cashCollected:'', contractedRevenue:'', objecionCategoria:null, objecionSub:null, objecionMiedoTags:[], objecionMiedoCombo:[], objecionDetalle:'', objecionResumen:'', fathomLink:'', fathomTranscript:'', manualNotes:'' };
+  form = { empresa:null, callType:null, callDate:'', prospectName:'', prospectEmail:'', prospectPhone:'', puntuacionLead:null, decisionMaker:null, monthlyRevenue:'', bottleneck:'', callResult:null, whoCancel:null, noshowType:null, pitched:null, closed:null, noPitchReason:null, programa:null, cashCollected:'', contractedRevenue:'', usaCuotas:false, cantCuotas:'', montoCuota:'', fechaPrimeraCuota:'', objecionCategoria:null, objecionSub:null, objecionMiedoTags:[], objecionMiedoCombo:[], objecionDetalle:'', objecionResumen:'', fathomLink:'', fathomTranscript:'', manualNotes:'' };
   saveFormToStorage();
   const badge = document.getElementById('save-badge');
   badge.style.display = 'inline'; badge.textContent = '✓ Guardado en Dashboard'; badge.style.color = 'var(--green)';
@@ -847,6 +901,9 @@ function saveCall() {
   document.querySelectorAll('.field-input, .field-textarea, .field-prefix-input').forEach(i=>i.value='');
   document.querySelectorAll('#who-cancel-section,#noshow-type-section,#attended-section,#pitched-section,#no-pitched-section,#closed-si-section,#closed-no-section,#obj-sub-bomba,#obj-sub-miedo').forEach(s=>s.classList.add('hidden'));
   document.querySelectorAll('#miedo-combo-dinero,#miedo-combo-logistica').forEach(b=>b.classList.remove('active-combo'));
+  document.getElementById('usa-cuotas').checked = false;
+  document.getElementById('cuotas-config').classList.add('hidden');
+  document.getElementById('cuotas-preview').textContent = '';
   // Reset puntuación
   [1,2,3,4,5,6,7,8,9,10].forEach(i=>{const btn=document.getElementById(`punt-btn-${i}`);if(btn){btn.style.borderColor='var(--border2)';btn.style.background='transparent';btn.style.color='var(--text3)';}});
   const pl=document.getElementById('punt-label');if(pl)pl.innerHTML='Sin puntuar todavía';
@@ -873,6 +930,36 @@ function setPuntLead(n) {
   });
   const label = document.getElementById('punt-label');
   if(label) label.innerHTML = `<span style="color:${color};font-weight:600;">${n}/10 — ${grupoLabel}</span>`;
+}
+
+function toggleCuotas(checked) {
+  form.usaCuotas = checked;
+  document.getElementById('cuotas-config').classList.toggle('hidden', !checked);
+  if(!checked) {
+    form.cantCuotas = ''; form.montoCuota = ''; form.fechaPrimeraCuota = '';
+    document.getElementById('cant-cuotas').value = '';
+    document.getElementById('monto-cuota').value = '';
+    document.getElementById('fecha-primera-cuota').value = '';
+  }
+  saveFormToStorage();
+  updateCuotasPreview();
+}
+
+function updateCuotasPreview() {
+  const preview = document.getElementById('cuotas-preview');
+  if(!preview) return;
+  const cant = parseInt(form.cantCuotas) || 0;
+  const monto = parseFloat(form.montoCuota) || 0;
+  const fecha1 = form.fechaPrimeraCuota;
+  if(!cant || !monto || !fecha1) { preview.textContent = ''; return; }
+  const fechas = [];
+  const base = new Date(fecha1 + 'T00:00:00');
+  for(let i=0; i<cant; i++) {
+    const f = new Date(base);
+    f.setDate(f.getDate() + (i*30));
+    fechas.push(f.toISOString().slice(0,10));
+  }
+  preview.innerHTML = `Se generarán <strong style="color:var(--green)">${cant} cuotas</strong> de $${monto.toLocaleString()} cada una (total: $${(cant*monto).toLocaleString()}), cada 30 días desde ${fechas[0]} hasta ${fechas[fechas.length-1]}.`;
 }
 
 // ===== COPY =====
