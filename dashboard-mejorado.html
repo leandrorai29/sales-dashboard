@@ -1402,6 +1402,21 @@ async function saveCall(){
   updateOverview();
   // Sincronizar con Supabase
   if(callObj) saveCall_sb(callObj).catch(e=>console.error('Supabase sync error:',e));
+  // Sincronizar con el lead correspondiente en Hot List (mismo nombre + empresa)
+  if(callObj) syncCallToHotLead(callObj);
+}
+
+// Sincroniza los cambios de una call (objeción, notas) hacia el lead correspondiente en Hot List
+function syncCallToHotLead(callObj){
+  const lead=hotLeads.find(l=>l.nombre===callObj.nombre && (l.empresa||'')===(callObj.empresa||''));
+  if(!lead)return;
+  let changed=false;
+  if(callObj.objecion && lead.objecion!==callObj.objecion){ lead.objecion=callObj.objecion; changed=true; }
+  if(callObj.notas && lead.notas!==callObj.notas){ lead.notas=callObj.notas; changed=true; }
+  if(changed){
+    saveHotList();
+    saveHotLead_sb(lead).catch(e=>console.error('Supabase HL sync:',e));
+  }
 }
 
 async function deleteCall(id){
@@ -1679,7 +1694,7 @@ function openHotLeadDetail(id){
     <!-- Objeción principal -->
     <div style="margin-bottom:16px;">
       <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">⚠️ Objeción principal</div>
-      <select id="hl-detail-objecion-${id}" class="input" style="font-size:13px;" onchange="saveLeadField(${id},'objecion',this.value)">
+      <select id="hl-detail-objecion-${id}" class="input" style="font-size:13px;" onblur="saveLeadField(${id},'objecion',this.value)" onchange="saveLeadField(${id},'objecion',this.value)">
         <option value="" ${!lead.objecion?'selected':''}>Sin objeción</option>
         <option value="🌫️ Bomba de Humo" ${lead.objecion==='🌫️ Bomba de Humo'?'selected':''}>🌫️ Bomba de Humo</option>
         <option value="💰 Dinero" ${lead.objecion==='💰 Dinero'?'selected':''}>💰 Dinero</option>
@@ -1691,11 +1706,14 @@ function openHotLeadDetail(id){
     <!-- Análisis de la call -->
     <div style="margin-bottom:16px;">
       <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">📊 Análisis de la call</div>
-      <textarea id="hl-detail-analisis-${id}" class="input" style="min-height:100px;font-size:13px;" placeholder="¿Qué pasó en la call? ¿Qué quedó pendiente? ¿Cómo estaba el lead emocionalmente?" onchange="saveLeadField(${id},'analisisCall',this.value)">${lead.analisisCall||''}</textarea>
+      <textarea id="hl-detail-analisis-${id}" class="input" style="min-height:100px;font-size:13px;" placeholder="¿Qué pasó en la call? ¿Qué quedó pendiente? ¿Cómo estaba el lead emocionalmente?" onblur="saveLeadField(${id},'analisisCall',this.value)">${lead.analisisCall||''}</textarea>
     </div>
 
     <!-- Notas -->
-    ${lead.notas?`<div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">📝 Notas</div><div style="font-size:12px;line-height:1.6;color:var(--text2);background:var(--surface2);border-radius:8px;padding:12px;">${lead.notas}</div></div>`:''}
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600;">📝 Notas</div>
+      <textarea id="hl-detail-notas-${id}" class="input" style="min-height:80px;font-size:13px;" placeholder="Contexto, próximos pasos, lo que necesites recordar..." onblur="saveLeadField(${id},'notas',this.value)">${lead.notas||''}</textarea>
+    </div>
 
     <hr class="divider">
 
@@ -1730,18 +1748,39 @@ function openHotLeadDetail(id){
 
 function setPuntuacionAndRefresh(id, val) {
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  // Preservar cualquier texto que el usuario haya escrito pero no guardado todavía (sin perder el foco)
+  const notasEl=document.getElementById('hl-detail-notas-'+id);
+  const analisisEl=document.getElementById('hl-detail-analisis-'+id);
+  if(notasEl && notasEl.value!==lead.notas) lead.notas=notasEl.value;
+  if(analisisEl && analisisEl.value!==lead.analisisCall) lead.analisisCall=analisisEl.value;
   lead.puntuacion=val;
   saveHotList();
+  saveHotLead_sb(lead).catch(e=>console.error('Supabase punt sync:',e));
   // Actualizar solo el número en el modal sin cerrarlo
   openHotLeadDetail(id);
 }
 
 function saveLeadField(id, field, value) {
   const lead=hotLeads.find(l=>l.id===id);if(!lead)return;
+  if(lead[field]===value)return; // evita guardados duplicados
   lead[field]=value;
   saveHotList();
   saveHotLead_sb(lead).catch(e=>console.error('Supabase field sync:',e));
   renderHotList();
+  // Sincronizar también con las calls del historial que correspondan a este lead
+  syncLeadToCalls(lead);
+}
+
+// Sincroniza los cambios del lead (objeción, notas) hacia las calls del historial con el mismo nombre/empresa
+function syncLeadToCalls(lead){
+  let changed=false;
+  state.calls.forEach(c=>{
+    if(c.nombre===lead.nombre && (c.empresa||'')===(lead.empresa||'')){
+      if(lead.objecion && c.objecion!==lead.objecion){ c.objecion=lead.objecion; changed=true; }
+      saveCall_sb(c).catch(e=>console.error('Supabase call sync:',e));
+    }
+  });
+  if(changed){ saveState(); updateOverview(); }
 }
 function addFollowupMessage(leadId){
   const texto=prompt('✍️ Escribí el mensaje de follow-up:');
