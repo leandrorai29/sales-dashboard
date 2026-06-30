@@ -57,6 +57,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .filter-btn{padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;font-family:'Inter',sans-serif;}
 .filter-btn:hover{color:var(--text);}
 .filter-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.35);}
+.filter-btn.active-miedo{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(244,63,94,.35);}
 .content{padding:28px 32px;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
@@ -564,10 +565,50 @@ select.input{cursor:pointer;}
       <div class="input-group"><label class="input-label">Nombre del Lead *</label><input class="input" id="call-lead-name" type="text" placeholder="Nombre completo"></div>
       <div class="input-group"><label class="input-label">Fecha</label><input class="input" id="call-fecha" type="date"></div>
     </div>
-    <div class="form-row">
-      <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-pitcheo">⏸️ No se pitcheó</option><option value="no-califica">🚫 No calificaba</option></select></div>
-      <div class="input-group"><label class="input-label">Objeción principal</label><select class="input" id="call-objecion"><option value="">Sin objeción</option><option value="🌫️ Bomba de Humo">🌫️ Bomba de Humo</option><option value="💰 Dinero">💰 Dinero</option><option value="🚚 Logística">🚚 Logística</option><option value="😰 Miedo">😰 Miedo</option></select></div>
+    <div class="input-group"><label class="input-label">Estado *</label><select class="input" id="call-estado"><option value="">Seleccionar...</option><option value="cerrada">✅ Cerrada</option><option value="no-cerrada">❌ No cerrada</option><option value="seguimiento">🔄 Seguimiento</option><option value="agendada">📅 Re-agendada</option><option value="no-pitcheo">⏸️ No se pitcheó</option><option value="no-califica">🚫 No calificaba</option></select></div>
+
+    <!-- Selector de objeción — mismas categorías que el Sales Script -->
+    <div class="input-group">
+      <label class="input-label">Categoría de objeción</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;" id="modal-obj-cat-buttons">
+        <button type="button" class="filter-btn" id="modal-obj-bomba" onclick="modalSelectObjCat('bomba')">🌫️ Bomba</button>
+        <button type="button" class="filter-btn" id="modal-obj-dinero" onclick="modalSelectObjCat('dinero')">💰 Dinero</button>
+        <button type="button" class="filter-btn" id="modal-obj-logistica" onclick="modalSelectObjCat('logistica')">🚚 Logística</button>
+        <button type="button" class="filter-btn" id="modal-obj-miedo" onclick="modalSelectObjCat('miedo')">😰 Miedo</button>
+      </div>
     </div>
+
+    <!-- Sub-opciones BOMBA -->
+    <div id="modal-obj-sub-bomba" class="hidden input-group">
+      <label class="input-label">Tipo de bomba de humo</label>
+      <select class="input" id="modal-obj-bomba-select" onchange="modalUpdateObjValue()">
+        <option value="pensarlo">🤔 Tengo que pensarlo</option>
+        <option value="socio-pareja">🤝 Pareja / Socio</option>
+        <option value="dias">📅 Lo pienso en unos días</option>
+        <option value="mail">📧 Mandámelo por mail</option>
+        <option value="numeros">📊 Revisar mis números</option>
+        <option value="tarjeta">💳 Se llevó la tarjeta</option>
+        <option value="otra">📝 Otra bomba de humo</option>
+      </select>
+    </div>
+
+    <!-- Sub-opciones MIEDO (multi-select) -->
+    <div id="modal-obj-sub-miedo" class="hidden input-group">
+      <label class="input-label">¿A qué le tiene miedo? <span style="font-weight:400;color:var(--text3)">(podés marcar varios)</span></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+        <button type="button" class="filter-btn" id="modal-miedo-yo" onclick="modalToggleMiedo('yo')">🙋 Yo</button>
+        <button type="button" class="filter-btn" id="modal-miedo-tu" onclick="modalToggleMiedo('tu')">🤝 Tú</button>
+        <button type="button" class="filter-btn" id="modal-miedo-mañana" onclick="modalToggleMiedo('mañana')">🔮 Mañana</button>
+        <button type="button" class="filter-btn" id="modal-miedo-ayer" onclick="modalToggleMiedo('ayer')">📉 Ayer</button>
+      </div>
+      <label class="input-label">¿Se combina con otra categoría?</label>
+      <div style="display:flex;gap:6px;">
+        <button type="button" class="filter-btn" id="modal-miedo-combo-dinero" onclick="modalToggleMiedoCombo('dinero')">+ Dinero</button>
+        <button type="button" class="filter-btn" id="modal-miedo-combo-logistica" onclick="modalToggleMiedoCombo('logistica')">+ Logística</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="call-objecion">
     <div class="input-group"><label class="input-label">Notas</label><textarea class="input" id="call-notas" style="min-height:80px" placeholder="Resumen de la call..."></textarea></div>
     <input type="hidden" id="call-edit-id">
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
@@ -798,6 +839,21 @@ function filterCuotas(f, btn){
   renderCuotas();
 }
 
+function formatFechaUI(fechaStr){
+  if(!fechaStr) return '—';
+  // Normalizar cualquier formato a YYYY-MM-DD primero
+  let f = fechaStr.trim();
+  // Si viene como DD/MM/YYYY lo convertimos
+  if(/^\d{2}\/\d{2}\/\d{4}$/.test(f)){
+    const [d,m,y]=f.split('/');
+    f=`${y}-${m}-${d}`;
+  }
+  const match = f.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!match) return fechaStr;
+  const [,y,m,d]=match;
+  return `${d}/${m}/${y}`;
+}
+
 function renderCuotas(){
   const t=today();
   const pendientes=cuotas.filter(c=>!c.pagada && c.fechaEstimada>=t);
@@ -814,7 +870,7 @@ function renderCuotas(){
   if(cuotasFilter==='pendientes') lista=pendientes;
   else if(cuotasFilter==='vencidas') lista=vencidas;
   else if(cuotasFilter==='cobradas') lista=cobradas;
-  lista.sort((a,b)=>a.fechaEstimada.localeCompare(b.fechaEstimada));
+  lista.sort((a,b)=>b.fechaEstimada.localeCompare(a.fechaEstimada));
 
   const tbody=document.getElementById('cuotas-table-body');
   if(lista.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin cuotas en este filtro</td></tr>';return;}
@@ -828,12 +884,13 @@ function renderCuotas(){
       <td>${c.empresa==='SA Dental'?'🦷 SA Dental':c.empresa==='Scaling In Blue'?'🏗️ Scaling':'<span style="color:var(--text3)">—</span>'}</td>
       <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.numeroCuota}/${c.totalCuotas}</td>
       <td style="font-family:'DM Mono';font-size:13px;color:var(--green)">$${(c.monto||0).toLocaleString()}</td>
-      <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fechaEstimada}</td>
+      <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${formatFechaUI(c.fechaEstimada)}</td>
       <td>${estadoBadge}</td>
       <td>${c.pagada?`<button class="btn btn-secondary btn-sm" onclick="marcarCuotaNoPagada(${c.id})">Deshacer</button>`:`<button class="btn btn-primary btn-sm" onclick="marcarCuotaPagada(${c.id})">✓ Marcar pagada</button>`}</td>
     </tr>`;
   }).join('');
 }
+
 
 async function marcarCuotaPagada(id){
   const cuota=cuotas.find(c=>c.id===id);if(!cuota)return;
@@ -1162,7 +1219,7 @@ function updateOverview(){
 
   const tbody=document.getElementById('calls-table-body');
   if(calls.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sin calls en este período</td></tr>';return;}
-  tbody.innerHTML=[...calls].reverse().map(c=>`
+  tbody.innerHTML=[...calls].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(c=>`
     <tr>
       <td style="font-family:'DM Mono';font-size:12px;color:var(--text2)">${c.fecha}</td>
       <td style="font-weight:500">${c.nombre}</td>
@@ -1208,13 +1265,105 @@ function drawObjChart(data) {
 }
 
 // ===== ADD/EDIT CALL =====
+const modalObjBombaLabels={'pensarlo':'Tengo que pensarlo','socio-pareja':'Pareja / Socio','dias':'Lo pienso en unos días','mail':'Mandámelo por mail','numeros':'Revisar números','tarjeta':'Se llevó la tarjeta','otra':'Otra bomba de humo'};
+const modalMiedoLabels={'yo':'Yo','tu':'Tú','mañana':'Mañana','ayer':'Ayer'};
+let modalObjState={categoria:null, miedoTags:[], miedoCombo:[]};
+
+function modalResetObjUI(){
+  modalObjState={categoria:null, miedoTags:[], miedoCombo:[]};
+  document.querySelectorAll('#modal-obj-cat-buttons .filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('modal-obj-sub-bomba').classList.add('hidden');
+  document.getElementById('modal-obj-sub-miedo').classList.add('hidden');
+  document.querySelectorAll('#modal-obj-sub-miedo .filter-btn').forEach(b=>b.classList.remove('active-miedo','active'));
+  document.getElementById('modal-obj-bomba-select').value='pensarlo';
+  document.getElementById('call-objecion').value='';
+}
+
+function modalSelectObjCat(cat){
+  modalObjState.categoria=cat;
+  modalObjState.miedoTags=[];
+  modalObjState.miedoCombo=[];
+  document.querySelectorAll('#modal-obj-cat-buttons .filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('modal-obj-'+cat).classList.add('active');
+  document.getElementById('modal-obj-sub-bomba').classList.toggle('hidden', cat!=='bomba');
+  document.getElementById('modal-obj-sub-miedo').classList.toggle('hidden', cat!=='miedo');
+  document.querySelectorAll('#modal-obj-sub-miedo .filter-btn').forEach(b=>b.classList.remove('active-miedo','active'));
+  modalUpdateObjValue();
+}
+
+function modalToggleMiedo(tag){
+  const idx=modalObjState.miedoTags.indexOf(tag);
+  const btn=document.getElementById('modal-miedo-'+tag);
+  if(idx>-1){modalObjState.miedoTags.splice(idx,1);btn.classList.remove('active-miedo');}
+  else{modalObjState.miedoTags.push(tag);btn.classList.add('active-miedo');}
+  modalUpdateObjValue();
+}
+
+function modalToggleMiedoCombo(combo){
+  const idx=modalObjState.miedoCombo.indexOf(combo);
+  const btn=document.getElementById('modal-miedo-combo-'+combo);
+  if(idx>-1){modalObjState.miedoCombo.splice(idx,1);btn.classList.remove('active');}
+  else{modalObjState.miedoCombo.push(combo);btn.classList.add('active');}
+  modalUpdateObjValue();
+}
+
+function modalUpdateObjValue(){
+  let val='';
+  if(modalObjState.categoria==='bomba'){
+    const sub=document.getElementById('modal-obj-bomba-select').value;
+    val='🌫️ Bomba de Humo: '+(modalObjBombaLabels[sub]||sub);
+  } else if(modalObjState.categoria==='miedo'){
+    const tags=modalObjState.miedoTags.map(t=>modalMiedoLabels[t]).join(', ');
+    const combos=modalObjState.miedoCombo.length?' + '+modalObjState.miedoCombo.map(c=>c==='dinero'?'Dinero':'Logística').join(' + '):'';
+    val=tags?'😰 Miedo ('+tags+')'+combos:'';
+  } else if(modalObjState.categoria==='dinero'){
+    val='💰 Dinero';
+  } else if(modalObjState.categoria==='logistica'){
+    val='🚚 Logística';
+  }
+  document.getElementById('call-objecion').value=val;
+}
+
+function modalLoadObjFromText(texto){
+  modalResetObjUI();
+  if(!texto) return;
+  if(texto.includes('Bomba de Humo')){
+    modalObjState.categoria='bomba';
+    document.getElementById('modal-obj-bomba').classList.add('active');
+    document.getElementById('modal-obj-sub-bomba').classList.remove('hidden');
+    // Detectar sub-tipo por label
+    const found=Object.entries(modalObjBombaLabels).find(([k,v])=>texto.includes(v));
+    if(found) document.getElementById('modal-obj-bomba-select').value=found[0];
+  } else if(texto.includes('Miedo')){
+    modalObjState.categoria='miedo';
+    document.getElementById('modal-obj-miedo').classList.add('active');
+    document.getElementById('modal-obj-sub-miedo').classList.remove('hidden');
+    Object.entries(modalMiedoLabels).forEach(([k,v])=>{
+      if(texto.includes(v)){
+        modalObjState.miedoTags.push(k);
+        document.getElementById('modal-miedo-'+k).classList.add('active-miedo');
+      }
+    });
+    if(texto.includes('+ Dinero')){modalObjState.miedoCombo.push('dinero');document.getElementById('modal-miedo-combo-dinero').classList.add('active');}
+    if(texto.includes('+ Logística')){modalObjState.miedoCombo.push('logistica');document.getElementById('modal-miedo-combo-logistica').classList.add('active');}
+  } else if(texto.includes('Dinero')){
+    modalObjState.categoria='dinero';
+    document.getElementById('modal-obj-dinero').classList.add('active');
+  } else if(texto.includes('Logística')){
+    modalObjState.categoria='logistica';
+    document.getElementById('modal-obj-logistica').classList.add('active');
+  }
+  document.getElementById('call-objecion').value=texto;
+}
+
 function openAddCall(){
   document.getElementById('modal-call-title').textContent='Nueva Call';
   document.getElementById('btn-save-call').textContent='Guardar Call';
   document.getElementById('call-fecha').value=today();
-  ['call-lead-name','call-objecion','call-notas'].forEach(i=>document.getElementById(i).value='');
+  ['call-lead-name','call-notas'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('call-estado').value='';
   document.getElementById('call-edit-id').value='';
+  modalResetObjUI();
   openModal('modal-add-call');
 }
 function openEditCall(id){
@@ -1224,9 +1373,9 @@ function openEditCall(id){
   document.getElementById('call-fecha').value=c.fecha;
   document.getElementById('call-lead-name').value=c.nombre;
   document.getElementById('call-estado').value=c.estado;
-  document.getElementById('call-objecion').value=c.objecion||'';
   document.getElementById('call-notas').value=c.notas||'';
   document.getElementById('call-edit-id').value=id;
+  modalLoadObjFromText(c.objecion||'');
   openModal('modal-add-call');
 }
 async function saveCall(){
